@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="Environment.js"></script>
+    <script src="Graphics.js"></script>
+    <script src="Controller.js"></script>
+    <script src="Camera.js"></script>
+    <canvas id="canvas"></canvas>
+    <div id="logdiv"></div>
+  </head>
+  <body>
+    <script>
+      var env = new Environment(100, 100, 10, 10);
+      var g = new Graphics(window.innerWidth, 100, document.getElementById('canvas'));
+      var cam = new Camera(0, 0, 0, 30, Math.PI/2, 0.01, 10);
+      var c = new Controller(cam, g, env, 1/20);
+      document.getElementById('canvas').style.position = 'fixed';
+      document.getElementById('canvas').style.left = window.innerWidth/2 - document.getElementById('canvas').width/2;
+      document.getElementById('canvas').style.top = window.innerHeight/2 - document.getElementById('canvas').height/2;
+      c.go();
+    </script>
+  </body>
+</html>
