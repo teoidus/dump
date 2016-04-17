@@ -1,0 +1,296 @@
+<html>
+  <head>
+    <style>
+      div.scramble {
+        display: inline;
+      } 
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+  </head>
+  <body>
+    <a href="Flatland/Flatland.html">To Flatland.</a><br>
+    <br>
+    Scramble generators: <br>
+    <button type="button" onclick="document.getElementById('scramble').innerHTML = polyGenerator(20, ['U', 'F', 'L', 'R', 'B', 'D']).join(' ')">
+      All: &lt;U,F,L,R,B,D&gt;</button>&nbsp <div id="scramble" class="scramble"></div><br>
+      
+    <button type="button" onclick="document.getElementById('sbScramble').innerHTML = polyGenerator(20, ['r', 'R', 'U', 'M']).join(' ')">
+    
+      SB: &lt;r,R,U,M&gt;</button>&nbsp <div id="sbScramble" class="scramble"></div><br>
+      
+    <button type="button" onclick="rouxScramble(20, 'muScramble')">LSE: &lt;M,U&gt;</button>&nbsp <div id="muScramble" class="scramble"></div><br>
+    
+    <input id="fbLen"></input><button type="button" onclick="generateFbScramble()">FB (&lt;=n optimal)</button>
+      &nbsp <div id="fbScramble" class="scramble"></div>&nbsp <button id='fbSolution' type="button" class="scramble" onclick="document.getElementById('fbSolution').innerHTML = fbSolution">(click for solution)</button><br>
+    
+    <input id="crossLen"></input><button type="button" onclick="generateCrossScramble()">Cross/B2 bomber (&lt;=n optimal)</button>
+      &nbsp <div id="crossScramble" class="scramble"></div>&nbsp <button id='crossSolution' type="button" class="scramble" onclick="document.getElementById('crossSolution').innerHTML = crossSolution">(click for solution)</button><br>
+    <br>
+    
+    <div>
+      U F', U' F'<br>
+      Pair building: B' r B', (U') (r/r2) B3, R' U' R B3<br>
+      Line building: R S2, U2 F', r u', R2 u' R2 u2
+    </div><br>
+    
+    <div>CMLL subset order: H, Pi, L, T, U, S, AS.<br>
+    TLDM's list: <a href="http://pastebin.com/raw/QCs71Ejz">http://pastebin.com/raw/QCs71Ejz</a><br>
+    <br>
+    Maru lube you literally just spread a corner and edge apart and put 2-3 drops into the core, flip over and do the same on the exact opposite side, work in for a few minutes. It is water based and dries out quicker, might have to lube every week or two... Just whenever you feel like its getting slower again.<br>
+    Not really worth taking your cube apart for Maru like you would do for silicone unless you want to put some on the screws/springs to remove noise.
+    <br><a href="http://xkcd.com/1663/#a9e5c85a-fab6-11e5-8002-42010a8e0014">garden</a><br></div><br>
+    
+    <div id="PBL">PBL<br>
+      <table border="1">
+        <tr> <td rowspan="2" colspan="2"></td><td colspan="3" align="center">U</td></tr>
+        <tr>                                  <td>L bar</td> <td>Diag</td> <td>Solved</td></tr>
+        <tr> <td rowspan="3" align="center">D</td>
+             <td>L bar</td> <td id="pbcLL"></td> <td id="pbcLD"></td> <td id="pbcLS"></td></tr>
+        <tr> <td>Diag</td>  <td id="pbcDL"></td> <td id="pbcDD"></td> <td id="pbcDS"></td></tr>
+        <tr> <td>Solved</td><td id="pbcSL"></td> <td id="pbcSD"></td> <td id="pbcSS"></td></tr>
+      </table>
+      <script>
+        function setElement(id, s) { document.getElementById(id).innerHTML = s };
+        setElement('pbcLL', "(y U2) R U'2 R'2 F2 R F2 U' F2 U2 F");
+        setElement('pbcDL', "(U') R U' R F2 R' U R'");
+        setElement('pbcSL', "T/J perm<br>(U) R U' R F2 R' U'3 R F2 R2");
+        
+        setElement('pbcLD', "(U2) F R' D R2 D' R F'");
+        setElement('pbcDD', "R2 F2 R2");
+        setElement('pbcSD', "Y/E perm<br>R2 D' R U' R' D R2 U F R F'");
+        
+        setElement('pbcLS', "l' U' B' U' (R2 x') U R' F' R2 U' R F2 R2");
+        setElement('pbcDS', "R U R' B' D F2 D F R' D2 R2 B");
+        setElement('pbcSS', "");
+      </script>
+    </div><br>
+    
+    <div id="hardScrambles">Hard scrambles: F' U L2 B2 U B2 R' B2 R2 L' D L B' D U' R' D' B L' R2<br>
+    F U R' U' L R2 B2 F U2 L D' U L D2 L2 D2 U' R' B2 D' - yellow-orange block. track the other pair<br>
+    B2 U' B2 R2 F2 D L2 D' B2 L2 D' L' D' B D2 F' U' L F2 U R D - solve the line and see it in inspection<br>
+    U' R2 D B2 F2 D' B2 F2 D2 F2 U' F' U' L' B' R U2 F D2 L B2 L' - easy FB. see it and execute quickly<br>
+    U2 B2 U' L2 D' F2 U' R2 U2 L2 U2 B R' F R2 L2 D' R' U' F2 L D'
+    </div>
+    <script>
+      var fbSolution;
+      document.getElementById('fbLen').value = 4;
+      function generateFbScramble() {
+        var fbLen = document.getElementById('fbLen').value;
+        while (true) {
+          var solution = normalize(polyGenerator(fbLen-1, ['U', 'F', 'L', 'R', 'B', 'D']).concat(polyGenerator(1, ['F', 'L', 'B', 'D'])));
+          if (solution.length == fbLen) break;
+        }
+        fbSolution = normalize(solution).join(' ');
+        document.getElementById('fbSolution').innerHTML = '(click for solution)';
+        document.getElementById('fbScramble').innerHTML = obfuscate(inverse(solution), solution.length*3).join(' ');
+      }
+      var crossSolution;
+      document.getElementById('crossLen').value = 5;
+      function generateCrossScramble() {
+        var len = document.getElementById('crossLen').value;
+        while (true) {
+          var solution = normalize(polyGenerator(len-1, ['U', 'F', 'L', 'R', 'B', 'D']).concat(polyGenerator(1, ['F', 'L', 'R', 'B', 'D'])));
+          if (solution.length == len) break;
+        }
+        crossSolution = normalize(solution).join(' ');
+        document.getElementById('crossSolution').innerHTML = '(click for solution)';
+        document.getElementById('crossScramble').innerHTML = obfuscate(inverse(solution), solution.length*3).join(' ');
+      }
+      function rouxScramble(n, id) {
+        document.getElementById(id).innerHTML = twoGenerator(n, "M", "U").join(' ');
+      }
+      function twoGenerator(n, a, b) {
+        var mu = [[a+"'", a, a+"2"], [b+"'", b, b+"2"]];
+        var result = '';
+        for (var i = 0; i < n; i++) {
+          result += mu[i%2][Math.floor(Math.random() * 2.99)] + ' ';
+        }
+        return result.split(' ');
+      }
+      function polyGenerator(n, gens) {
+        var moves = [];
+        for (var i = 0; i < gens.length; i++) {
+          moves[i] = [gens[i]+"'", gens[i], gens[i]+"2"];
+        }
+        var result = [];
+        prev = 0;
+        while (result.length < n) {
+          while (true) {
+            var j = Math.floor(Math.random()*gens.length - 0.01);
+            if (j != prev) break;
+          }
+          result.push(moves[j][Math.floor(Math.random() * 2.99)]);
+          result = normalize(result);
+          prev = j;
+        }
+        return result;
+      }
+      function decompose(alg) {
+        var result = [];
+        for (var i = 0; i < alg.length; i++) {
+          switch (alg[i].substring(1,2)) {
+            case '2':
+              face = alg[i].substring(0,1);
+              for (var j = 0; j < 2; j++) 
+                result.push(face);
+              break;
+            default:
+              result.push(alg[i]);
+          }
+        }
+        return result;
+      }
+      function getTurns(move) {
+        switch (move.substring(1)) {
+          case "'": return 3;
+          case '': return 1;
+          default: return (parseInt(move.substring(1), 10) % 4);
+        }
+      }
+      function turnsToNotation(n) {
+        switch (n % 4) {
+          case 1: case -3: return '';
+          case 2: case -2: return '2';
+          case 3: case -1: return "'";
+        }
+      }
+      function reduce(move1, move2) {
+        /* assumes move1 and move2 apply to same face*/
+        turns = getTurns(move1) + getTurns(move2);
+        return (turns%4 == 0) ? '' : move1.substring(0,1) + turnsToNotation(turns);
+      }
+      axes = [{L: true, R: true}, {U: true, D: true}, {F: true, B: true}];
+      function getAxis(turn) {
+        for (var i = 0; i < axes.length; i++)
+          if (turn.substring(0,1) in axes[i])
+            return i;
+      }
+      function oppositeFace(turn) {
+        for (var result in axes[getAxis(turn)])
+          if (result != turn.substring(0,1))
+            return result;
+      }
+      function recompose(alg) {
+        var result = [];
+        altered = false;
+        for (var i = 0; i < alg.length; i++) {
+          var algFace = alg[i].substring(0,1);
+          var j = result.length - 1;
+          
+          replaced = false;
+          if (result.length > 0) {
+            for (var j = result.length-1; j >= 0 && getAxis(algFace) == getAxis(result[j]); j--) {
+              if (algFace.substring(0,1) == result[j].substring(0,1)) {
+                reduced = reduce(alg[i], result[j]);
+                result.splice(j,1,reduced);
+                replaced = true;
+                altered = true;
+                break;
+              }
+            }
+          }
+          if (!replaced)
+            result.push(alg[i]);
+        }
+        return {sequence: result.filter(function(x) { return x != '' }), altered};
+      }
+      function normalize(alg) {
+        var result = [];
+        for (var i = 0; i < alg.length; i++)
+          result[i] = alg[i];
+          i = 0;
+        while (true) {
+          recomposed = recompose(result);
+          result = recomposed.sequence;
+          if (!recomposed.altered) break;
+          i += 1;
+          //console.log('Performed',i,'reduction(s).');
+        }
+        return result;
+      }
+      function reverse(a) {
+        return a.substring(0,1) + turnsToNotation(-getTurns(a));
+      }
+      function converse(a) {
+        return a.map(function(a) { return reverse(a) });
+      }
+      function inverse(a) {
+        return converse(a).reverse();
+      }
+      function conjugate(a, b) {
+        return a.concat(b).concat(inverse(a));
+      }
+      function commutator(a, b) {
+        return a.concat(b).concat(inverse(a)).concat(inverse(b));
+      }
+      function substitute(alg, pos, len, sub) {
+        alg.splice.apply(alg, [pos,len].concat(sub));
+      }
+      function normalizedSub(alg, pos, len, sub, verbose) {
+        if (verbose) console.log(alg);
+        substitute(alg, pos, len, sub);
+        if (verbose) console.log('after sub:', alg);
+        alg.splice.apply(alg, [0,alg.length].concat(normalize(alg)));
+      }
+      function obfuscateFaceTurn(turn, args) { /* where args = {b to cancel, c, d to cancel} */
+        with (args) {
+          var b1b2 = [b, oppositeFace(b)+b.substring(1)];
+          var cKeys = Object.keys(axes[cAxis]);
+          var c1c2_2 = [reduce(cKeys[0],cKeys[0]), reduce(cKeys[1],cKeys[1])];
+          var d1d2 = [d, oppositeFace(d)+d.substring(1)];
+          var a2n = [oppositeFace(turn)+turn.substring(1)];
+          return conjugate(b1b2, c1c2_2).concat(a2n).concat(conjugate(inverse(d1d2), c1c2_2));
+        }
+      }
+      function pushEval(evals, alg, i, args) {
+        eval = {i: i, value: 0, turn: alg[i], args: args};
+        t = alg.slice();
+        normalizedSub(t, i, 1, obfuscateFaceTurn(eval.turn, args));
+        //console.log(i, alg.join(' '), '->', t.join(' '), args)
+        eval.value = t.length;
+        evals.push(eval);
+        //console.log(JSON.stringify(evals));
+      }
+      function pushEvals(evals, alg, index, bAxis) {
+        var turn = alg[index];
+        var lastAxis = (Math.max(getAxis(turn),bAxis) + Math.abs(getAxis(turn)-bAxis)) % 3;
+        var bFaces = Object.keys(axes[bAxis]);
+        var lastFaces = Object.keys(axes[lastAxis]);
+        var turnOptions = ['', "'"];
+        for (var i = 0; i < 2; i++)
+        for (var j = 0; j < 2; j++)
+        for (var k = 0; k < 2; k++)
+        for (var l = 0; l < 2; l++) {
+          var args = {b: bFaces[i]+turnOptions[k], cAxis: lastAxis, d: bFaces[j]+turnOptions[l]};
+          pushEval(evals, alg, index, args);
+        }
+      }
+      function getOptimalSubstitution(alg) {
+        var evals = [];
+        for (var i = 1; i < alg.length-1; i++) {
+          var prev = alg[i-1]; var next = alg[i+1];
+          if (getAxis(prev) != getAxis(alg[i]))
+            pushEvals(evals, alg, i, getAxis(prev));
+          if (getAxis(alg[i]) != getAxis(next)) {
+            pushEvals(evals, alg, i, getAxis(next));
+          }
+        }
+        evals = evals.filter(function(a) { return a.value > alg.length }) // alg must increase in length
+          .sort(function(a, b) { return a.value - b.value }); // ascending order - smaller movecounts = better
+        evals = evals.filter(function(a) { return a.value == evals[0].value }); // pick a random one to break ties
+        console.log(evals);
+        return evals[Math.floor(Math.random()*evals.length-0.01)];
+      }
+      function obfuscate(alg, moveLimit) {
+        var result = alg.slice();
+        while (result.length <= moveLimit) {
+          var optimal = getOptimalSubstitution(result);
+          var substitutee = optimal.turn;
+          normalizedSub(result, optimal.i, 1, obfuscateFaceTurn(optimal.turn, optimal.args));
+          console.log('Replaced', substitutee, '@', optimal.i, 'with args', optimal.args, '(value =', optimal.value.toString() + "):", result.join(' '));
+        }
+        return result;
+      }
+    </script>
+  </body>
+</html>
