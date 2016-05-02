@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <canvas id="canvas"></canvas>
+  </head>
+  <body>
+    <script>
+      var c = document.getElementById('canvas');
+      c.width = window.innerWidth - 20;
+      c.height = window.innerHeight - 20;
+      var ctx = c.getContext('2d');
+      
+      function drawNoiseFrame() {
+        var cellSize = 5;
+        for (var i = 0; i < c.width / cellSize; i++)
+        for (var j = 0; j < c.height / cellSize; j++) {
+          var a = Math.floor(Math.random() * 256).toString();
+          ctx.fillStyle = 'rgb(' + a + ',' + a + ',' + a + ')';
+          ctx.fillRect(i*cellSize, j*cellSize, cellSize, cellSize);
+        }
+      }
+      
+      var fps = 20;
+      setInterval(drawNoiseFrame, 1000 / fps);
+    </script>
+  </body>
+</html>
