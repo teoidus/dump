@@ -50,7 +50,7 @@
         for (var i = 0; i < c.width / cellSize; i++)
         for (var j = 0; j < c.height / cellSize; j++) {
           var x = i*cellSize; var y = j*cellSize;
-          var d = cellSize*cellSize*256/(Math.pow(Math.pow(pos.x - x,2) + Math.pow(pos.y - y,2), 1/2));
+          var d = cellSize*2*256/(Math.pow(Math.pow(pos.x - x,2) + Math.pow(pos.y - y,2), 1/2));
           var a = Math.floor(Math.random() * (256 - d));
           ctx.fillStyle = 'rgb(' +
             Math.round(a + d*Math.random()) + ',' +
