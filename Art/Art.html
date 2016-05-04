@@ -4,11 +4,17 @@
     <canvas id="canvas"></canvas>
     <script src="philosopher.js"></script>
     <script src="council.js"></script>
+    <div id="title"><b>A Musing on Entropy</b><div>
   </head>
   <audio autoplay loop><source src="static.mp3" type="audio/ogg"></audio>
   <body>
     <script>
       var philosopherHeight = 250;
+      var titleHeight = 30;
+      var title = document.getElementById('title');
+      title.style.width = window.innerWidth - 10;
+      title.style.height = titleHeight;
+      title.style.textAlign = 'center';
       var mousePos;
       // shamelessly taken from StackOverflow (hey, like you'd want to code this yourself either)
       // http://stackoverflow.com/questions/7790725/javascript-track-mouse-position
@@ -36,10 +42,10 @@
     <script>
       var c = document.getElementById('canvas');
       c.width = window.innerWidth;
-      c.height = window.innerHeight - philosopherHeight;
+      c.height = window.innerHeight - (philosopherHeight + titleHeight);
       c.style.position = 'fixed';
       c.style.left = '0';
-      c.style.top = '0';
+      c.style.top = titleHeight;
       frameCount = 0;
       var ctx = c.getContext('2d');
       
@@ -123,7 +129,7 @@
         ]
       ]);
       var council = new PhilosopherCouncil([plato, dutton, sibley, walton, danto],
-        {x: 0, y: c.height}, {x: c.width, y: philosopherHeight});
+        {x: 0, y: c.height+titleHeight }, {x: c.width, y: philosopherHeight});
       /* TODO:
         Plato - art as imitation, censorship
         Dutton - art as universal, dependent upon aesthetics, necessarily finely made
