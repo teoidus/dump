@@ -34,7 +34,7 @@
                   (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
                   (doc && doc.clientTop  || body && body.clientTop  || 0);
             }
-            if (event.pageX >= 0 && event.pageY >= 0 && event.pageX <= c.width && event.pageY <= c.height)
+            if (event.pageX >= 0 && event.pageY >= titleHeight && event.pageX <= c.width && event.pageY <= c.height+titleHeight)
               mousePos = { x: event.pageX, y: event.pageY };
         }
       })();
@@ -52,7 +52,7 @@
       function drawNoiseFrame() {
         var cells = 14000;
         var cellSize = Math.sqrt(c.width * c.height / cells);
-        var pos = (!mousePos) ? { x: c.width/2, y: c.height/2 } : mousePos;
+        var pos = (!mousePos) ? { x: c.width/2, y: c.height/2 } : { x: mousePos.x, y: mousePos.y - titleHeight };
         for (var i = 0; i < c.width / cellSize; i++)
         for (var j = 0; j < c.height / cellSize; j++) {
           var x = i*cellSize; var y = j*cellSize;
