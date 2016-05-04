@@ -1,0 +1,9 @@
+function Philosopher(id, imgSrc, size) {
+  this.img = new Image();
+  this.img.src = imgSrc;
+  this.size = size;
+  this.img.height = this.size;
+  this.img.style.position = 'fixed';
+  this.img.id = id;
+  document.body.appendChild(this.img);
+}

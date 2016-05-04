@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <canvas id="canvas"></canvas>
+    <script src="philosopher.js"></script>
+    <script src="council.js"></script>
+  </head>
+  <audio autoplay loop><source src="static.mp3" type="audio/ogg"></audio>
+  <body>
+    <script>
+      var philosopherHeight = 250;
+      var mousePos;
+      // shamelessly taken from StackOverflow (hey, like you'd want to code this yourself either)
+      // http://stackoverflow.com/questions/7790725/javascript-track-mouse-position
+      (function() {
+        document.onmousemove = handleMouseMove;
+        function handleMouseMove(event) {
+            var dot, eventDoc, doc, body, pageX, pageY;
+            event = event || window.event;
+            if (event.pageX == null && event.clientX != null) {
+                eventDoc = (event.target && event.target.ownerDocument) || document;
+                doc = eventDoc.documentElement;
+                body = eventDoc.body;
+                event.pageX = event.clientX +
+                  (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+                  (doc && doc.clientLeft || body && body.clientLeft || 0);
+                event.pageY = event.clientY +
+                  (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+                  (doc && doc.clientTop  || body && body.clientTop  || 0);
+            }
+            mousePos = { x: event.pageX, y: event.pageY };
+        }
+      })();
+    </script>
+    <script>
+      var c = document.getElementById('canvas');
+      c.width = window.innerWidth;
+      c.height = window.innerHeight - philosopherHeight;
+      c.style.position = 'fixed';
+      c.style.left = '0';
+      c.style.top = '0';
+      frameCount = 0;
+      var ctx = c.getContext('2d');
+      
+      function drawNoiseFrame() {
+        var cells = 14000;
+        var cellSize = Math.sqrt(c.width * c.height / cells);
+        var pos = (!mousePos) ? { x: -1000, y: -1000 } : mousePos;
+        for (var i = 0; i < c.width / cellSize; i++)
+        for (var j = 0; j < c.height / cellSize; j++) {
+          var x = i*cellSize; var y = j*cellSize;
+          var d = cellSize*cellSize*256/(Math.pow(Math.pow(pos.x - x,2) + Math.pow(pos.y - y,2), 1/2));
+          var a = Math.floor(Math.random() * (256 - d));
+          ctx.fillStyle = 'rgb(' +
+            Math.round(a + d*Math.random()) + ',' +
+            Math.round(a + d*Math.random()) + ',' +
+            Math.round(a + d*Math.random()) + ')';
+          ctx.fillRect(x, y, cellSize, cellSize);
+        }
+        frameCount += 1;
+        council.doDialogue(fps, frameCount);
+      }
+      
+      var fps = 20;
+      setInterval(drawNoiseFrame, 1000 / fps);
+      
+      var plato = new Philosopher('Plato', 'philosopher.png', {x:100, y:100}, 6, [
+        ['Socrates: Well, this is an utter abomination. I\'ve never seen anything as chaotic.<br>'+
+         'Glaucon: Why golly gee Socrates, that\'s absolutely right.',
+         'Socrates: What even is the meaning of this? Such disorder does not resemble anything at all.<br>'+
+         'Glaucon: That\'s true.',
+         'Socrates: I don\'t understand. Perhaps it\'s a depiction of color itself?<br>'+
+         'Glaucon: Why, now that you mention it, that sounds completely true.<br>'+
+         'Socrates: Oh, nevermind, that\'s just complete nonsense. I haven\'t the faintest idea.<br>'+
+         'Glaucon: Oh, yes, of course.'
+        ],
+        [
+         'Socrates: Well, the colors are curious, but I\'ve made up my mind--this can\'t possibly be art.<br>'+
+         'Glaucon: You\'re absolutely right, Socrates. I say we censor these works immediately.'
+        ],
+      ]);
+      var council = new PhilosopherCouncil([plato],
+        {x: 0, y: c.height}, {x: c.width, y: philosopherHeight});
+      /* TODO:
+        Plato - art as imitation, censorship
+        Collingwood - art vs craft
+        Dutton - art as universal, dependent upon aesthetics, necessarily finely made
+        Sibley - defeasible aesthetic concepts, formalist
+        Walton - standard, variable, contra-standard
+        Danto - is of artistic identification, artist's interpretation as function transforming objects into art
+      */
+    </script>
+  </body>
+</html>
