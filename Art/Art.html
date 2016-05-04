@@ -27,7 +27,8 @@
                   (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
                   (doc && doc.clientTop  || body && body.clientTop  || 0);
             }
-            mousePos = { x: event.pageX, y: event.pageY };
+            if (event.pageX >= 0 && event.pageY >= 0 && event.pageX <= c.width && event.pageY <= c.height)
+              mousePos = { x: event.pageX, y: event.pageY };
         }
       })();
     </script>
@@ -44,7 +45,7 @@
       function drawNoiseFrame() {
         var cells = 14000;
         var cellSize = Math.sqrt(c.width * c.height / cells);
-        var pos = (!mousePos) ? { x: -1000, y: -1000 } : mousePos;
+        var pos = (!mousePos) ? { x: c.width/2, y: c.height/2 } : mousePos;
         for (var i = 0; i < c.width / cellSize; i++)
         for (var j = 0; j < c.height / cellSize; j++) {
           var x = i*cellSize; var y = j*cellSize;
@@ -63,30 +64,72 @@
       var fps = 20;
       setInterval(drawNoiseFrame, 1000 / fps);
       
-      var plato = new Philosopher('Plato', 'philosopher.png', {x:100, y:100}, 6, [
-        ['Socrates: Well, this is an utter abomination. I\'ve never seen anything as chaotic.<br>'+
-         'Glaucon: Why golly gee Socrates, that\'s absolutely right.',
-         'Socrates: What even is the meaning of this? Such disorder does not resemble anything at all.<br>'+
-         'Glaucon: That\'s true.',
-         'Socrates: I don\'t understand. Perhaps it\'s a depiction of color itself?<br>'+
-         'Glaucon: Why, now that you mention it, that sounds completely true.<br>'+
-         'Socrates: Oh, nevermind, that\'s just complete nonsense. I haven\'t the faintest idea.<br>'+
-         'Glaucon: Oh, yes, of course.'
+      var plato = new Philosopher('Plato', 'philosopher.png', {x:100, y:100}, 19, [
+        ['SOCRATES: Well, this is an utter abomination. I\'ve never seen anything as chaotic.<br>'+
+         'GLAUCON: Why golly gee Socrates, that\'s absolutely right.',
+         'SOCRATES: What even is the meaning of this? Such disorder does not resemble anything at all.<br>'+
+         'GLAUCON: That\'s true.',
+         'SOCRATES: Perhaps it\'s a depiction of color itself?<br>'+
+         'GLAUCON: Why, that\'s brilliant.<br>'+
+         'SOCRATES: Oh, nevermind, that\'s just complete nonsense. I haven\'t the faintest idea.<br>'+
+         'GLAUCON: Of course. Surely no one would ever believe such a thing, even for an instant.',
+         'SOCRATES: And that ungodly noise! Surely, this is some kind of joke.<br>'+
+         'GLAUCON: I can\'t see it any other way.',
         ],
         [
-         'Socrates: Well, the colors are curious, but I\'ve made up my mind--this can\'t possibly be art.<br>'+
-         'Glaucon: You\'re absolutely right, Socrates. I say we censor these works immediately.'
+         'SOCRATES: Well. The colors are curious, but I\'ve made up my mind--this can\'t possibly be art.<br>'+
+         'GLAUCON: You\'re absolutely right, Socrates. I say we censor these works immediately.'
         ],
       ]);
-      var council = new PhilosopherCouncil([plato],
+      var dutton = new Philosopher('Dutton', 'philosopher.png', {x:100, y:100}, 16, [
+        ['Hm, let\'s see if there\'s anything here that I can hyper-aggressively disagree with.'],
+        ['That noise is unbearable! I know I\'m supposed to be doing some sort of analysis here, but unlike with my very legitimate philosophical arguments against basically everyone, I have to disagree with that noise just because.',
+         'Why is this a thing? It\'s just a bunch of weird static. There\'s nothing to see here (or hear, for that matter...).'],
+        [
+         'Well: not finely made, sounds that make your ears bleed, and no appreciable aesthetic properties in sight, besides that weird multicolor thing that pops up sometimes... seems like a pretty shitty work of art if you ask me.'
+        ],
+      ]);
+      var sibley = new Philosopher('Sibley', 'philosopher.png', {x:100, y:100}, 17, [
+        ['As a whole, quite chaotic. I can tell, because these patterns have no semblance of order to them and change constantly.',
+         'That strange bundle of color in an otherwise black-white work--peculiar. It\'s... bright, lively.',
+         'I\'m fairly sure that sound is just white noise. Odd.',
+         'All this grayscale is making me uncomfortable. So dark, and lifeless.'
+        ],
+        [
+         'A strange, violent work--yet, that burst of color brings with it a glimmer of hope. I wonder what it all means.'
+        ],
+      ]);
+      var walton = new Philosopher('Walton', 'philosopher.png', {x:100, y:100}, 20, [
+        ['It\'s hard to say what features are supposed to be standard here.',
+         'The work seems to have both a visual and aural component--maybe it\'s like a kind of video?',
+        ],
+        ['Perhaps the idea was create a work composed almost entirely of contra-standard features?',
+         'Even if it\'s a video, there is certainly very little that is standard or variable. I don\'t know about you, but I personally don\'t watch many videos of static noise.',
+         'I\'m not sure what to make of this without knowing what sort of work this is supposed to be.',
+         'That blob of color is certainly weird. When it moves, it almost seems as if controlled by... something.'
+        ],
+        ['Weird. I don\'t think this qualifies as art--unless I\'m unaware of a category this work is a part of, this just looks to me like a strange, badly made static video... thing.'
+        ],
+      ]);
+      var danto = new Philosopher('Danto', 'philosopher.png', {x:100, y:100}, 15, [
+        ['I don\'t know what to say yet because the artist hasn\'t programmed me yet, so I\'ll just do something cliche, like break the 4th wall and ask weird questions and make word soup.'
+        ],
+        ['So if I\'m interpreting this work in front of me here, and I\'m part of the work in front of you there, and art is the result of an interpretation... aren\'t I the result of interpretation of myself as interpreter?'
+        ],
+        ['Even better: if you can manipulate the work that I\'m interpreting, and this work is the result of the interpretation of some hypothetical artist, then doesn\'t that make you, in some way, the artist?'
+        ],
+        ['Now hold on. If you\'re the artist, then I am viewing the work that is interpreted by someone appreciating the work in which I exist. So... you are simultaneously interpreting the work that I am appreciating, and appreciating the work that allows me to exist as a result of interpretation. Isn\'t that beautiful?'
+        ]
+      ]);
+      var council = new PhilosopherCouncil([plato, dutton, sibley, walton, danto],
         {x: 0, y: c.height}, {x: c.width, y: philosopherHeight});
       /* TODO:
         Plato - art as imitation, censorship
-        Collingwood - art vs craft
         Dutton - art as universal, dependent upon aesthetics, necessarily finely made
         Sibley - defeasible aesthetic concepts, formalist
         Walton - standard, variable, contra-standard
         Danto - is of artistic identification, artist's interpretation as function transforming objects into art
+        Collingwood - art vs craft
       */
     </script>
   </body>

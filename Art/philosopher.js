@@ -3,6 +3,7 @@ function Philosopher(id, imgSrc, size, laconicity, dialogue) {
   this.div.style.position = 'fixed';
   this.div.style.wordWrap = 'break-word';
   this.padding = 5;
+  this.div.style.fontSize = window.innerWidth / 80;
   this.div.style.width = size.x - this.padding*2;
   this.div.style.height = size.y - this.padding*2;
   this.div.style.border = 'solid black 1px';
@@ -29,7 +30,7 @@ function Philosopher(id, imgSrc, size, laconicity, dialogue) {
   this.laconicity = laconicity;
   
   this.dialogue = dialogue;
-  this.finalDialogue = dialogue.splice(dialogue.length-1, 1);
+  this.finalDialogue = dialogue.splice(dialogue.length-1, 1)[0];
 }
 
 Philosopher.prototype.say = function(s) {
