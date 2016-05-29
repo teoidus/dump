@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script src="CSSCube.js">
+    </script>
+    <section class="container">
+      <div id="cube">
+      </div>
+    </section>
+  </head>
+  <body style="background-color: #DDDDDD">
+    <script type="text/javascript">
+      var cDiv = document.getElementById("cube");
+      var c = new CSSCube("cube", ["white","orange","green","red","blue","yellow"], 250, cDiv);
+      cDiv.style.position = "fixed";
+      cDiv.style.left = "50%"; cDiv.style.top = "50%";
+      cDiv.style.transform = "translate(-50%, -50%)";
+    </script>
+    Test buttons:<br>
+      <button onclick="c.testX()">x</button>
+      <button onclick="c.testY()">y</button>
+      <button onclick="c.testZ()">z</button>
+  </body>
+</html>
