@@ -3,7 +3,7 @@ function CSSCube(id, colorScheme, size, div) { // colorScheme = rgb, [U L F R B 
   this.size = size; // length in pixels
   this.div = div;
   this.div.id = id;
-  this.div.style.perspective = "1000px";
+  this.div.style.perspective = "2500px";
   this.div.style.width = size + "px";
   this.div.style.height = size + "px";
 
@@ -58,6 +58,14 @@ function CSSCube(id, colorScheme, size, div) { // colorScheme = rgb, [U L F R B 
             "origin",this.origins[i].toCSS(),
             "initial",JSON.stringify(this.initials[i]),
             figure.style.backgroundColor);*/
+  }
+
+  this.div.style.transformStyle = "preserve-3d";
+  this.div.style.transition = "transform 1s";
+  with (this) {
+    setTimeout(function() {
+      div.style.transform = "rotateX(-20deg) rotateY(-15deg)";
+    }, 250);
   }
 }
 
