@@ -24,13 +24,14 @@
           R: "U'", H: "U'", T: "U", J: "U", I: "U", // 4 also bound to U'
           C: "L'", Q: "L2", // 2 to L
           B: "F", F: "F'", N: "F'",
-          L: "R'", // other R moves done below
-          A: "D", W: "D",
+          K: "R'", // other R moves done below
+          A: "D", W: "D", L: "D'", // 3 to D'
           S: "M'", D: "M'", E: "M"
         }
         keymap["4"] = "U'";
         keymap["2"] = "L";
         keymap[" "] = "R"; keymap[";"] = "R2";
+        keymap["3"] = "D'";
         var nmap = {}; nmap["'"] = 3; nmap["2"] = 2;
         var m = (s in keymap) ? keymap[s[0]] : s[0];
         var n = (m.length > 1) ? nmap[m[1]] : 1;
@@ -45,9 +46,9 @@
           h.innerHTML += "<br>U: J, I, T(OH)<br>"
             + "U': 4, R, H(OH)<br>"
             + "L': C, L: 2, L2: Q<br>"
-            + "R': L, R: space, R2: semicolon<br>"
+            + "R': K, R: space, R2: semicolon<br>"
             + "F: B, F': F, N<br>"
-            + "D: A, W<br>"
+            + "D: A, W, D': 3, L<br>"
             + "M: E, M': S, D<br>";
         } else h.innerHTML = "help";
       }
