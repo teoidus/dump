@@ -9,28 +9,48 @@
     </section>
   </head>
   <body style="background-color: #AAAAAA" onkeypress="doMove(event)">
+    <div id="help" onclick="toggleHelp()">help</div>
     <script type="text/javascript">
       var cDiv = document.getElementById("cube");
       var c = new CSSCube("cube", ["white","orange","green","red","blue","yellow"], 250, cDiv);
       cDiv.style.position = "fixed";
-      cDiv.style.left = "30%"; cDiv.style.top = "30%";
+      cDiv.style.left = "30%"; cDiv.style.top = "25%";
 
       function doMove(e){
         var k = (window.event) ? e.keyCode : e.which;
-        s = String.fromCharCode(k).toUpperCase();
-        console.log("Received move: " + s);
-        c.move(s);
+        var s = String.fromCharCode(k).toUpperCase();
+        var keymap = {
+          X: "x", Y: "y", Z: "z",
+          R: "U'", H: "U'", T: "U", J: "U", I: "U", // 4 also bound to U'
+          C: "L'", Q: "L2", // 2 to L
+          B: "F", F: "F'", N: "F'",
+          L: "R'", // other R moves done below
+          A: "D", W: "D",
+          S: "M'", D: "M'", E: "M"
+        }
+        keymap["4"] = "U'";
+        keymap["2"] = "L";
+        keymap[" "] = "R"; keymap[";"] = "R2";
+        var nmap = {}; nmap["'"] = 3; nmap["2"] = 2;
+        var m = (s in keymap) ? keymap[s[0]] : s[0];
+        var n = (m.length > 1) ? nmap[m[1]] : 1;
+        m = m[0];
+        console.log("Received move: " + s + " -> " + m + ", " + n);
+        c.move(m, n);
+      }
+
+      function toggleHelp() {
+        var h = document.getElementById("help");
+        if (h.innerHTML == "help") {
+          h.innerHTML += "<br>U: J, I, T(OH)<br>"
+            + "U': 4, R, H(OH)<br>"
+            + "L': C, L: 2, L2: Q<br>"
+            + "R': L, R: space, R2: semicolon<br>"
+            + "F: B, F': F, N<br>"
+            + "D: A, W<br>"
+            + "M: E, M': S, D<br>";
+        } else h.innerHTML = "help";
       }
     </script>
-    Test buttons:<br>
-      <button onclick="c.rotX()">x</button>
-      <button onclick="c.rotY()">y</button>
-      <button onclick="c.rotZ()">z</button>
-    <br>
-    Real buttons:<br>
-      <button onclick="c.move('x')">x</button>
-      <button onclick="c.move('y')">y</button>
-      <button onclick="c.move('U')">U</button>
-      <button onclick="c.move()">z</button>
   </body>
 </html>

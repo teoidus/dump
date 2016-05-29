@@ -122,7 +122,7 @@ CSSCube.prototype.testZ = function() {
   this.updateTransforms();
 }
 
-CSSCube.prototype.move = function(moveString) {
+CSSCube.prototype.move = function(moveString, n) {
   if (moveString in ArrayCube.moveMaps) {
     var m = ArrayCube.moveMaps[moveString];
     for (var i = 0; i < this.N; i++) {
@@ -131,12 +131,14 @@ CSSCube.prototype.move = function(moveString) {
       if (m[i].angle != 0) {
         //console.log("i = " + i);
         this.rotations[s].addRotation({
-          angle: m[i].angle,
+          angle: m[i].angle * n,
           axis: m[i].axis
         }); // need to explicitly copy
       }
     }
-    this.mapping = ArrayCube.apply(ArrayCube.mappings[moveString], this.mapping);
+    for (var i = 0; i < n; i++) {
+      this.mapping = ArrayCube.apply(ArrayCube.mappings[moveString], this.mapping);
+    }
     //console.log(JSON.stringify(this.mapping) + " (applied " +
     //  JSON.stringify(ArrayCube.mappings[moveString]) + ")");
     this.updateTransforms();
