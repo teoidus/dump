@@ -1,22 +1,36 @@
 <html>
   <head>
-    <script src="CSSCube.js">
-    </script>
+    <script src="ArrayCube.js"></script>
+    <script src="Rotation.js"></script>
+    <script src="CSSCube.js"></script>
     <section class="container">
       <div id="cube">
       </div>
     </section>
   </head>
-  <body style="background-color: #AAAAAA">
+  <body style="background-color: #AAAAAA" onkeypress="doMove(event)">
     <script type="text/javascript">
       var cDiv = document.getElementById("cube");
       var c = new CSSCube("cube", ["white","orange","green","red","blue","yellow"], 250, cDiv);
       cDiv.style.position = "fixed";
       cDiv.style.left = "30%"; cDiv.style.top = "30%";
+
+      function doMove(e){
+        var k = (window.event) ? e.keyCode : e.which;
+        s = String.fromCharCode(k).toUpperCase();
+        console.log("Received move: " + s);
+        c.move(s);
+      }
     </script>
     Test buttons:<br>
-      <button onclick="c.testX()">x</button>
-      <button onclick="c.testY()">y</button>
-      <button onclick="c.testZ()">z</button>
+      <button onclick="c.rotX()">x</button>
+      <button onclick="c.rotY()">y</button>
+      <button onclick="c.rotZ()">z</button>
+    <br>
+    Real buttons:<br>
+      <button onclick="c.move('x')">x</button>
+      <button onclick="c.move('y')">y</button>
+      <button onclick="c.move('U')">U</button>
+      <button onclick="c.move()">z</button>
   </body>
 </html>
