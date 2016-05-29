@@ -23,7 +23,7 @@ ArrayCube = {
   composite: function(transforms) {
     var result = [];
     for (var i = 0; i < transforms[0].length; i++) {
-      result.push(i); // init to identity
+      result.push(i); // identity
     }
     for (var i = 0; i < transforms.length; i++) {
       result = ArrayCube.apply(transforms[i], result);
