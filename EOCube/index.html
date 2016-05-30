@@ -9,35 +9,40 @@
     </section>
   </head>
   <body style="background-color: #AAAAAA" onkeypress="doMove(event)">
-    <div id="help" onclick="toggleHelp()">help</div>
+    <div id="help" onmouseover="openHelp()" onmouseleave="closeHelp()">help</div>
     <script type="text/javascript">
       var cDiv = document.getElementById("cube");
-      var c = new CSSCube("cube", ["white","orange","green","red","blue","yellow"], 250, cDiv);
+      var colors = ['#FFFFFF', '#FF8C00', '#228B22', '#B22222', '#00008B', '#DDDD00']; // Dayan
+      var c = new CSSCube("cube", colors, 250, cDiv);
       cDiv.style.position = "fixed";
       cDiv.style.left = "30%"; cDiv.style.top = "25%";
 
       function doMove(e){
         var k = (window.event) ? e.keyCode : e.which;
         var s = String.fromCharCode(k).toUpperCase();
-        var keymap = {
-          X: "x", Y: "y", Z: "z",
-          R: "U'", H: "U'", T: "U", J: "U", I: "U", // 4 also bound to U'
-          C: "L'", Q: "L2", // 2 to L
-          B: "F", F: "F'", N: "F'",
-          K: "R'", // other R moves done below
-          A: "D", W: "D", L: "D'", // 3 to D'
-          S: "M'", D: "M'", E: "M",
-          O: "y", // 1 to y'
-          M: "x", // ' to x'
-          U: "z" // 5 to z'
-        }
-        keymap["4"] = "U'";
-        keymap["2"] = "L";
-        keymap[" "] = "R"; keymap[";"] = "R2";
-        keymap["3"] = "D'";
-        keymap["1"] = "y'";
-        keymap["'"] = "x'";
-        keymap["5"] = "z'";
+        var keymap = {};
+        // right hand
+        keymap["K"] = "R"; keymap[" "] = "R'"; // R w/ middle finger, R' w/ thumb
+        keymap["J"] = "U"; keymap["I"] = "U"; // U w/ index/middle
+        keymap["N"] = "U'"; // U' w/ indexOH
+        keymap["L"] = "D'"; // D' w/ ring finger
+        keymap["B"] = "F'"; keymap["H"] = "F"; // F' w/ indexOH, F w/ index
+        keymap["U"] = "B"; // B w/ index
+        keymap["O"] = "x"; keymap[";"] = "y"; keymap["'"] = "z";
+
+        // left hand
+        keymap["E"] = "L'"; keymap["C"] = "L"; // mirror of RH
+        keymap["R"] = "U'"; keymap["4"] = "U'"; // mirror of RH
+        keymap["F"] = "U"; // mirror of RH
+        keymap["A"] = "D"; keymap["W"] = "D"; // D w/ pinky/ring
+        keymap["2"] = "D'"; // D' w/ ringpush
+        keymap["T"] = "F'"; keymap["G"] = "F"; // mirror of RH
+        keymap["5"] = "B'"; // mirror of RH
+        keymap["V"] = "x'"; keymap["Q"] = "y'"; keymap["1"] = "z'";
+
+        keymap["Z"] = "M'"; keymap["X"] = "M'"; // M' w/ ring/middle
+        keymap["S"] = "M"; // M w/ ringpush
+
         var nmap = {}; nmap["'"] = 3; nmap["2"] = 2;
         var m = (s in keymap) ? keymap[s[0]] : s[0];
         var n = (m.length > 1) ? nmap[m[1]] : 1;
@@ -46,20 +51,21 @@
         c.move(m, n);
       }
 
-      function toggleHelp() {
-        var h = document.getElementById("help");
-        if (h.innerHTML == "help") {
-          h.innerHTML += "<br>U: J, I, T(OH)<br>"
-            + "U': 4, R, H(OH)<br>"
-            + "L': C. L: 2. L2: Q<br>"
-            + "R': K. R: space. R2: semicolon<br>"
-            + "F: B. F': F, N<br>"
-            + "D: A, W. D': 3, L<br>"
-            + "M: E. M': S, D<br>"
-            + "x: M. x': '<br>"
-            + "y: O. y': 1<br>"
-            + "z: U. x': 5<br>";
-        } else h.innerHTML = "help";
+      function openHelp() {
+        var h = document.getElementById("help").innerHTML = "help<br>"
+            + "U: J, I, F(OH)<br>"
+            + "U': R, 4, N(OH)<br>"
+            + "L': E. L: C<br>"
+            + "R': space. R: K.<br>"
+            + "F: H, G(OH). F': T, B(OH)<br>"
+            + "D: A, W. D': 2, L<br>"
+            + "M: S. M': Z, X<br>"
+            + "x: O. x': V<br>"
+            + "y: semicolon. y': Q<br>"
+            + "z: '. z': 1<br>";
+      }
+      function closeHelp() {
+        var h = document.getElementById("help").innerHTML = "help";
       }
     </script>
   </body>

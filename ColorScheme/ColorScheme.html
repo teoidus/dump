@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <script src="CubeCanvas.js"></script>
+    <script src="Camera.js"></script>
+    <script src="ColorScheme.js"></script>
+    <canvas id="canvas"></canvas>
+  </head>
+  <body>
+    <script>
+      var c = document.getElementById('canvas');
+      c.style.position = 'fixed';
+      c.style.left = '0px'; c.style.top = '0px';
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      xyPixelRatio = 1/200; // 1 xy coord = 100 pixels
+      var pos = [3, 3, 3]; var xBasis = [-3, 3, 0];
+      var basis = [
+        Vector.scale(xyPixelRatio*c.width, Vector.normalize(xBasis)),
+        Vector.scale(xyPixelRatio*c.height,
+          Vector.normalize(Vector.cross(pos, xBasis)))
+      ];
+      var g = new CubeCanvas(c, new Camera(pos, basis[0], basis[1]));
+      var colors = ['#FFFFFF', '#FF8C00', '#228B22', '#B22222', '#00008B', '#DDDD00'];
+      var bgColor = '#EEEEEE'; var unknownColor = '#AAAAAA';
+      var cube = new Cube(colors, bgColor, 1, [0,0,0]);
+      g.drawCube(cube, 0.2, 0);
+
+      var s = new ColorScheme([['R','O'], ['W','Y'], ['B','G']]);
+      var delay = 3000; postDelay = 3000;
+      s.presentProblems(g, bgColor, unknownColor, delay, postDelay);
+    </script>
+  </body>
+</html>
