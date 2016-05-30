@@ -1,5 +1,5 @@
-function CSSCube(id, colorScheme, size, div) { // colorScheme = rgb, [U L F R B D]
-  this.colors = colorScheme;
+function CSSCube(id, stickers, size, div) { // colorScheme = rgb, [U L F R B D]
+  this.stickers = stickers;
   this.size = size; // length in pixels
   this.div = div;
   this.div.id = id;
@@ -15,15 +15,12 @@ function CSSCube(id, colorScheme, size, div) { // colorScheme = rgb, [U L F R B 
     this.mapping.push(i);
   }
 
-  this.stickers = [];
   this.origins = [];
   this.rotations = [];
   this.initials = []; // initial positions before transition to 3d
   this.figures = [];
   for (var i = 0; i < this.N; i++) {
     // stickered UL to UR, down to DL to DR
-    var face = Math.floor(i/9);
-    this.stickers.push(this.colors[face]);
     this.rotations.push({angle: 0, axis:0});
     this.origins.push(new RelativeOrigin(0,0,0,0));
     this.initials.push({left:0, top:0});

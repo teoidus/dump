@@ -13,11 +13,16 @@
     <script type="text/javascript">
       var cDiv = document.getElementById("cube");
       var colors = ['#FFFFFF', '#FF8C00', '#228B22', '#B22222', '#00008B', '#DDDD00']; // Dayan
-      var c = new CSSCube("cube", colors, 250, cDiv);
+      var stickers = [];
+      for (var i = 0; i < 54; i++) {
+        stickers.push(colors[Math.floor(i/9)]);
+      }
+      var c = new CSSCube("cube", stickers, 250, cDiv);
       cDiv.style.position = "fixed";
       cDiv.style.left = "30%"; cDiv.style.top = "25%";
 
       function doMove(e){
+        // incoporate this code into the cube object!!!!! //??
         var k = (window.event) ? e.keyCode : e.which;
         var s = String.fromCharCode(k).toUpperCase();
         var keymap = {};
@@ -28,7 +33,7 @@
         keymap["L"] = "D'"; // D' w/ ring finger
         keymap["B"] = "F'"; keymap["H"] = "F"; // F' w/ indexOH, F w/ index
         keymap["U"] = "B"; // B w/ index
-        keymap["O"] = "x"; keymap[";"] = "y"; keymap["'"] = "z";
+        keymap["V"] = "x"; keymap[";"] = "y"; keymap["'"] = "z";
 
         // left hand
         keymap["E"] = "L'"; keymap["C"] = "L"; // mirror of RH
@@ -38,10 +43,12 @@
         keymap["2"] = "D'"; // D' w/ ringpush
         keymap["T"] = "F'"; keymap["G"] = "F"; // mirror of RH
         keymap["5"] = "B'"; // mirror of RH
-        keymap["V"] = "x'"; keymap["Q"] = "y'"; keymap["1"] = "z'";
+        keymap["O"] = "x'"; keymap["Q"] = "y'"; keymap["1"] = "z'";
 
         keymap["Z"] = "M'"; keymap["X"] = "M'"; // M' w/ ring/middle
         keymap["S"] = "M"; // M w/ ringpush
+
+        keymap["D"] = ""; // unbind default mapping of D -> D
 
         var nmap = {}; nmap["'"] = 3; nmap["2"] = 2;
         var m = (s in keymap) ? keymap[s[0]] : s[0];
