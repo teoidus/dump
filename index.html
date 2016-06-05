@@ -5,9 +5,9 @@
     <style>
       div.scramble {
         display: inline;
-      } 
+      }
     </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
     <a href="Flatland/Flatland.html">To Flatland.</a><br>
@@ -16,30 +16,32 @@
     Scramble generators: <br>
     <button type="button" onclick="document.getElementById('scramble').innerHTML = polyGenerator(20, ['U', 'F', 'L', 'R', 'B', 'D']).join(' ')">
       All: &lt;U,F,L,R,B,D&gt;</button>&nbsp <div id="scramble" class="scramble"></div><br>
-      
+
     <button type="button" onclick="document.getElementById('sbScramble').innerHTML = polyGenerator(20, ['r', 'R', 'U', 'M']).join(' ')">
-    
+
       SB: &lt;r,R,U,M&gt;</button>&nbsp <div id="sbScramble" class="scramble"></div><br>
-      
+
     <button type="button" onclick="rouxScramble(20, 'muScramble')">LSE: &lt;M,U&gt;</button>&nbsp <div id="muScramble" class="scramble"></div><br>
-    
+
+    <button type="button" onclick="document.getElementById('ruScramble').innerHTML = polyGenerator(20, ['R', 'U']).join(' ')">2-gen: &lt;R,U&gt;</button>&nbsp <div id="ruScramble" class="scramble"></div><br>
+
     <input id="fbLen"></input><button type="button" onclick="generateFbScramble()">FB (&lt;=n optimal)</button>
       &nbsp <div id="fbScramble" class="scramble"></div>&nbsp <button id='fbSolution' type="button" class="scramble" onclick="document.getElementById('fbSolution').innerHTML = fbSolution">(click for solution)</button><br>
-    
+
     <input id="crossLen"></input><button type="button" onclick="generateCrossScramble()">Cross/B2 bomber (&lt;=n optimal)</button>
       &nbsp <div id="crossScramble" class="scramble"></div>&nbsp <button id='crossSolution' type="button" class="scramble" onclick="document.getElementById('crossSolution').innerHTML = crossSolution">(click for solution)</button><br>
     <br>
-    
+
     <div>
       U F', U' F'<br>
       Pair building: B' r B', (U') (r/r2) B3, R' U' R B3<br>
       Line building: R S2, U2 F', r u', R2 u' R2 u2
     </div><br>
-    
+
     <div>CMLL subset order: H, Pi, L, T, U, S, AS.<br>
     TLDM's list: <a href="http://pastebin.com/raw/QCs71Ejz">http://pastebin.com/raw/QCs71Ejz</a><br>
     <br><a href="http://xkcd.com/1663/#a9e5c85a-fab6-11e5-8002-42010a8e0014">garden</a><br></div><br>
-    
+
     <div id="PBL">PBL<br>
       <table border="1">
         <tr> <td rowspan="2" colspan="2"></td><td colspan="3" align="center">U</td></tr>
@@ -54,17 +56,17 @@
         setElement('pbcLL', "(y U2) R U'2 R'2 F2 R F2 U' F2 U2 F");
         setElement('pbcDL', "(U') R U' R F2 R' U R'");
         setElement('pbcSL', "T/J perm<br>(U) R U' R F2 R' U'3 R F2 R2");
-        
+
         setElement('pbcLD', "(U2) F R' D R2 D' R F'");
         setElement('pbcDD', "R2 F2 R2");
         setElement('pbcSD', "Y/E perm<br>R2 D' R U' R' D R2 U F R F'");
-        
+
         setElement('pbcLS', "l' U' B' U' (R2 x') U R' F' R2 U' R F2 R2");
         setElement('pbcDS', "R U R' B' D F2 D F R' D2 R2 B");
         setElement('pbcSS', "");
       </script>
     </div><br>
-    
+
     <div id="hardScrambles">Hard scrambles: F' U L2 B2 U B2 R' B2 R2 L' D L B' D U' R' D' B L' R2<br>
     F U R' U' L R2 B2 F U2 L D' U L D2 L2 D2 U' R' B2 D' - yellow-orange block. track the other pair<br>
     B2 U' B2 R2 F2 D L2 D' B2 L2 D' L' D' B D2 F' U' L F2 U R D - solve the line and see it in inspection<br>
@@ -131,7 +133,7 @@
           switch (alg[i].substring(1,2)) {
             case '2':
               face = alg[i].substring(0,1);
-              for (var j = 0; j < 2; j++) 
+              for (var j = 0; j < 2; j++)
                 result.push(face);
               break;
             default:
@@ -176,7 +178,7 @@
         for (var i = 0; i < alg.length; i++) {
           var algFace = alg[i].substring(0,1);
           var j = result.length - 1;
-          
+
           replaced = false;
           if (result.length > 0) {
             for (var j = result.length-1; j >= 0 && getAxis(algFace) == getAxis(result[j]); j--) {
