@@ -25,6 +25,8 @@
 
     <button type="button" onclick="document.getElementById('ruScramble').innerHTML = polyGenerator(20, ['R', 'U']).join(' ')">2-gen: &lt;R,U&gt;</button>&nbsp <div id="ruScramble" class="scramble"></div><br>
 
+    <button type="button" onclick="document.getElementById('dominoScramble').innerHTML = polyGenerator(20, ['R2', 'U', 'D', 'M2']).join(' ').replace(/22/g, '2')">Domino: &lt;R2,M2,U,D&gt;</button>&nbsp <div id="dominoScramble" class="scramble"></div><br>
+
     <input id="fbLen"></input><button type="button" onclick="generateFbScramble()">FB (&lt;=n optimal)</button>
       &nbsp <div id="fbScramble" class="scramble"></div>&nbsp <button id='fbSolution' type="button" class="scramble" onclick="document.getElementById('fbSolution').innerHTML = fbSolution">(click for solution)</button><br>
 
