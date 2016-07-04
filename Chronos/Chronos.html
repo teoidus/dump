@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script src="Chronos.js"></script>
+    <canvas id="canvas"></canvas>
+  </head>
+  <body>
+    <script>
+      var c = document.getElementById('canvas');
+      c.style.position = 'fixed';
+      c.style.left = '0px'; c.style.top = '0px';
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      
+      var agenda = "0:10 test1\n0:15 test2"
+      var chronos = new Chronos(agenda, 1000/20, c);
+      chronos.go();
+    </script>
+  </body>
+</html>
