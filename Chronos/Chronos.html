@@ -1,9 +1,11 @@
 <html>
   <head>
     <script src="Chronos.js"></script>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" style="z-index: -1"></canvas>
+    <textarea id="input"></textarea>
+    <button id="go" onclick="startAgenda()">Begin</button>
   </head>
-  <body>
+  <body onresize="chronos.resize(window.innerWidth, window.innerHeight)">
     <script>
       var c = document.getElementById('canvas');
       c.style.position = 'fixed';
@@ -11,9 +13,15 @@
       c.width = window.innerWidth;
       c.height = window.innerHeight;
       
-      var agenda = "0:10 test1\n0:15 test2"
-      var chronos = new Chronos(agenda, 1000/20, c);
-      chronos.go();
+      var input = document.getElementById("input");
+      var chronos = null;
+      function startAgenda() {
+        var agenda = input.value;
+        input.style.visibility = "hidden";
+        document.getElementById("go").style.visibility = "hidden";
+        chronos = new Chronos(agenda, 1000/20, c);
+        chronos.go();
+      }
     </script>
   </body>
 </html>

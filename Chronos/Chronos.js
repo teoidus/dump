@@ -1,4 +1,4 @@
-function msToTime(duration) {
+function msToTime(duration, showMs) {
     var milliseconds = parseInt((duration%1000)/100)
         , seconds = parseInt((duration/1000)%60)
         , minutes = parseInt((duration/(1000*60))%60)
@@ -8,22 +8,28 @@ function msToTime(duration) {
     minutes = (minutes < 10) ? "0" + minutes : minutes;
     seconds = (seconds < 10) ? "0" + seconds : seconds;
 
-    return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    var result = hours + ":" + minutes + ":" + seconds;
+    return (showMs) ? result+"."+milliseconds : result;
 }
 // from https://coderwall.com/p/wkdefg/converting-milliseconds-to-hh-mm-ss-mmm
 
-function Chronos(agenda, dt, canvas) {
-  this.parseDuration = function(hm) {
-    var tokens = hm.split(":"); // h:m
-    return parseInt(tokens[0])*60*1000 + parseInt(tokens[1])*1000;
+function timeToMs(s) { // takes HH:MM:SS.mmm
+  var tokens = s.split(":");
+  var result = 0;
+  for (var i = tokens.length-1, k = 1000; i >= 0; i--, k *= 60) {
+    result += parseFloat(tokens[i])*k;
   }
+  return result;
+}
+
+function Chronos(agenda, dt, canvas) {
   
   var events = agenda.split("\n");
   this.events = [];
   this.totalTime = 0;
   for (var i = 0; i < events.length; i++) {
     var tokens = events[i].split(" ");
-    var t = this.parseDuration(tokens[0]);
+    var t = timeToMs(tokens[0]);
     this.events.push({
       duration: t,
       desc: tokens.slice(1).join(" "),
@@ -70,6 +76,11 @@ Chronos.prototype.updateCurrentEvent = function() {
   }
 }
 
+Chronos.prototype.resize = function(w, h) {
+  this.canvas.width = w;
+  this.canvas.height = h;
+}
+
 Chronos.prototype.render = function() {
   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   
@@ -110,8 +121,15 @@ Chronos.prototype.render = function() {
   this.ctx.lineTo(x, timelineY);
   this.ctx.stroke();
   // Timestamp
-  this.ctx.textAlign = (this.t/this.totalTime > 0.5) ? "right" : "left"; 
-  var sign = (this.t/this.totalTime > 0.5) ? -1 : 1; 
   this.ctx.font = this.canvas.height/16 + "px Arial";
-  this.ctx.fillText(msToTime(this.t), x + sign*this.canvas.width/256, timelineY - this.canvas.height/128);
+  var s = msToTime(this.t, this.current.duration < 60*1000);
+  var textWidth = this.ctx.measureText(s).width;
+  if (textWidth > x) {
+    this.ctx.textAlign = "left";
+    var sign = 1;
+  } else {
+    this.ctx.textAlign = "right";
+    var sign = -1;
+  }
+  this.ctx.fillText(s, x + sign*this.canvas.width/256, timelineY - this.canvas.height/96);
 }
