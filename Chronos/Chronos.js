@@ -22,8 +22,7 @@ function timeToMs(s) { // takes HH:MM:SS.mmm
   return result;
 }
 
-function Chronos(agenda, dt, canvas) {
-  
+function Chronos(agenda, dt, canvas, onComplete) {
   var events = agenda.split("\n");
   this.events = [];
   this.totalTime = 0;
@@ -47,6 +46,8 @@ function Chronos(agenda, dt, canvas) {
   this.ctx = this.canvas.getContext("2d");
   
   this.interval = null;
+  
+  this.onComplete = onComplete;
 }
 
 Chronos.prototype.doTick = function() {
@@ -67,7 +68,9 @@ Chronos.prototype.updateCurrentEvent = function() {
     if (this.current.index >= this.events.length-1) {
       this.current.duration = 0;
       this.current.desc = "";
+      this.current.index += 1;
       clearInterval(this.interval);
+      this.onComplete();
     } else {
       this.current.index += 1;
       this.current.duration = this.events[this.current.index].duration;
@@ -86,6 +89,7 @@ Chronos.prototype.render = function() {
   
   var timelineY = this.canvas.height * 7/8;
   var tickY = timelineY - this.canvas.height/16;
+  var timeFont = this.canvas.height/16;
   
   // Current event description
   var s = this.current.desc;
@@ -110,6 +114,14 @@ Chronos.prototype.render = function() {
       var rectW = Math.min(this.events[i].duration/this.totalTime*this.canvas.width, this.t/this.totalTime*this.canvas.width - x);
       this.ctx.fillStyle = this.events[i].color;
       this.ctx.fillRect(x, timelineY, rectW, h);
+      if (i < this.current.index) { // completion times
+        this.ctx.fillStyle = "white";
+        this.ctx.textAlign = "center";
+        this.ctx.font = timeFont/2 + "px Arial";
+        var s = this.events[i].desc + " (" + msToTime(this.events[i].duration) + ")";
+        this.ctx.fillText(s, x + w/2, timelineY + h*5/8, w);
+        console.log(s, x + w/2, timelineY, w);
+      }
     }
   }
   
@@ -121,7 +133,7 @@ Chronos.prototype.render = function() {
   this.ctx.lineTo(x, timelineY);
   this.ctx.stroke();
   // Timestamp
-  this.ctx.font = this.canvas.height/16 + "px Arial";
+  this.ctx.font = timeFont + "px Arial";
   var s = msToTime(this.t, this.current.duration < 60*1000);
   var textWidth = this.ctx.measureText(s).width;
   if (textWidth > x) {

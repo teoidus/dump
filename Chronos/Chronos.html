@@ -2,15 +2,17 @@
   <head>
     <script src="Chronos.js"></script>
     <canvas id="canvas" style="z-index: -1"></canvas>
-    <textarea id="input"></textarea>
-    <button id="go" onclick="startAgenda()">Begin</button>
+    <center>
+      <textarea id="input" style="width: 100%; height: 50%"></textarea><br>
+      <button id="go" onclick="startAgenda()">Begin</button>
+    </center>
   </head>
   <body onresize="chronos.resize(window.innerWidth, window.innerHeight)">
     <script>
       var c = document.getElementById('canvas');
       c.style.position = 'fixed';
       c.style.left = '0px'; c.style.top = '0px';
-      c.width = window.innerWidth;
+      c.width  = window.innerWidth;
       c.height = window.innerHeight;
       
       var input = document.getElementById("input");
@@ -19,7 +21,10 @@
         var agenda = input.value;
         input.style.visibility = "hidden";
         document.getElementById("go").style.visibility = "hidden";
-        chronos = new Chronos(agenda, 1000/20, c);
+        chronos = new Chronos(agenda, 1000/20, c, function() {
+          input.style.visibility = "visible";
+          document.getElementById("go").style.visibility = "visible";
+        });
         chronos.go();
       }
     </script>
