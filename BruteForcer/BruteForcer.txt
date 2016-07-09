@@ -1,0 +1,2 @@
+<iframe src="URL"></iframe>
+https://alg.cubing.net/?alg=R_R_U_U&view=fullscreen

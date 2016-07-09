@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <div id="input">
+      Moveset: <input id="moveset"></input>
+      Depth: <input id="depth"></input>
+      <button id="go">Go</button>
+      <br>
+      Frame width: <input id="W" type="range"></input>
+      height: <input id="H" type="range"></input>
+    </div><br>
+    <div id="solutions"></div>
+  </head>
+  <body>
+    <script>
+      // <iframe src="URL"></iframe>
+      // 
+      
+      var input = document.getElementById("input");
+      var solutions = document.getElementById("solutions");
+      var moveset = document.getElementById("moveset");
+      var depth = document.getElementById("depth");
+      
+      var w = document.getElementById("W");
+      var h = document.getElementById("H");
+      w.min = 0; h.min = 0; w.max = 200; h.max = 200;
+      
+      function getPossibilities(moves, depth, ignore) {
+        if (depth == 0) return [""];
+        
+        var modifiers = ["", "-", "2"];
+        var p = [];
+        for (var i = 0; i < moves.length; i++) {
+          if (typeof ignore != "undefined" && ignore == moves[i]) continue;
+          for (var j = 0; j < modifiers.length; j++) {
+            var continuations = getPossibilities(moves, depth-1, moves[i]);
+            for (var k = 0; k < continuations.length; k++) {
+              p.push([moves[i] + modifiers[j]].concat(continuations[k]));
+            }
+          }
+        }
+        return p;
+      }
+      
+      function possibilityToURL(p) {
+        return "https://alg.cubing.net/?alg=" + p.join("_") + "&view=fullscreen";
+      }
+      
+      function possibilitiesToURLs(p) {
+        var u = [];
+        for (var i = 0; i < p.length; i++) u.push(possibilityToURL(p[i]));
+        return u;
+      }
+      
+      function visualizePossibilities(p, w, h) {
+        var f = [];
+        var u = possibilitiesToURLs(p);
+        for (var i = 0; i < p.length; i++) {
+          f.push(document.createElement("iframe"));
+          f[i].style.width = w;
+          f[i].style.height = h;
+          f[i].style.position = "fixed";
+          f[i].style.left = w*i;
+          f[i].style.top = 0;
+          f[i].src = u[i];
+          document.body.appendChild(f[i]);
+        }
+        return f;
+      }
+    </script>
+  </body>
+<html>
