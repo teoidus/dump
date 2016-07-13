@@ -1,0 +1,117 @@
+<html>
+  <head>
+    <script src="ArrayCube.js"></script>
+    <script src="Rotation.js"></script>
+    <script src="CSSCube.js"></script>
+    <section class="container">
+      <div id="cube">
+      </div>
+    </section>
+  </head>
+  <body style="background-color: #AAAAAA" onkeypress="doMove(event)">
+    Solving on: <select id="base" onChange="setBase(c, colors)">
+      <option>W</option>
+      <option>O</option>
+      <option>G</option>
+      <option>R</option>
+      <option>B</option>
+      <option>Y</option>
+    </select><br>
+    <span id="minValue">1</span> <input type="range" id="speed" oninput="setBase(c, colors)"></input> <span id="maxValue">15</span> (images/sec)
+    <script type="text/javascript">
+      var cDiv = document.getElementById("cube");
+      //var colors = ['#FFFFFF', '#FF8C00', '#228B22', '#B22222', '#00008B', '#DDDD00']; // Dayan
+      var colors = ['#FFFFFF', '#FF9933', '#44DD44', '#FF3333', '#0080FF', '#F5F500']; // Qiyi
+      var filterColor = "#DDDDDD";
+      var stickers = [];
+      var filter = [];
+
+      var base = document.getElementById("base");
+      var speed = document.getElementById("speed");
+      speed.min = parseInt(document.getElementById("minValue").innerHTML);
+      speed.max = parseInt(document.getElementById("maxValue").innerHTML);
+      
+      var interval = null;
+      
+      for (var i = 0; i < 54; i++) {
+        stickers.push(colors[Math.floor(i/9)]);
+      }
+      updateFilter();
+      
+      function updateFilter() {
+        filter = [];
+        for (var i = 0; i < 54; i++) {
+          filter.push({filtering: false, color: filterColor})
+        }
+        if (typeof c != "undefined") c.newFilter(filter);
+      }
+      var c = new CSSCube("cube", stickers, filter, 250, cDiv);
+      cDiv.style.position = "fixed";
+      cDiv.style.left = "30%"; cDiv.style.top = "25%";
+      
+      function getPiece(i) {
+        var pieceMap = [
+           0,  1,  2,  3,  4,  5,  6,  7,  8,
+           0,  3,  6,  9, 12, 15, 18, 21, 24,
+           6,  7,  8, 15, 16, 17, 24, 25, 26,
+           8,  5,  2, 17, 14, 11, 26, 23, 20,
+           2,  1,  0, 11, 10,  9, 20, 19, 18,
+          24, 25, 26, 21, 22, 23, 18, 19, 20];
+        return pieceMap[i];
+      }
+      
+      function getOpposite(b) {
+        var opposites = [5, 3, 4, 1, 2, 0];
+        return opposites[b];
+      }
+      
+      function normalizeIndex(i, arr) {
+        return (i + arr.length) % arr.length;
+      }
+      
+      function getRandomEdgeStickers(b, colors) {
+        var color1;
+        do {
+          color1 = Math.floor(Math.random() * colors.length);
+        }
+        while (color1 == b || color1 == getOpposite(b));
+        
+        var color2 = b;
+        while (color2 == b || color2 == getOpposite(b) || color2 == color1 || color2 == getOpposite(color1)) {
+          color2 = Math.floor(Math.random() * colors.length);
+        }
+        return [colors[color1], colors[color2]];
+      }
+      
+      function edgeResticker(cube, colors) {
+        //document.body.style.backgroundColor = colors[base.selectedIndex];
+        var stickerColors = getRandomEdgeStickers(base.selectedIndex, colors);
+        
+        var sticker1 = 0;
+        while ((sticker1 % 9) % 2 != 1) { // edge sticker
+          sticker1 = Math.floor(54 * Math.random());
+        }
+        for (var sticker2 = 0; sticker2 < 54; sticker2++) {
+          if (getPiece(sticker1) == getPiece(sticker2) && sticker1 != sticker2)
+            break;
+        }
+        
+        var stickers = [];
+        for (var i = 0; i < 54; i++) {
+          if (i == sticker1)
+            stickers.push(stickerColors[0]);
+          else if (i == sticker2)
+            stickers.push(stickerColors[1]);
+          else stickers.push(filterColor) //colors[base.selectedIndex]);
+        }
+        
+        cube.newStickers(stickers);
+      }
+      
+      function setBase(cube, colors) {
+        clearInterval(interval);
+        interval = setInterval(function() { edgeResticker(cube, colors) }, 1000 / speed.value);
+      }
+    </script>
+  </body>
+</html>

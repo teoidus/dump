@@ -159,6 +159,11 @@ CSSCube.prototype.newFilter = function(filter) {
   this.updateStickers();
 }
 
+CSSCube.prototype.newStickers = function(stickers) {
+  this.stickers = stickers;
+  this.updateStickers();
+}
+
 CSSCube.prototype.filterOn = function() {
   this.filtering = true; this.updateStickers();
 }
