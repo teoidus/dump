@@ -35,7 +35,7 @@ function CSSCube(id, stickers, filter, size, div) { // colorScheme = rgb, [U L F
         figure.style.height = (this.size/3) + "px";
         //figure.style.border = "1px solid black";
         figure.style.backgroundColor = this.stickers[i];
-        figure.style.opacity = 0.8;
+        figure.style.opacity = 1; //0.8;
         //figure.style.display = "block";
         this.div.appendChild(figure);
         figure.style.transition = "transform " + this.transitionSpeed + "s";
