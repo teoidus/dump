@@ -17,7 +17,7 @@
       <option>B</option>
       <option>Y</option>
     </select><br>
-    <span id="minValue">1</span> <input type="range" id="speed" oninput="setBase(c, colors)"></input> <span id="maxValue">15</span> (images/sec)
+    <span id="minValue">1</span> <input type="range" id="speed" oninput="setBase(c, colors)"></input> <span id="maxValue">25</span> (images/sec)
     <script type="text/javascript">
       var cDiv = document.getElementById("cube");
       //var colors = ['#FFFFFF', '#FF8C00', '#228B22', '#B22222', '#00008B', '#DDDD00']; // Dayan
@@ -30,6 +30,7 @@
       var speed = document.getElementById("speed");
       speed.min = parseInt(document.getElementById("minValue").innerHTML);
       speed.max = parseInt(document.getElementById("maxValue").innerHTML);
+      speed.value = 5;
       
       var interval = null;
       
@@ -102,7 +103,7 @@
             stickers.push(stickerColors[0]);
           else if (i == sticker2)
             stickers.push(stickerColors[1]);
-          else stickers.push(filterColor) //colors[base.selectedIndex]);
+          else stickers.push(colors[base.selectedIndex]);
         }
         
         cube.newStickers(stickers);
