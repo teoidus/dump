@@ -1,6 +1,6 @@
 <html>
   <head>
-    <audio id="click" src="click.wav"></audio>
+    <audio id="click" src="Click.wav"></audio>
     <canvas id="canvas" style="z-index: -1; border: 1px solid black; position: fixed; top: 0px; left: 0px"></canvas>
     BPM (spacebar to calibrate): <input type="text" onkeydown="if (event.keyCode == 13) go(); else if (event.keyCode == 32) setBySpacebar()" id="bpm"></input>
     Subdivision: <input type="text" onkeydown="if (event.keyCode == 13) set(parseInt(document.getElementById('bpm').value, 10), parseInt(document.getElementById('sub').value, 10))" id="sub"></input>
