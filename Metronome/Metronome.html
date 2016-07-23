@@ -2,7 +2,8 @@
   <head>
     <audio id="click" src="Click.wav"></audio>
     <canvas id="canvas" style="z-index: -1; border: 1px solid black; position: fixed; top: 0px; left: 0px"></canvas>
-    BPM (spacebar to calibrate): <input type="text" onkeydown="if (event.keyCode == 13) go(); else if (event.keyCode == 32) setBySpacebar()" id="bpm"></input>
+    BPM (spacebar to calibrate): <input type="text" onkeydown="if (event.keyCode == 13) go(); else if (event.keyCode == 32) setBySpacebar()" id="bpm"></input> <b>OR</b> 30<input id="slider" type="range" oninput="document.getElementById('bpm').value = document.getElementById('slider').value" onchange="go()"></input>250
+    <br>
     Subdivision: <input type="text" onkeydown="if (event.keyCode == 13) set(parseInt(document.getElementById('bpm').value, 10), parseInt(document.getElementById('sub').value, 10))" id="sub"></input>
     <button id="go" onclick="go()">go</button>
     <button id="stfu" onclick="stop()">stop</button>
@@ -16,7 +17,10 @@
       
       var bpm = document.getElementById('bpm');
       var sub = document.getElementById('sub');
+      var slider = document.getElementById('slider');
       sub.value = 1;
+      slider.min = 30;
+      slider.max = 250;
       var times = [];
       var maxLen = 10;
       
