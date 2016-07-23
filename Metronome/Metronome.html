@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <audio id="click" src="click.wav"></audio>
+    <canvas id="canvas" style="z-index: -1; border: 1px solid black; position: fixed; top: 0px; left: 0px"></canvas>
+    BPM (spacebar to calibrate): <input type="text" onkeydown="if (event.keyCode == 13) go(); else if (event.keyCode == 32) setBySpacebar()" id="bpm"></input>
+    Subdivision: <input type="text" onkeydown="if (event.keyCode == 13) set(parseInt(document.getElementById('bpm').value, 10), parseInt(document.getElementById('sub').value, 10))" id="sub"></input>
+    <button id="go" onclick="go()">go</button>
+    <button id="stfu" onclick="stop()">stop</button>
+    <button id="calibrate" onclick="setBySpacebar()">calibrate</button>
+  </head>
+  <body>
+    <script>
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+      var onLeft = false;
+      
+      var bpm = document.getElementById('bpm');
+      var sub = document.getElementById('sub');
+      sub.value = 1;
+      var times = [];
+      var maxLen = 10;
+      
+      function updateCanvasDim()
+      {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      
+      updateCanvasDim();
+      window.onresize = updateCanvasDim;
+      
+      var click = document.getElementById('click');
+      var intervalId = '';
+      var clickCount = 0;
+      
+      function doClick(subBeat, sub)
+      {
+        if (sub == 1) onLeft = !onLeft;
+        click.volume = (subBeat == 0) ? 1.0 : 0.25;
+        click.currentTime = 0;
+        click.play();
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = (subBeat == 0) ? '#000000' : '#AAAAAA';
+        if (sub == 1)
+          if (onLeft)
+            context.fillRect(0, 0, canvas.width / 2, canvas.height);
+          else
+            context.fillRect(canvas.width / 2, 0, canvas.width / 2, canvas.height);
+        else context.fillRect(subBeat * canvas.width / sub, 0, canvas.width / sub, canvas.height);
+        clickCount++;
+      }
+      
+      function go() {
+      set(parseInt(document.getElementById('bpm').value, 10), parseInt(document.getElementById('sub').value, 10))
+      }
+      
+      function stop()
+      {
+        if (intervalId != '')
+        {
+          clearInterval(intervalId);
+          intervalId = '';
+        }
+      }
+      
+      function set(bpm, sub)
+      {
+        stop();
+        if (bpm != 0) intervalId = setInterval(function() { doClick(clickCount % sub, sub) }, 60 * 1000 / (bpm * sub));
+      }
+      
+      function getBpm(times)
+      {
+        var dt = 0;
+        for (var i = 0; i < times.length-1; i++) {
+          dt += times[i+1] - times[i];
+        }
+        dt /= times.length - 1;
+        return 60 * 1000 / dt;
+      }
+      
+      function addTime(time, times, maxLen)
+      {
+        while (times.length >= maxLen)
+          times.shift();
+        times.push(time);
+        console.log("New times:", times);
+        console.log("Projected bpm:", getBpm(times));
+      }
+      
+      function setBySpacebar()
+      {
+        stop();
+        addTime((new Date()).getTime(), times, maxLen);
+        if (times.length > 1) {
+          var newBpm = getBpm(times);
+          bpm.value = newBpm;
+          set(newBpm, document.getElementById('sub').value);
+        }
+      }
+    </script>
+  </body>
+</html>
