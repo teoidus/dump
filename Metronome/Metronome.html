@@ -75,12 +75,13 @@
       
       function getBpm(times)
       {
-        var dt = 0;
+        var dts = [];
         for (var i = 0; i < times.length-1; i++) {
-          dt += times[i+1] - times[i];
+          dts.push(times[i+1] - times[i]);
         }
-        dt /= times.length - 1;
-        return 60 * 1000 / dt;
+        dts = dts.sort();
+        var median = (dts[Math.floor(dts.length/2)] + dts[Math.ceil(dts.length/2)])/2;
+        return 60 * 1000 / median;
       }
       
       function addTime(time, times, maxLen)
