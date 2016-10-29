@@ -1,0 +1,5 @@
+// converts a^x to digits in base b
+function baseChange(a, x, b)
+{
+
+}
