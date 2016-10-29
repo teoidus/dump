@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <script src="peer.min.js">
+  </head>
+  <body>
+    <script>
+      var peer = new Peer(prompt("ID:", "guest"), {key: "5anubu9g6h90y66r"});
+      if (peer.id == "guest") var conn = peer.connect("tester");
+      conn.on("open", function(){
+        conn.send("hi!");
+      });
+      
+      peer.on('connection', function(conn) {
+        conn.on('data', function(data){
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>
