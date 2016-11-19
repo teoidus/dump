@@ -1,0 +1,39 @@
+<html>
+  Code
+  <textarea id="code"></textarea><br>
+  <button id="go" onclick="bf(code.value, input.value)">Go</button><br>
+  Input:
+  <textarea id="input"></textarea><br>
+  Output:
+  <textarea id="output"></textarea>
+  <body>
+    <script>
+      var code = document.getElementById("code");
+      var input = document.getElementById("input");
+      var output = document.getElementById("output");
+      function bf(s, input) 
+      {
+        var c = "";
+        var data = []; for (var i = 0; i < 30000; ++i) data.push(0);
+        var pointer = 0;
+        for (var i = 0; i < s.length; ++i) {
+          switch(s[i]) {
+            case ">": c += "pointer++;"; break;
+            case "<": c += "pointer--;"; break;
+            case "+": c += "data[pointer]++;"; break;
+            case "-": c += "data[pointer]--;"; break;
+            case ".": c += "outputDo(data, pointer, String.fromCharCode(data[pointer]));"; break;
+            case ",": c += "data[pointer] = input.getValueAt(0); input = input.substring(1)"; break;
+            case "[": c += "while (data[pointer] != 0) {"; break;
+            case "]": c += "}"; break;
+            default: break;
+          }
+        }
+        console.log(c);
+        eval(c);
+      }
+      
+      function outputDo(data, pointer, c) { console.log(data, pointer, c); output.value += String.fromCharCode(data[pointer]); }
+    </script>
+  <body>
+</html>

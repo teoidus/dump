@@ -1,10 +1,32 @@
 <html>
   <head>
     <script src="peer.min.js"></script>
+    <script src="console.js"></script>
+    <script src="StringMap.js"></script>
+    <script src="Evaluator.js"></script>
+    <style>
+      .io {
+        border: none;
+        left: 0%;
+        top: 0%;
+        position: fixed;
+        width: 100%;
+        height: 96%;
+        font-family: courier;
+      }
+    </style>
+    <input id="input" class="io" style="top: 96%; height: 4%; z-index: 50" onkeydown="/*console.log(event.keyCode);*/ if (event.keyCode == 13) {
+      c.input(document.getElementById('input').value);
+      document.getElementById('input').value = '';
+    }"></input>
+    <canvas id="graphicsOutput" class="io" style="z-index: 1"></canvas>
+    <textarea id="textOutput" readonly="readonly" class="io" style="background:transparent; resize: none; z-index: 2"></textarea>
   </head>
-  <body>
+  <body onresize="resizeCanvas()">
     <script>
-      var peer = new Peer(prompt("ID:", "guest"), {key: "5anubu9g6h90y66r"});
+      var c = new Console(document.getElementById("textOutput"), document.getElementById("graphicsOutput"));
+      resizeCanvas();
+      /*var peer = new Peer(prompt("ID:", "guest"), {key: "5anubu9g6h90y66r"});
       if (peer.id == "guest")
       {
         var conn = peer.connect("tester");
@@ -18,6 +40,27 @@
           console.log(data);
         });
       });
+      */
+      
+      function resizeCanvas()
+      {
+        var canvas = document.getElementById("graphicsOutput");
+        canvas.width = window.innerWidth * 1.00;
+        canvas.height = window.innerWidth * 0.96;
+        canvas.style.width = canvas.width;
+        canvas.style.height = canvas.height;
+      }
+      
+      /*
+      var ca=document.getElementById("graphicsOutput");
+      var ctx=ca.getContext("2d");
+      ctx.beginPath();
+      ctx.arc(100,75,50,0,2*Math.PI);
+      ctx.stroke();
+      
+        Each application as object
+          Translate "appname.fn arg1 arg2 arg3 to appname.fn(arg1, arg2, arg3)", not difficult
+      */
     </script>
   </body>
 </html>
