@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <input id="in" style="width:100%" onkeydown="if (event.keyCode == 13) addNew(document.getElementById('in').value)"></input>
+  </head>
+  <body>
+    <div id="items"></div>
+    <script>
+      domItems = document.getElementById("items");
+      k = 30000; // 30s
+      items = [];
+      
+      function revive(item)
+      {
+        item.age = 0;
+        item.lifespan *= 2;
+      }
+      
+      function addNew(s)
+      {
+        document.getElementById("in").value = "";
+        for (var i = 0; i < items.length; ++i) {
+          if (items[i].name == s)
+            return revive(items[i]);
+        }
+      
+        domItem = document.createElement("p");
+        domItem.innerHTML = s;
+        
+        item = {
+          age: 0,
+          lifespan: k,
+          name: s,
+          dom: domItem
+        };
+        items.push(item);
+        
+        domItem.self = item;
+        if (items.length > 1) {
+          console.log(items[items.length-1].dom);
+          domItems.insertBefore(domItem, domItems.children[0]);
+        } else
+          domItems.appendChild(domItem);
+      }
+      
+      function rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (Math.floor(r) * 256 * 256) + (Math.floor(g) * 256) + Math.floor(b)).toString(16).substring(1, 7);
+      }
+      
+      function tween(a, b, k) {
+        return a + k*(b-a)
+      }
+      
+      function ageToColor(age, lifespan)
+      {
+        var dead = "#000000";
+        var good = [100, 255, 100];
+        var bad = [255, 0, 0];
+        var k = Math.min(age/lifespan, 1);
+        if (k == 1)
+          return dead;
+        return rgbToHex(tween(good[0], bad[0], k),
+                        tween(good[1], bad[1], k),
+                        tween(good[2], bad[2], k));
+      }
+      
+      function tick(dt)
+      {
+        for (var i = 0; i < items.length; ++i) {
+          items[i].age += dt;
+          items[i].dom.style.color = ageToColor(items[i].age, items[i].lifespan);
+        }
+      }
+      
+      var fps = 20;
+      setInterval(function() { tick(1000/fps) }, 1000/fps);
+    </script>
+  </body>
+</html>
