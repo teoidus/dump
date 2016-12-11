@@ -1,0 +1,118 @@
+<html>
+  <head>
+    <script src="util.js"></script>
+    <script src="IdeaManager.js"></script>
+    <script src="TaskManager.js"></script>
+    <script src="Reviewer.js"></script>
+    <script src="Manager.js"></script>
+    <input id="in" style="width:100%" onkeydown="if (event.keyCode == 13) cmd(document.getElementById('in').value)"></input>
+    <br>
+    <br>
+    <div id="ideas" style="position: fixed; width: 33%; left: 0.333%"><b>Sandbox</b></div>
+    <div id="tasks" style="position: fixed; width: 33%; left: 33.333%"><b>Tasks</b></div>
+    <div id="review" style="position: fixed; width: 33%; left: 66.333%"><b>Review</b></div>
+    
+    <div id="help" style="position: fixed; border: solid; padding: 5px 5px 5px 5px; background-color: white;
+                          top: 50%; left: 50%;transform: translate(-50%, -50%); visibility: hidden"
+                   onclick="help.style.visibility = 'hidden'">
+      <b>Task Manager (v0.5) - Help</b><br>
+      Click anywhere in this box to dismiss.<br>
+      <br>
+      <i>Sandbox</i> is a place for ideas that might spontaneously come to mind.<br>
+      <i>Tasks</i> maintains a list of things to do, how long they'll take, and when to do them by.<br>
+      <i>Review</i> maintains a list of learnt items to review at exponentially increasing intervals.<br>
+      <br>
+      
+      ???: opens this help box.<br><br>
+      +<u>name</u> <u>description</u>: adds an entry in sandbox with the given name and description.<br><br>
+      -<u>name</u>: removes the sandbox entry corresponding to <u>name</u>.<br><br>
+      \<u>task</u> <u>duration</u> <u>deadline</u> <u>description</u>: adds a task named <u>task</u>,
+        expected to take <u>duration</u> amount of time and be done by <u>deadline</u>. <u>deadline</u>
+        can be expressed absolutely (e.g. 12/11/2016, 12:14AM) or relatively (e.g. 1d2h30m4s -> due in
+        1 day, 2 hours, 30 minutes, and 4 seconds).<br><br>
+      /<u>task</u>: remove <u>task</u> from list.<br><br>
+      ~<u>prompt</u> <u>answer</u> <u>lifespan</u>: adds an item to review. Program will prompt you with
+        <u>prompt</u> and expect <u>answer</u> when <u>lifespan</u> amount of time has passed. If answered
+        correctly, <u>lifespan</u> will double and the counter will be reset; else, <u>lifespan</u> is halved.<br><br>
+      <u>prompt</u>: force program to review the item corresponding to the prompt <u>prompt</u> before its
+        <u>lifespan</u> has fully elapsed.<br>
+    </div>
+  </head>
+  <body>
+    <div id="items"></div>
+    <script>
+      var input = document.getElementById("in");
+      var help = document.getElementById("help");
+      
+      function clearInput()
+      {
+        input.value = "";
+        input.style.color = "#000000";
+      }
+      function resetInput()
+      {
+        input.value = "??? for help | "
+          + " +<idea> <desc>, -<idea> | "
+          + "\\<task> <duration> <deadline> <desc>, /<task> | "
+          + "~<q> <a> <lifespan>, <q> to review";
+        input.style.color = "#CCCCCC";
+      }
+      input.onfocus = clearInput;
+      input.onblur = resetInput;
+      resetInput();
+      
+      var managers = {
+        ideas: new IdeaManager(document.getElementById("ideas")),
+        tasks: new TaskManager(document.getElementById("tasks")),
+        review: new Reviewer(document.getElementById("review"))
+      };
+      
+      function tick(dt)
+      {
+        for (m in managers)
+        {
+          managers[m].tick(dt);
+        }
+      }
+      
+      function cmd(s)
+      {
+        if (s.length == 0) return;
+        if (s == "???") {
+          help.style.visibility = "visible";
+          input.value = "";
+          return;
+        }
+        var c = s.substring(1);
+        switch (s[0])
+        {
+          case "+":
+            managers.ideas.add(c.split(" ")[0], c);
+            break;
+          case "-": 
+            managers.ideas.remove(c.split(" ")[0]);
+            break;
+          case "\\":
+            var tokens = c.split(" ");
+            managers.tasks.add(tokens[0], tokens.slice(3).join(" "), tokens[1], tokens[2]);
+            break;
+          case "/":
+            managers.tasks.remove(c.split(" ")[0]);
+            break;
+          case "~":
+            var tokens = c.split(" ");
+            managers.review.add(tokens[0], tokens[1], tokens[2]);
+            break;
+          default:
+            managers.review.revive(s);
+            break;
+        }
+        
+        input.value = "";
+      }
+      
+      var fps = 20;
+      setInterval(function() { tick(1000/fps) }, 1000/fps);
+    </script>
+  </body>
+</html>
