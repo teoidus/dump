@@ -5,7 +5,7 @@ function TaskManager(div)
   this.div = div;
 }
 
-TaskManager.prototype.add = function(name, desc, estimatedTime, deadline, sudo)
+TaskManager.prototype.add = function(name, estimatedTime, deadline, sudo)
 {
   var n = name;
   while (n in this.taskNames && typeof sudo == "undefined") // prevent overwrite
@@ -18,9 +18,9 @@ TaskManager.prototype.add = function(name, desc, estimatedTime, deadline, sudo)
     n = rename;
   }
   
-  var t = parseTime(estimatedTime);
+  var t = (estimatedTime != "") ? parseTime(estimatedTime) : undefined;
   
-  var d = parseDate(deadline);
+  var d = (deadline != "") ? parseDate(deadline) : undefined;
   
   // keep list sorted by most urgent tasks
   var i = 0;
@@ -30,13 +30,13 @@ TaskManager.prototype.add = function(name, desc, estimatedTime, deadline, sudo)
       break;
     i += 1;
   }
-  this.tasks.splice(i, 0, { name: n, desc: desc, t: t, d: d });
+  this.tasks.splice(i, 0, { name: n, t: t, d: d });
   this.taskNames[n] = true;
   
-  //?? deadline/urgency info
   var divElement = document.createElement("div");
   divElement.id = n;
-  divElement.innerHTML = n;
+  divElement.innerHTML = ""; // expanded at next tick
+  
   if (++i < this.tasks.length)
     this.div.insertBefore(divElement, document.getElementById(this.tasks[i].name));
   else
@@ -52,7 +52,15 @@ TaskManager.prototype.remove = function(name)
 
 TaskManager.prototype.tick = function(dt)
 {
-  
+  for (var i = 0; i < this.tasks.length; ++i)
+  {
+    var html = this.tasks[i].name;
+    if (typeof this.tasks[i].t != "undefined")
+      html += " (" + msToString(this.tasks[i].t) + ")";
+    if (typeof this.tasks[i].d != "undefined")
+      html += "<sub><sub>" + msToString(this.tasks[i].d - Date.now()) + "</sub></sub>";
+    document.getElementById(this.tasks[i].name).innerHTML = html;
+  }
 }
 
 TaskManager.prototype.save = function()
@@ -60,11 +68,11 @@ TaskManager.prototype.save = function()
   return JSON.stringify(this.tasks);
 }
 
-IdeaManager.prototype.load = function(s)
+TaskManager.prototype.load = function(s)
 {
   var data = JSON.parse(s);
   for (var i = 0; i < data.length; ++i)
   {
-    this.add(data[i].name, data[i].desc, data[i].t, data[i].d, "sudo");
+    this.add(data[i].name, data[i].t, data[i].d, "sudo");
   }
 }

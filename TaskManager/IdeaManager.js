@@ -1,37 +1,29 @@
 function IdeaManager(div)
 {
-  this.ideas = {};
-  this.ideaNames = [];
+  this.ideas = [];
   this.div = div;
 }
 
-IdeaManager.prototype.add = function(name, desc, sudo)
+IdeaManager.prototype.add = function(desc)
 {
-  var n = name;
-  while (n in this.ideas && typeof sudo == "undefined") // prevent overwrite
-  {
-    var rename = prompt(n + " already exists. Rename (press enter to overwrite)?", n);
-    if (n == rename) { // forced overwrite
-      n = rename;
-      break;
-    }
-    n = rename;
-  }
-  
-  this.ideas[n] = desc;
-  this.ideaNames.unshift(n);
+  var n = (0x10000 + (this.ideas.length)).toString(16).substring(1);
   
   var divElement = document.createElement("div");
-  divElement.id = n;
-  divElement.innerHTML = n;
-  this.div.appendChild(divElement);
+  divElement.id = this.ideas.length;
+  divElement.innerHTML = n + ": " + desc;
+  if (this.ideas.length > 0)
+    this.div.insertBefore(divElement, document.getElementById(this.ideas.length-1));
+  else
+    this.div.appendChild(divElement);
+  
+  this.ideas.unshift(desc);
 }
 
 IdeaManager.prototype.remove = function(name)
 {
-  delete this.ideas[name];
-  this.ideaNames = this.ideaNames.filter(a => a != name);
-  this.div.removeChild(document.getElementById(name));
+  var n = parseInt(name, 16);
+  this.ideas.splice(n, 1);
+  this.div.removeChild(document.getElementById(n));
 }
 
 IdeaManager.prototype.tick = function(dt)
@@ -41,14 +33,14 @@ IdeaManager.prototype.tick = function(dt)
 
 IdeaManager.prototype.save = function()
 {
-  return JSON.stringify({ i: this.ideas, n: this.ideaNames });
+  return JSON.stringify(this.ideas);
 }
 
 IdeaManager.prototype.load = function(s)
 {
   var data = JSON.parse(s);
-  for (var i = 0; i < data.n.length; ++i)
+  for (var i = data.length-1; i >= 0; --i)
   {
-    this.add(data.n[i], data.i[data.n[i]], "sudo");
+    this.add(data[i]);
   }
 }
