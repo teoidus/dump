@@ -10,7 +10,7 @@ function parseTime(time)
       return function(t) { t[0] *= dhms[c]; t.unshift(0); };
     return function(t) { return t };
   }
-  for (var i = 0; i < time.length; ++i)
+  for (var i = 0; i < time.toString().length; ++i)
     dfa(time[i])(t);
   return t.reduce(function(a, b) { return a + b });
 }

@@ -18,9 +18,9 @@ TaskManager.prototype.add = function(name, estimatedTime, deadline, sudo)
     n = rename;
   }
   
-  var t = (estimatedTime != "") ? parseTime(estimatedTime) : undefined;
+  var t = (estimatedTime != "" && typeof estimatedTime != "undefined") ? parseTime(estimatedTime) : undefined;
   
-  var d = (deadline != "") ? parseDate(deadline) : undefined;
+  var d = (deadline != "" && typeof deadline != "undefined") ? parseDate(deadline) : undefined;
   
   // keep list sorted by most urgent tasks
   var i = 0;

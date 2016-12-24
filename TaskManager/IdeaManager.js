@@ -11,12 +11,13 @@ IdeaManager.prototype.add = function(desc)
   var divElement = document.createElement("div");
   divElement.id = this.ideas.length;
   divElement.innerHTML = n + ": " + desc;
+  divElement.style.wordWrap = "break-word";
   if (this.ideas.length > 0)
     this.div.insertBefore(divElement, document.getElementById(this.ideas.length-1));
   else
     this.div.appendChild(divElement);
   
-  this.ideas.unshift(desc);
+  this.ideas.push(desc);
 }
 
 IdeaManager.prototype.remove = function(name)
@@ -39,7 +40,7 @@ IdeaManager.prototype.save = function()
 IdeaManager.prototype.load = function(s)
 {
   var data = JSON.parse(s);
-  for (var i = data.length-1; i >= 0; --i)
+  for (var i = 0; i < data.length; ++i)
   {
     this.add(data[i]);
   }
