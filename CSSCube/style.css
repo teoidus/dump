@@ -1,0 +1,27 @@
+html, body {
+  font-family: sans-serif;
+  text-space-collapse: discard;
+  margin: 0px;
+}
+
+.btn-bar {
+  background-color: #eeeeee;
+  color: #eeeeee;
+  border: none;
+  text-align: center;
+}
+
+.btn {
+  background-color: #eeeeee;
+  color: black;
+  border: none;
+  cursor: pointer;
+  height: 92%;
+  width: 17%;
+  margin: auto;
+  z-index: 1;
+}
+
+.btn:hover {
+  background-color: #bbbbbb;
+}

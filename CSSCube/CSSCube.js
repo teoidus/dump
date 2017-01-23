@@ -1,7 +1,5 @@
-function CSSCube(id, stickers, filter, size, div) { // colorScheme = rgb, [U L F R B D]
+function CSSCube(id, stickers, size, div, stickerless, turnSpeed) { // stickers = [[rgb, opacity]], [U L F R B D]
   this.stickers = stickers;
-  this.filter = filter;
-  this.filtering = true;
   this.size = size; // length in pixels
   this.div = div;
   this.div.id = id;
@@ -10,7 +8,7 @@ function CSSCube(id, stickers, filter, size, div) { // colorScheme = rgb, [U L F
   this.div.style.height = size + "px";
 
   this.N = 54;
-  this.transitionSpeed = 0.1;
+  this.transitionSpeed = (typeof turnSpeed != "undefined") ? turnSpeed : 0.15;
 
   this.mapping = [];
   for (var i = 0; i < this.N; i++) {
@@ -26,19 +24,19 @@ function CSSCube(id, stickers, filter, size, div) { // colorScheme = rgb, [U L F
     this.rotations.push({angle: 0, axis:0});
     this.origins.push(new RelativeOrigin(0,0,0,0));
     this.initials.push({left:0, top:0});
-        var figure = document.createElement("figure");
-        this.figures.push(figure);
+      var figure = document.createElement("figure");
+      this.figures.push(figure);
         figure.id = i.toString();
         figure.style.position = "fixed";
         figure.style.transformStyle = "preserve-3d";
         figure.style.width = (this.size/3) + "px";
         figure.style.height = (this.size/3) + "px";
-        //figure.style.border = "1px solid black";
-        figure.style.backgroundColor = this.stickers[i];
-        figure.style.opacity = 1;
+        if (!stickerless) figure.style.border = "1px solid black";
+        figure.style.backgroundColor = this.stickers[i][0];
+        figure.style.opacity = this.stickers[i][1];
         //figure.style.display = "block";
-        this.div.appendChild(figure);
-        figure.style.transition = "transform " + this.transitionSpeed + "s";
+      this.div.appendChild(figure);
+      figure.style.transition = "transform " + this.transitionSpeed + "s";
   }
   this.div.style.transformStyle = "preserve-3d";
   this.div.style.transition = "transform " + this.transitionSpeed + "s";
@@ -51,14 +49,16 @@ function CSSCube(id, stickers, filter, size, div) { // colorScheme = rgb, [U L F
       div.style.transform = "rotateX(-20deg) rotateY(-15deg)";
     }, 250);
   }
-  //this.figures[0].style.backgroundColor = "black";
+  
+  // animations
+  this.animation = [];
+  this.playInterval = null;
+  this.currentFrame = 0;
 }
 
 CSSCube.prototype.resetTransforms = function() {
-  //console.log("behgin:" + JSON.stringify(ArrayCube.inverse(this.mapping)));
   for (var i = 0; i < this.N; i++) {
     var s = ArrayCube.inverse(this.mapping)[i]; // compute transform for proper sticker
-    //console.log("Figure " + i + " -> position " + s);
     var face = Math.floor(s/9);
     var rotations = [{angle:90, axis:0}, {angle:90, axis:2}, {angle:0, axis:2},
                      {angle:-90, axis:2}, {angle:180, axis:2}, {angle:-90, axis:0}];
@@ -83,13 +83,6 @@ CSSCube.prototype.resetTransforms = function() {
     this.figures[i].style.top = this.initials[i].top + "px";
     this.figures[i].style.transformOrigin = this.origins[i].toCSS();
     this.figures[i].style.transform = this.rotations[i].toCSS();
-
-    /*console.log("Face",face,"rot",this.rotations[i].toCSS(),
-            "origin",this.origins[i].toCSS(),
-            "initial",JSON.stringify(this.initials[i]),
-            this.figures[i].style.backgroundColor,this.figures[i].style.width,
-          this.figures[i].style.height, this.figures[i].style.left,
-        this.figures[i].style.top);*/
   }
 }
 
@@ -122,46 +115,132 @@ CSSCube.prototype.testZ = function() {
   this.updateTransforms();
 }
 
-CSSCube.prototype.move = function(moveString, n) {
+CSSCube.prototype.moveN = function(moveString, n) {
   if (moveString in ArrayCube.moveMaps) {
     var m = ArrayCube.moveMaps[moveString];
     for (var i = 0; i < this.N; i++) {
-      //console.log(moveString + " " + JSON.stringify(m));
       var s = this.mapping[i];
       if (m[i].angle != 0) {
-        //console.log("i = " + i);
         this.rotations[s].addRotation({
           angle: m[i].angle * n,
           axis: m[i].axis
         }); // need to explicitly copy
       }
     }
-    for (var i = 0; i < n; i++) {
+    for (var i = 0; i < (4+n)%4; i++) {
       this.mapping = ArrayCube.apply(ArrayCube.mappings[moveString], this.mapping);
     }
-    //console.log(JSON.stringify(this.mapping) + " (applied " +
-    //  JSON.stringify(ArrayCube.mappings[moveString]) + ")");
     this.updateTransforms();
   }
 }
 
+CSSCube.prototype.move = function(moveString) {
+  var m = moveString.substring(0,1);
+  var nString = moveString.substring(1);
+  
+  var modifiers = {"'": -1, "2": 2}
+  var n = 1;
+  for (var i = 0; i < nString.length; ++i)
+    if (nString[i] in modifiers)
+      n *= modifiers[nString[i]];
+  this.moveN(m, n);
+}
+      
+CSSCube.prototype.parseMoves = function(s) {
+  var wideMoves = {
+    "u": ["U", "E'"],
+    "l": ["L", "M"],
+    "f": ["F", "S"],
+    "r": ["R", "M'"],
+    "b": ["B", "S'"],
+    "d": ["D", "E"],
+  };
+  
+  var tokens = s.split(" ");
+  var moves = [];
+  for (var i = 0; i < tokens.length; ++i) {
+    var generator = tokens[i].substring(0,1);
+    if (generator in wideMoves) {
+      var m = wideMoves[generator];
+      var n = tokens[i].substring(1);
+      moves.push([m[0] + n, m[1] + n]);
+    } else {
+      moves.push([tokens[i]]);
+    }
+  }
+  
+  return moves;
+}
+
+CSSCube.prototype.moves = function(s) {
+  var moves = this.parseMoves(s);
+  for (var i = 0; i < moves.length; ++i)
+    for (var j = 0; j < moves[i].length; ++j)
+      this.move(moves[i][j]);
+}
+
 CSSCube.prototype.updateStickers = function() {
   for (var i = 0; i < this.figures.length; i++) {
-    if (this.filtering && this.filter[i].filtering) {
-      this.figures[i].style.backgroundColor = this.filter[i].color;
-    } else
-      this.figures[i].style.backgroundColor = this.stickers[i];
+    this.figures[i].style.backgroundColor = this.stickers[i][0];
+    this.figures[i].style.opacity = this.stickers[i][1];
   }
 }
 
-CSSCube.prototype.newFilter = function(filter) {
-  this.filter = filter;
-  this.updateStickers();
+CSSCube.prototype.loadAnimation = function(s) {
+  console.log(s);
+  this.animation = this.parseMoves(s);
 }
 
-CSSCube.prototype.filterOn = function() {
-  this.filtering = true; this.updateStickers();
+CSSCube.prototype.next = function() {
+  if (this.currentFrame < this.animation.length)
+  {
+    var move = this.animation[this.currentFrame];
+    for (var i = 0; i < move.length; ++i) {
+      this.move(move[i]);
+    }
+    this.currentFrame = Math.min(this.currentFrame + 1, this.animation.length);
+  }
 }
-CSSCube.prototype.filterOff = function() {
-  this.filtering = false; this.updateStickers();
+
+CSSCube.prototype.prev = function() {
+  if (this.currentFrame > 0)
+  {
+    var move = this.animation[--this.currentFrame];
+    for (var i = 0; i < move.length; ++i) {
+      this.move(move[i] + "'");
+    }
+  }
+}
+
+CSSCube.prototype.play = function() {
+  with (this) {
+    if (!isPaused())
+      pause();
+    playInterval = setInterval(function() { next() }, 500);
+  }
+}
+
+CSSCube.prototype.pause = function() {
+  if (!this.isPaused()) {
+    clearInterval(this.playInterval);
+    this.playInterval = null;
+  }
+}
+
+CSSCube.prototype.jumpToBeginning = function() {
+  this.pause();
+  while (this.currentFrame > 0) {
+    this.prev();
+  }
+}
+
+CSSCube.prototype.jumpToEnd = function() {
+  this.pause();
+  while (this.currentFrame < this.animation.length) {
+    this.next();
+  }
+}
+
+CSSCube.prototype.isPaused = function() {
+  return this.playInterval == null;
 }
