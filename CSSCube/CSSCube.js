@@ -200,6 +200,9 @@ CSSCube.prototype.next = function() {
     }
     this.currentFrame = Math.min(this.currentFrame + 1, this.animation.length);
   }
+  else {
+    this.pause();
+  }
 }
 
 CSSCube.prototype.prev = function() {
