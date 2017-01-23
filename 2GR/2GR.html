@@ -32,22 +32,31 @@
     <div class="page">
       <h1 class="title">2-generator reduction</h1>
       <p>2GR is an advanced speedsolving method that quickly reduces the cube to the &lt;R,U&gt; subgroup, leading to a very ergonomic F2L step and an 84-algorithm 1-look LL.</p>
-      <h3>Substeps in outline:</h3>
       <table>
-        <tr><td><i>EOPair</i>: orient all the edges and create a 2x1x1 corner-edge pair at DBL-DL</td>
-          <td><iframe class="demo" src="file:///C:/Users/user/OneDrive/GitHub/dump/CSSCube/demo.html?size=200&moves=x2%20y%27"></iframe></td>
+        <h2 class="title">Outline of Substeps</h2>
+
+        <tr><td>Scramble</td>
+          <td>R' D' L' D F2 D' B' U F D2 B' L' U2 F' U2 F' U2 F L D2</td>
         </tr>
-        <tr><td><i>CPLine</i>: complete a 3x1x1 line on LD while reducing the remaining 6 corners to &lt;R,U&gt;</td>
-          <td><iframe class="demo" src="file:///C:/Users/user/OneDrive/GitHub/dump/CSSCube/demo.html?size=200&moves=x2%20y%27"></iframe></td>
+        <tr><td>1. <i>EOPair</i>: create a 2x1x1 corner-edge pair at DBL-DL while orienting all the edges</td>
+          <td><iframe class="demo" src="http://teoidus.github.io/dump/CSSCube/demo.html?size=200&setup=R' D' L' D F2 D' B' U F D2 B' L' U2 F' U2 F' U2 F L D2&moves=x y' r' U R F' u' r' U' f2"></iframe>
+          x y' r' U R F' u' r' U' f2</td>
         </tr>
-        <tr><td><i>Block</i>: expand the 3x1x1 line LD into a 3x2x2 block</td>
-          <td><iframe class="demo" src="file:///C:/Users/user/OneDrive/GitHub/dump/CSSCube/demo.html?size=200&moves=x2%20y%27"></iframe></td>
+        <tr><td>2. <i>CPLine</i>: complete a 3x1x1 line on LD while reducing the remaining 6 corners to &lt;R,U&gt;</td>
+          <td><iframe class="demo" src="http://teoidus.github.io/dump/CSSCube/demo.html?size=200&setup=R' D' L' D F2 D' B' U F D2 B' L' U2 F' U2 F' U2 F L D2 x y' r' U R F' u' r' U' f2&moves=r F' r'"></iframe>
+          r F' r'</td>
         </tr>
-        <tr><td><i>F2L</i>: complete the F2L</td>
-          <td><iframe class="demo" src="file:///C:/Users/user/OneDrive/GitHub/dump/CSSCube/demo.html?size=200&moves=x2%20y%27"></iframe></td>
+        <tr><td>3. <i>Block</i>: expand the line into a 3x2x2 block</td>
+          <td><iframe class="demo" src="http://teoidus.github.io/dump/CSSCube/demo.html?size=200&setup=R' D' L' D F2 D' B' U F D2 B' L' U2 F' U2 F' U2 F L D2 x y' r' U R F' u' r' U' f2 r F' r'&moves=U' R E2 R' U' r2"></iframe>
+          U' R E2 R' U' r2</td>
         </tr>
-        <tr><td><i>2GLL</i>: complete the last layer in 1 look</td>
-          <td><iframe class="demo" src="file:///C:/Users/user/OneDrive/GitHub/dump/CSSCube/demo.html?size=200&moves=x2%20y%27"></iframe></td>
+        <tr><td>4. <i>F2L</i>: complete the F2L</td>
+          <td><iframe class="demo" src="http://teoidus.github.io/dump/CSSCube/demo.html?size=200&setup=R' D' L' D F2 D' B' U F D2 B' L' U2 F' U2 F' U2 F L D2 x y' r' U R F' u' r' U' f2 r F' r' U' R E2 R' U' r2&moves=R' U2 R U R' U2 R U' R U R U R"></iframe>
+          R' U2 R U R' U2 R U' R U R U R</td>
+        </tr>
+        <tr><td>5. <i>2GLL</i>: complete the last layer in 1 look</td>
+          <td><iframe class="demo" src="http://teoidus.github.io/dump/CSSCube/demo.html?size=200&setup=R' D' L' D F2 D' B' U F D2 B' L' U2 F' U2 F' U2 F L D2 x y' r' U R F' u' r' U' f2 r F' r' U' R E2 R' U' r2 R' U2 R U R' U2 R U' R U R U R&moves=R' U2 R U R' U R U R U R' U R U2 R' U2"></iframe>
+          R' U2 R U R' U R U R U R' U R U2 R' U2</td>
         </tr>
       </table>
     </div>
