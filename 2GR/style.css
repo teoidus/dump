@@ -73,3 +73,11 @@ html, body {
   width: 201;
   height: 201;
 }
+
+.alg-table {
+  width: 100%;
+}
+
+.alg-table td {
+  width: 50%;
+}
