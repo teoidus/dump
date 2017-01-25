@@ -27,7 +27,7 @@
         <a href="../2GLL/2GLL_O.html">O (EPLL)</a>
       </div>
     </div>
-      
+    
     <div class="dropdown">
       <button class="dropbtn" onclick="location.href='#'">Trainers</button>
       <div class="dropdown-content">
@@ -37,22 +37,32 @@
       </div>
     </div>
     <button class="btn" onclick="location.href='../Examples/Examples.html'">Examples</button>
+    
+    <script src="algLoader.js"></script>
   </head>
   <body>
-    <div class="page">
-      <h1 class="title">2GLL</h1>
-      <p>84 algorithms are needed to complete the last layer in 1 look. They are divided into 8 subsets based on corner orientation.<br>
-         To minimize redundancy, algorithms that are mirrors of previously shown ones are always placed at the end each subset.<br>
-         <br>
-         Since many algorithms are made of combinations of sunes, the following abbreviations will be used to aid memorization:<br>
-           <ul>
-             <li>S - Sune</li>
-             <li>S' - Antisune</li>
-             <li>BS - Backsune</li>
-             <li>BS' - Backantisune</li>
-           </ul>
-         Click on any of the 8 2GLL subsets in the dropdown menu above to begin learning.<br>
-      </p>
+    <div id="page" class="page">
+      <h1 class="title">T</h1>
+      Recognition is identical to U set recognition: look at patterns in the 2x3 block of oriented pieces. L refers to the left 2x1, R refers to the right 2x1, and F refers to the front 3x1. Many cases are simply inverses of U set algorithms.<br><br>
+      <table id="algs"></table>
     </div>
+    <script>
+      var table = document.getElementById("algs");
+      // alg, recognition
+      loadAlgs(table, [
+        ["R U2 R' U' R U' R2 U2' R U R' U R", "Z-perm pattern on R"],
+        ["R U R' U R U2' R' U2 R' U' R U' R' U2 R", "Block"],
+        ["y' R U R2' U' R2 U' R2' U2' R U' R U' R'", "Opposites on R, adjacents on F"],
+        ["y2 R' U2' R U R' U R U' R' U' R U' R' U2 R", "Pair on R, opposites on F"],
+        ["y' R' U' R U' R' U R U' R U R2' U R2 U2' R'", "Pair on R, adjacents on F"],
+        ["y' R U R' U R U2' R' U' R U2 R' U' R U' R'", "Line on F, adjacents on R"],
+        ["y R2 U R2' U R U' R' U R2 U2' R' U R' U R U' R'", "H-perm pattern"],
+        ["y' R' U2' R U R' U R2 U2' R' U' R U' R'", "Z-perm pattern on L"],
+        ["y' R U R' U R' U2 R2 U R2 U R2 U' R'", "Opposites on L, adjacents on F"],
+        ["y R U2 R' U' R U' R' U R U R' U R U2' R'", "Pair on L, opposites on F"],
+        ["R U R' U R U' R' U R' U' R2 U' R2' U2' R", "Pair on L, adjacents on F"],
+        ["R' U' R U' R' U2 R U R' U2' R U R' U R", "Line on F, adjacents on L"],
+      ])
+    </script>
   </body>
 </html>

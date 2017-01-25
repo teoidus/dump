@@ -4,6 +4,13 @@ html, body {
   margin: 0px;
 }
 
+.example-btn {
+  background-color: #eeeeee;
+  color: black;
+  border: none;
+  cursor: pointer;
+}
+
 .btn, .dropbtn {
   background-color: #eeeeee;
   color: black;
@@ -56,7 +63,7 @@ html, body {
 }
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn, .btn:hover {
+.dropdown:hover .dropbtn, .btn:hover, .example-btn:hover {
   background-color: #bbbbbb;
 }
 
@@ -72,12 +79,4 @@ html, body {
 .demo {
   width: 201;
   height: 201;
-}
-
-.alg-table {
-  width: 100%;
-}
-
-.alg-table td {
-  width: 50%;
 }

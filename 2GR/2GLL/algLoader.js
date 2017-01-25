@@ -10,7 +10,7 @@ function loadAlgs(table, algs)
   var recogCell = r.insertCell(r.cells.length);
   
   algCell.innerHTML = "<h3>Algorithm</h3>";
-  recogCell.innerHTML = "<h3>Recognition</h3>";
+  recogCell.innerHTML = "<h3>Recognition & Memorization</h3>";
     
   for (var i = 0; i < algs.length; ++i) {
     var r = table.insertRow(table.rows.length);

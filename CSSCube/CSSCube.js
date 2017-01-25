@@ -187,7 +187,6 @@ CSSCube.prototype.updateStickers = function() {
 }
 
 CSSCube.prototype.loadAnimation = function(s) {
-  console.log(s);
   this.animation = this.parseMoves(s);
 }
 
