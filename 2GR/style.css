@@ -8,7 +8,7 @@ html, body {
   background-color: #eeeeee;
   color: black;
   border: none;
-  cursor: pointer;
+  cursor: pointer; 
 }
 
 .btn, .dropbtn {
