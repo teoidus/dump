@@ -19,8 +19,7 @@
   </head>
   <body style="background-color: #CCCCCC">
     <script type="text/javascript">
-      // buttons:
-      // play, pause, next, prev, beginning, end, alg.cubing.net
+      // alg.cubing.net
       // x y z      
       var args = {};
       if (location.search) {
@@ -33,16 +32,25 @@
       }
       
       var size = (typeof args.size != "undefined") ? args.size : 250;
+      var spacing = (typeof args.godmode != "undefined") ? size/22.5 : 0;
+      var animSpeed = (typeof args.speed != "undefined") ? args.speed : undefined;
       
       if (typeof args.stickers != "undefined")
       {
-        //??
+        var tokens = args.stickers.split("|");
+        var colors = tokens[0].split(",").map(x => "#" + x);
+        var indices = tokens.slice(1).join("");
+        
+        var stickers = [];
+        for (var i = 0; i < 54; i++) {
+          stickers.push([colors[indices[i]], 1]);
+        }
       } else {
         var colors = ['#FFFFFF', '#FF8C00', '#228B22', '#B22222', '#00008B', '#DDDD00']; // Dayan
         var stickers = [];
         var opacity = 1;
         for (var i = 0; i < 54; i++) {
-          stickers.push([colors[Math.floor(i/9)], 1]);
+          stickers.push([colors[Math.floor(i/9)], opacity]);
         }
       }
       
@@ -61,7 +69,7 @@
       bar.style.width = size;
       bar.style.height = size/10;
       
-      var c = new CSSCube("cube", stickers, size*1/2, cDiv, true);
+      var c = new CSSCube("cube", stickers, size*1/2, cDiv, true, animSpeed, spacing);
       
       if (typeof args.setup != "undefined")
       {

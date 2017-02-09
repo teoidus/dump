@@ -1,6 +1,7 @@
-function CSSCube(id, stickers, size, div, stickerless, turnSpeed) { // stickers = [[rgb, opacity]], [U L F R B D]
+function CSSCube(id, stickers, size, div, stickerless, turnSpeed, spacing) { // stickers = [[rgb, opacity]], [U L F R B D]
   this.stickers = stickers;
   this.size = size; // length in pixels
+  this.spacing = (typeof spacing != "undefined") ? spacing : 0;
   this.div = div;
   this.div.id = id;
   this.div.style.perspective = "2500px";
@@ -29,7 +30,7 @@ function CSSCube(id, stickers, size, div, stickerless, turnSpeed) { // stickers 
         figure.id = i.toString();
         figure.style.position = "fixed";
         figure.style.transformStyle = "preserve-3d";
-        figure.style.width = (this.size/3) + "px";
+        figure.style.width =  (this.size/3) + "px";
         figure.style.height = (this.size/3) + "px";
         if (!stickerless) figure.style.border = "1px solid black";
         figure.style.backgroundColor = this.stickers[i][0];
@@ -72,7 +73,9 @@ CSSCube.prototype.resetTransforms = function() {
     ];
     var origin = origins[sticker];
     this.origins[i] = new RelativeOrigin(0.5+origin[0], 0.5+origin[1], -1.5,
-      this.size/3); // this.size/3 = length of sticker
+      this.size/3 + this.spacing); // this.size/3 = length of sticker
+      console.log(this.size/3, this.spacing);
+      console.log(this.origins[i]);
 
     this.initials[i] = {
       left: (sticker%3) * this.size/3,

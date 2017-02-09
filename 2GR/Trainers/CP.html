@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    
+    <div class="btn-bar"> _</div>
+    <button class="btn" onclick="location.href='../2GR.html';">2GR</button>
+    <button class="btn" onclick="location.href='../EOPair/EOPair.html'">EOPair</button>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='../CPLine/CPLine.html'">CPLine</button>
+      <div class="dropdown-content">
+        <a href="../CPLine/Recog.html">Recognition</a>
+        <a href="../CPLine/Track.html">Tracking</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Block/Block.html'">Block</button>
+    <button class="btn" onclick="location.href='../F2L/F2L.html'">F2L</button>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='../2GLL/2GLL.html'">2GLL</button>
+      <div class="dropdown-content">
+        <a href="../2GLL/2GLL_U.html">U</a>
+        <a href="../2GLL/2GLL_T.html">T</a>
+        <a href="../2GLL/2GLL_Pi.html">Pi</a>
+        <a href="../2GLL/2GLL_S.html">S</a>
+        <a href="../2GLL/2GLL_AS.html">AS</a>
+        <a href="../2GLL/2GLL_L.html">L</a>
+        <a href="../2GLL/2GLL_H.html">H</a>
+        <a href="../2GLL/2GLL_O.html">O (EPLL)</a>
+      </div>
+    </div>
+      
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight: bold" onclick="location.href='#'">Trainers</button>
+      <div class="dropdown-content">
+        <a href="../Trainers/CP.html">CP</a>
+        <a href="../Trainers/2GLL.html">2GLL</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Examples/Examples.html'">Examples</button>
+    <script src="../js/exampleLoader.js"></script>
+    <script src="../js/CP.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <h1 class="title">CP Trainers</h1>
+      
+      <h3>Recognition</h3>
+      <p>Select the correct key swap for the given scramble.</p>
+      <table id="recognition">
+      </table>
+      <br>
+      <hr>
+      
+      <h3>Tracking</h3>
+      <p>Select the correct key swap for the given scramble.</p>
+      <table id="tracking">
+      </table>
+    </div>
+    <script>
+      function getScramble(len)
+      {
+        var generators = ["R", "U", "F"];
+        var modifiers = ["", "'", "2"];
+        
+        var result = "";
+        var prev = "";
+        for (var i = 0; i < len; ++i)
+        {
+          prev = generators.filter(x => x != prev)[Math.floor((generators.length-1) * Math.random())];
+          result += prev + modifiers[Math.floor(modifiers.length * Math.random())] + " ";
+        }
+        
+        return result.trim();
+      }
+      
+      // generates move sequence that places dlf at same place as scramble
+      function getFakeScramble(len, scramble)
+      {
+        var dlf = applyMovesFixed(scramble).indexOf(cornerNames.indexOf("LDF"));
+        
+        var result = "";
+        do {
+          result = getScramble(len);
+        } while (applyMovesFixed(result).indexOf(cornerNames.indexOf("LDF")) != dlf
+          && JSON.stringify(getSwapFixed(result)) != JSON.stringify(getSwapFixed(scramble)));
+        return result;
+      }
+      
+      function newTask(id)
+      {
+        var table = document.getElementById(id);
+        table.innerHTML = "";
+        
+        var len = 11; // God's number (2x2x2)
+        table.scramble = getScramble(len);
+        
+        var titles = table.insertRow(table.rows.length);
+        var diagrams = table.insertRow(table.rows.length);
+        
+        var buttonify = function(s) {
+          return "<button id='" + id + "-" + s + "' class='btn' style='width:100%' onclick=\"check"
+            + "('" + id + "', '" + s + "')\">" + s + "</button>";
+        };
+        var scrambleString = (id == "recognition") ? table.scramble
+          : table.scramble.split(" ").slice(Math.floor(len/2)).join(" ");
+        var titleTexts = ["Scramble: " + scrambleString, buttonify("1"), buttonify("2"), buttonify("3"), buttonify("4")];
+        for (var i = 0; i < titleTexts.length; ++i) {
+          var cell = titles.insertCell(titles.cells.length);
+          cell.innerHTML = titleTexts[i];
+          cell.style.width = "25%";
+          cell.style.textAlign = "center";
+        }
+        
+        var size = window.innerWidth * 0.9 / titleTexts.length;
+        var demoURL = "../../CSSCube/demo.html?size=" + size; 
+        var demoString = (id == "recognition") ? "&godmode=true&setup=x2 y " + scrambleString
+          : getDemoFixed(table.scramble.split(" ").slice(0, Math.floor(len/2)).join(" "));
+        var srcs = [demoURL + demoString];
+        for (var i = 0; i < titleTexts.length-1; ++i)
+        {
+          srcs.push(demoURL + getDemoFixed(getFakeScramble(len, table.scramble)));
+        }
+        table.answer = 1 + Math.floor((titleTexts.length-1) * Math.random());
+        srcs[table.answer] = demoURL + getDemoFixed(table.scramble);
+        
+        for (var i = 0; i < srcs.length; ++i)
+        {
+          var diagram = diagrams.insertCell(diagrams.cells.length);
+          var anim = document.createElement("iframe");
+          anim.width = size;
+          anim.height = size;
+          anim.setAttribute("scrolling", "no");
+          //anim.src = "http://teoidus.github.io/dump/CSSCube/demo.html?size="
+          anim.src = srcs[i];
+          
+          diagram.appendChild(anim);
+        }
+      }
+      
+      function check(id, s)
+      {
+        var colors = { true: "#00FF00", false: "#FF0000" };
+      
+        var answer = document.getElementById(id).answer;
+        document.getElementById(id + "-" + s).style.backgroundColor = colors[s == answer];
+        document.getElementById(id + "-" + answer).style.backgroundColor = colors[true];
+        
+        setTimeout(function() { newTask(id) }, 1000);
+      }
+      
+      newTask("recognition");
+      newTask("tracking");
+    </script>
+  </body>
+</html>

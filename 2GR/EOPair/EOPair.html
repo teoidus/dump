@@ -1,0 +1,150 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    
+    <div class="btn-bar"> _</div>
+    <button class="btn" onclick="location.href='../2GR.html';">2GR</button>
+    <button class="btn" style="font-weight: bold" onclick="location.href='../EOPair/EOPair.html'">EOPair</button>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='../CPLine/CPLine.html'">CPLine</button>
+      <div class="dropdown-content">
+        <a href="../CPLine/Recog.html">Recognition</a>
+        <a href="../CPLine/Track.html">Tracking</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Block/Block.html'">Block</button>
+    <button class="btn" onclick="location.href='../F2L/F2L.html'">F2L</button>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='../2GLL/2GLL.html'">2GLL</button>
+      <div class="dropdown-content">
+        <a href="../2GLL/2GLL_U.html">U</a>
+        <a href="../2GLL/2GLL_T.html">T</a>
+        <a href="../2GLL/2GLL_Pi.html">Pi</a>
+        <a href="../2GLL/2GLL_S.html">S</a>
+        <a href="../2GLL/2GLL_AS.html">AS</a>
+        <a href="../2GLL/2GLL_L.html">L</a>
+        <a href="../2GLL/2GLL_H.html">H</a>
+        <a href="../2GLL/2GLL_O.html">O (EPLL)</a>
+      </div>
+    </div>
+      
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='#'">Trainers</button>
+      <div class="dropdown-content">
+        <a href="../Trainers/CP.html">CP</a>
+        <a href="../Trainers/2GLL.html">2GLL</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Examples/Examples.html'">Examples</button>
+    <script src="../js/exampleLoader.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <h1 class="title">EOPair</h1>
+      This step can be divided into two substeps: EO (1a) and Pair (1b). With practice, the entire EOPair will be plannable in inspection. Since this step can be difficult at first, it may be helpful to take a look at some <a href="../Examples/Examples.html">example solves</a> after reading this page.
+      <h2 class="title">EO</h2>
+      <p style="text-align: center">
+      (ZZ users: you will already be familiar with the idea of detecting bad edges and using F/B moves to change orientation. Click <a href="#RUF-EO">here</a> to skip the basics.)
+      </p>
+      
+      <h3>Recognition (Slow)</h3>
+      <p>
+      In this step, we will orient edges with respect to a pair of opposite colors that will end up on the F/B faces of the solved cube. (Any pair of colors can be chosen, but this tutorial will use red and orange.) This means that after the cube is rotated such that the red or orange center is on F, all edges will be "good." An edge is "good" if it's solvable &lt;R,U,L,D&gt; and "bad" if it's not. Some examples (notice that the bad edge examples are only permutable &lt;R,U,L,D&gt;--that is, they can be placed between the center pieces they belong next to, but will be "flipped the wrong way"):
+      </p>
+      <table id="good-bad-examples"></table>
+      <script>
+        var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|000020050|000000000|010030000|000000000|000010000|000000000";
+        loadExample(document.getElementById("good-bad-examples"), ["good", "good", "good", "bad", "bad", "bad"], [
+          "U' // solvable by U' R2 D",
+          "R' // solvable by R2 D",
+          "F' // solvable by R' D", "U' // permutable by U' R2 D", "R' // permutable by R2 D", "// permutable by R' D"], stickers, true);
+      </script>
+      <p>
+      You can determine which edges are bad by applying this definition to every single edge on the cube.
+      
+      <h3>Recognition (Fast)</h3>
+      <p>
+      While the above allows you to detect bad edges, it is very slow. Therefore when detecting bad edges during inspection, we will use a set of rules involving color patterns instead.<br>
+      <br>
+      Bad edges are detected as follows:<br>
+        1. Look at stickers on F.<br>
+          1a. If you see any U/D colors on edge pieces on U/D, they're bad.<br>
+          1b. If you see any L/R colors on edge pieces on L/R, they're bad.<br>
+          1c. If you see any F/B colors, look at the other edge sticker:<br>
+          1ca. If you see any U/D colors on edge pieces on L/R, they're bad.<br>
+          1cb. If you see any L/R colors on edge pieces on U/D, they're bad.<br>
+        <br>
+        2. Look at edges in the S slice.<br>
+          2a. If you see L/R colors on U/D, they're bad.<br>
+          2b. If you see U/D colors on L/R, they're bad.<br>
+        <br>
+        3. Apply the rules in step 1 to stickers on B.<br>
+      <br>With practice, these patterns will eventually "pop out" during inspection and allow you to detect bad edges quickly (~2s or less). <br>
+      </p>
+      
+      <h3>Correction</h3>
+      <p>
+      We know that all edges on the cube must be solvable (or it wouldn't exactly be a fun puzzle), so there must be a way to handle these "bad" edges. By definition, a bad edge can't be solved with any combination of R, U, L, or D moves, so solving it must involve the use of one of the other 2 face turn types (F, B).
+      </p>
+      <p>
+      Clearly then, F and B moves are special. Specifically, an 90 degree F turn will "flip" all edges on F (good edges become bad, and vice versa), and a 90 degree B turn will flip all edges on B. You can verify this for yourself: take a solved cube, apply an F, and you'll find that it's impossible to solve the 4 edges on the F face using only &lt;R,U,L,D&gt;. Similarly, take a solved cube and manually flip the 4 edges on F (either by algorithm or disassembly) and then apply an F, and you'll find that all 4 edges are now solvable &lt;R,U,L,D&gt;. (If you're not fully convinced, you can enter these positions into <a href="MEEP">Cube Explorer</a>, forbid it from using F/B moves or slice turns, and ask it to find solutions.) Note that only quarter-turns like F/F', B/B' will flip edges. F2 and B2 actually preserve edge orientation.
+      </p>
+      <p>
+      We also know that &lt;R,U,L,D&gt; doesn't affect orientation, since moving an edge around &lt;R,U,L,D&gt; can never change whether or not it's solvable &lt;R,U,L,D&gt;. This means we can safely use &lt;R,U,L,D&gt; to move edges around without worrying about changing their orientation. Therefore, to turn all bad edges into good ones, we can use &lt;R,U,L,D&gt; to collect bad edges on F/B and &lt;F,B&gt; to flip them in groups of 4. Additionally, since F2 and B2 don't actually flip edges, we can use those as well to help collect bad edges on the F/B faces. Here are some examples (click on any of the numbered buttons):
+      <div id="4flip-list"></div>
+      <table id="4flip-examples"></table>
+      </p>
+      <script>
+         var list = document.getElementById("4flip-list");
+         var table = document.getElementById("4flip-examples");
+         var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|000021000|000005000|000430050|050000050|000010000|000003000";
+         addExample(list, table, ["collect", "collect", "flip"], ["U // move the bad edge at UR onto F", "R // move DR onto F", "F // correct all 4 edges"], stickers);
+         var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|000421030|050000000|050030050|050000000|000010000|000000000";
+         addExample(list, table, ["collect", "collect", "flip"], ["L // move UL onto F", "R' // move UR onto F", "F // correct all 4 edges"], stickers);
+         var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|040023010|000000000|050034000|050200000|050010000|000000000";
+         addExample(list, table, ["hide", "collect", "collect", "flip"], ["F2 // move FU and DR to make way for UB and UR", "R' // move UR onto F", "U2 // move UB onto F", "F // correct all 4 edges"], stickers);
+      </script>
+      
+      <p>
+      What if the number of bad edges isn't a multiple of 4 (e.g. 2, 6, 10)? For each of these cases, there are special strategies that you can use to get yourself to a multiple of 4:<br>
+      For <b>2flips</b>, you can place 1 bad edge on F/B and apply an F/B turn to make that bad edge good and all 3 other good edges on that face bad. So -1 bad edge by flipping the 1 bad one, but +3 bad edges by flipping the 3 good ones = +2 net change in bad edges. Add that to the 2 bad you started with and you get 4 bad edges.<br>
+      For <b>6flips</b>, you can place 3 bad edges on F/B and apply an F/B turn to make all 3 good and the last edge on that face bad. -3 bad edges, but also +1 by flipping the good one = -2 net change. Add that to the 6 you started with and you get 4 bad edges again.<br>
+      For <b>10flips</b>, if you have 4 bad on both F and B already you can apply both an F and a B turn right away and give yourself a 2flip. If you have 4 bad only on F or only on B, you can apply only an F turn or B turn and give yourself a 6flip.
+      </p>
+      <p>
+      Here are some examples of 2, 6, and 10flips:
+      <div id="2,6,10-list"></div>
+      <table id="2,6,10-examples"></table>
+      </p>
+      <p>
+      Make sure you're very comfortable with detecting and correcting bad edges before moving on.
+      </p>
+      
+      <a name="RUF-EO"></a>
+      <h3>Using &lt;R,r,U,u,F,f&gt;</h3>
+      <p>
+      Now we will use EO as described above, but execute it very differently in order to make the next step (CPLine) easier to plan in inspection. Instead of solving EO from a fixed front, we'll instead first rotate the cube so that the corner that belongs at DLB is solved in place, and then use &lt;R,r,U,u,F,f&gt; to complete EOPair. (This tutorial will use F = red, U = yellow, so the white-orange-blue corner belongs at DLB).
+      </p>
+      <p>
+      Since we will be using wide moves, the centers are allowed to change position throughout EO, so F and B turns won't necessarily flip edges. Instead, you'll have to keep track of where the red/orange faces are, and a quarter turn on any of the red/orange faces will flip all 4 edges on that face (note that if the red center is on L, an r move is a quarter turn on the red face, an R move is a quarter turn on the orange face, and an M' is a quarter turn on both the red and orange faces).
+      </p>
+      
+      Here are some useful non-intuitive 4flip solutions (other cases can be completed or reduced to these fairly easily if you're comfortable with ZZ-style EO):
+      <table id="ruf-4flips"></table>
+      
+      <p>
+      Note: even though we are rotating the cube so that DLB is solved, edge detection should still be done with respect to the red center. Don't treat whatever center ends up on F after your rotation as your red center and detect EO that way.<br>
+      Note 2: this won't make EO take any more moves. Since L, B, and D moves can be done with r x', f z', and u y' respectively, any sequence of &lt;R,U,L,D,F,B&gt; can be rewritten as an equally long sequence of &lt;R,r,U,u,F,f&gt;.
+      </p>
+      
+      <h2 class="title">Pair</h2>
+      <p>
+      In this step, we simply solve the DL edge, connecting it to the DLB corner (forming a corner-edge pair). The only restriction in this step is that EO must be preserved: therefore, only half turns (180 degrees) are allowed on the red/orange faces, but anything else is fine.<br>
+      <br>
+      This step is largely intuitive. Since only 1 piece is solved in this step, there are very few cases and solutions are pretty simple. With practice, you should be able to predict where the DL edge will go during EO and plan out the whole EOPair in inspection.<br>
+      <br>
+      If you're finding it difficult to see how the DL edge can be placed efficiently, take a look at some <a href="../Examples/Examples.html">example solves</a>.
+      </p>
+    </div>
+  </body>
+</html>

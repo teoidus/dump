@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" type="text/css" href="style.css">
     
+    <a name="top"></a>
     <div class="btn-bar"> _</div>
     <button class="btn" style="font-weight: bold" onclick="location.href='2GR.html';">2GR</button>
     <button class="btn" onclick="location.href='EOPair/EOPair.html'">EOPair</button>
@@ -31,8 +32,7 @@
     <div class="dropdown">
       <button class="dropbtn" onclick="location.href='#'">Trainers</button>
       <div class="dropdown-content">
-        <a href="Trainers/C.html">Correction swaps</a>
-        <a href="Trainers/K.html">Key swaps</a>
+        <a href="Trainers/CP.html">CP</a>
         <a href="Trainers/2GLL.html">2GLL</a>
       </div>
     </div>
@@ -40,17 +40,22 @@
   </head>
   <body>
     <div class="page">
-      <h1 class="title">2-generator reduction</h1>
-      <p>2GR is an advanced speedsolving method that reduces the cube to the &lt;R,U&gt; subgroup, allowing for a very ergonomic F2L step and an 84-algorithm 1-look LL.<br>
+      <h1 class="title">2GR (2-generator reduction)</h1>
+      <p>2GR is an advanced speedsolving method that reduces the cube to the &lt;R,U&gt; subgroup, allowing for a very ergonomic F2L step and an 84-algorithm 1-look LL.
+      </p>
+      <p>
+      Projected movecount: 49<br>
+      Moves planned in inspection: 11<br>
+      Algorithm count: 84 (intuitive CP), 210 (algorithmic CP)<br>
+      </p>  
+      <p>
+      The main difficulty in reducing to the &lt;R,U&gt; subgroup lies in recognizing and applying a "CP fix" that restricts the 6 corners movable by the R and U faces to 120 of 720 possible permutations available to them.<br>
       <br>
-      Projected movecount: 47<br>
-      Moves planned in inspection: 12<br>
-      Look count: 5<br>
+      Unlike past attempts at performing this CP fix (like ZZ-Porky and CPLS), 2GR performs this reduction early enough in the solve that it can be planned in inspection. This avoids issues with recognition time and takes less moves to perform. To accomplish this, the entire cube group is reduced to the &lt;R,U,F2,r2,u2,f2&gt;, &lt;R,U,r2,u2&gt;, and &lt;R,U&gt; subgroups through the EOPair, CPLine, and Block steps described below.<br>
       </p>
       <hr></hr>
       <table>
         <h2 class="title">Outline of Substeps</h2>
-
         <tr><td>Scramble</td>
           <td>R' D' L' D F2 D' B' U F D2 B' L' U2 F' U2 F' U2 F L D2</td>
         </tr>
@@ -75,6 +80,10 @@
           R' U2 R U R' U R U R U R' U R U2 R' U2 // 46 moves</td>
         </tr>
       </table>
+      <br>
+      <div style="text-align: center">
+        <button class="btn" style="align: center" onclick="location.href='#top'">Click on any of the substeps at the top of this page to learn more.</button>
+      </div>
     </div>
   </body>
 </html>

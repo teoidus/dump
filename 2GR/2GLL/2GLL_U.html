@@ -31,14 +31,13 @@
     <div class="dropdown">
       <button class="dropbtn" onclick="location.href='#'">Trainers</button>
       <div class="dropdown-content">
-        <a href="../Trainers/C.html">Correction swaps</a>
-        <a href="../Trainers/K.html">Key swaps</a>
+        <a href="../Trainers/CP.html">CP</a>
         <a href="../Trainers/2GLL.html">2GLL</a>
       </div>
     </div>
     <button class="btn" onclick="location.href='../Examples/Examples.html'">Examples</button>
     
-    <script src="algLoader.js"></script>
+    <script src="../js/algLoader.js"></script>
   </head>
   <body>
     <div id="page" class="page">
@@ -50,13 +49,13 @@
       var table = document.getElementById("algs");
       // alg, recognition
       loadAlgs(table, [
-        ["R' U' R U' R' U2 R2 U R' U R U2' R'", "Z-perm pattern on R<br>BS S"],
         ["R U2 R' U' R U' R' U2 R' U2' R U R' U R", "Block<br>S' U2 BS'"],
+        ["R' U' R U' R' U2 R2 U R' U R U2' R'", "Z-perm pattern on R<br>BS S"],
         ["R' U' R U' R U2' R2' U' R2 U' R2' U R", "Opposites on R, adjacents on F<br>BS with weird cancellations"],
         ["y R U2 R2' U' R2 U' R' U R' U' R U R' U R", "Pair on R, opposites on F"],
         ["y R' U2' R U R' U R U R' U' R U' R' U2 R", "Pair on R, adjacents on F<br>BS' U BS"],
         ["R' U' R U' R' U2 R U' R' U2' R U R' U R", "Line on F, adjacents on R<br>BS U' BS'"],
-        ["R U R' U' R U' R U2' R2' U' R U R' U' R2 U' R2'", "H-perm pattern"],
+        ["x' R2 D2' R' U' R D2' R2' D R U R' D' x", "H-perm pattern<br>R U R' U' R U' R U2' R2' U' R U R' U' R2 U' R2' also works but is longer"],
         ["y' R U R' U R U2' R2' U' R U' R' U2 R", "Z-perm pattern on L<br>S BS"],
         ["y' R U R' U R' U2 R2 U R2 U R2 U' R'", "Opposites on L, adjacents on F<br>S with weird cancellations"],
         ["y2 R' U2' R2 U R2' U R U' R U R' U' R U' R'", "Pair on L, opposites on F"],

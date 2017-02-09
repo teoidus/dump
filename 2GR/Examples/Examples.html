@@ -31,18 +31,17 @@
     <div class="dropdown">
       <button class="dropbtn" onclick="location.href='#'">Trainers</button>
       <div class="dropdown-content">
-        <a href="../Trainers/C.html">Correction swaps</a>
-        <a href="../Trainers/K.html">Key swaps</a>
+        <a href="../Trainers/CP.html">CP</a>
         <a href="../Trainers/2GLL.html">2GLL</a>
       </div>
     </div>
     <button class="btn" style="font-weight: bold" onclick="location.href='../Examples/Examples.html'">Examples</button>
-    <script src="exampleLoader.js"></script>
+    <script src="../js/exampleLoader.js"></script>
   </head>
   <body>
     <div class="page">
       <h1 class="title">Examples</h1>
-      <p>This is a collection of 2GR example solves. Click on any of the numbers below to get an idea of what 2GR looks like in practice.
+      <p>This is a collection of 2GR example solves. Click on any of the numbers below to get an idea of what the various substeps look like in practice.
       <div id="example-list"></div>
       <br>
       <table id="examples"></table>
@@ -63,7 +62,7 @@
         "r F' r' // 2GLine 3/11                                             ",
         "U' R E2 R' U' r2 // Block 6/17                                     ",
         "R' U2 R U R' U2 R U' R U R U R // F2L 13/30                        ",
-        "R' U2 R U R' U R U R U R' U R U2 R' U2 // 2GLL 16-3/43             "
+        "R' U2 R U R' U R U R U R' U R U2 R' U2 // 2GLL 16/46               "
       ]);
       
       add([
@@ -181,6 +180,87 @@
         "M2 U' R u r2 E M2 U' M2 // Block 9/23                      ",
         "U R' U' R U' R2 U' R' U2 R U' R' U' R // F2L 14/37         ",
         "U' R' U2 R U R' U R2 U2' R' U' R U' R' U // 2GLL 15/52     "
+      ]);
+      
+      add([
+        "D R D2 F D R2 B L D2 F2 U' B' L F2 L' B' D' B L2 U x2 // insp",
+        "R f R U' F u f' // EOPair 7/7                                ",
+        "R' U2 F // CPLine 3/10                                       ",
+        "U2 r' u2 r U2 r // Block 6/16                                ",
+        "R U' R U' R' U R U R2' U R // F2L 11/27                      ",
+        "L U' L' U L2 U2 L' U' L U' L2 U L U' L' E // 2GLL 16/43      "
+      ]);
+      
+      add([
+        "F L2 B L' U L2 D' B2 L' U2 F D F' U L' B2 D L' D2 R' y2 z' // insp",
+        "U F M' F r' f // EOPair 6/6                                       ",
+        "u R2' U' F2 // CPLine 4/10                                        ",
+        "u2 U r u2 r U' M U2 M // Block 9/19                               ",
+        "R U R U R' U2 R U2 R' // F2L+forceAS 9/28                         ",
+        "U2 R' U' R U' R2 U' R' U' R2 U R U R2 U2 // 2GLL 15/43            "
+      ]);
+
+      add([
+        "U2 F D L2 U R D L B U2 R2 U2 B L2 D' B L' U' F' R2 x2 z // insp",
+        "M f U M' U r' U' f2 // EOPair 8/8                              ",
+        "U R U F2 // CPLine 4/12                                        ",
+        "M2 U R' u R2 u R2 U r2 // Block 9/21                           ",
+        "U2 R2 U2 R U' R U R2 U2' R2' // F2L 10/31                      ",
+        "U2 R' U R2 U R' U R U2 R U2 R U R' U R2 U // 2GLL 17/48        "
+      ]);
+
+      add([
+        "R U2 L2 F R2 F2 U F2 L D B' R' D' R D F' U' F2 U' R z2 // insp",
+        "r' R2 u M' U F R' f // EOPair 8/8                             ",
+        "F2 U F u // CPLine 4/12                                       ",
+        "R U2 r2' U' r2 // Block 5/17                                  ",
+        "U R U2 R' U2 R2 U' R' U' R U R2' U' R2 // F2L 14/31           ",
+        "M2 U M U2 M' U M2 u2 // 2GLL 8/39                             "
+      ]);
+
+      add([
+        "B2 L' U L' F2 L2 D2 F2 L' F D2 L U2 L' F2 R B' L D2 B z y // insp",
+        "r' f M F u' r' S2 // EOPair 7/7                                  ",
+        "R' u' F // CPLine 3/10                                           ",
+        "r2 u' r' E2 r U' r2' // Block 7/17                               ",
+        "R' U' R' U R2 U' R' U' R U R U z' // F2L 12/29                   ",
+        "U' x' U' R' D R U R2 U2 R D' R' U2 R2 F // 2GLL 14/43            "
+      ]);
+
+      add([
+        "F R F R' U' F2 L' U2 R F' D L' U B U2 F2 L U L' F x2 // insp",
+        "R' U2 S U f // EOPair 5/5                                   ",
+        "u' U' R' U F2 // CPLine 5/10                                ",
+        "R u r2 u' M2 U2 R U' r2 // Block 9/19                       ",
+        "U R2 U' R' U2 R' U2 z' // F2L 7/26                          ",
+        "U R' U2 R U R' U R2 U2 R' U' R U' R' U' r2 // 2GLL 16/42    "
+      ]);
+
+      add([
+        "U F D2 R' D' R' U2 F' U2 R F R2 F L' F' R D' F2 R' B z' // insp",
+        "r' y' R U' r U2' r2' // EOPair 6/6                             ",
+        "U2 R2 y // CPLine 2/8                                          ",
+        "u2 U M' U2 r R2' u2 r2 // Block 8/16                           ",
+        "U2 R' U' R U' R U' R U R2' U2 R U z' // F2L 13/29              ",
+        "R U R' U R U2 R' U' R U2 R' U' R U' R' r2 // 2GLL 16/45        "
+      ]);
+
+      add([
+        "B D2 F' L F' L' F' R B D' F U2 B2 R U' L' F L' F' R' // insp",
+        "U' r2' u' y' R U r2' // EOPair 6/6                          ",
+        "y R2 U F2 // CPLine 3/9                                     ",
+        "R2 u2 U R U' r2 // Block 6/15                               ",
+        "R U2 R2 U' R2 U' z' // F2L 6/21                             ",
+        "U2 R U R2 U' R2 U' R2 U2 R2 U2 R' U R2 // 2GLL 14/35        "
+      ]);
+
+      add([
+        "L2 F U F2 U' F2 D L F2 U' B' R B L B' R U F' L2 U z' // insp",
+        "r U' R2' y' r U M2' // EOPair 6/6                           ",
+        "y U' r F r' // CPLine 4/10                                  ",
+        "U2 r2 U r2' U R u2 // Block 7/17                            ",
+        "U2 R' U' R' U2 R2 U2 z' // F2L 7/24                         ",
+        "M2 U M' U2 M U M2 U' // 2GLL 8/32                           "
       ]);
     </script>
   </body>

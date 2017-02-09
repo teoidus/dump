@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    
+    <div class="btn-bar"> _</div>
+    <button class="btn" onclick="location.href='../2GR.html';">2GR</button>
+    <button class="btn" onclick="location.href='../EOPair/EOPair.html'">EOPair</button>
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight: bold" onclick="location.href='../CPLine/CPLine.html'">CPLine</button>
+      <div class="dropdown-content">
+        <a href="../CPLine/Recog.html">Recognition</a>
+        <a href="../CPLine/Track.html">Tracking</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Block/Block.html'">Block</button>
+    <button class="btn" onclick="location.href='../F2L/F2L.html'">F2L</button>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='../2GLL/2GLL.html'">2GLL</button>
+      <div class="dropdown-content">
+        <a href="../2GLL/2GLL_U.html">U</a>
+        <a href="../2GLL/2GLL_T.html">T</a>
+        <a href="../2GLL/2GLL_Pi.html">Pi</a>
+        <a href="../2GLL/2GLL_S.html">S</a>
+        <a href="../2GLL/2GLL_AS.html">AS</a>
+        <a href="../2GLL/2GLL_L.html">L</a>
+        <a href="../2GLL/2GLL_H.html">H</a>
+        <a href="../2GLL/2GLL_O.html">O (EPLL)</a>
+      </div>
+    </div>
+      
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='#'">Trainers</button>
+      <div class="dropdown-content">
+        <a href="../Trainers/CP.html">CP</a>
+        <a href="../Trainers/2GLL.html">2GLL</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Examples/Examples.html'">Examples</button>
+    <script src="../js/exampleLoader.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <h1 class="title">CPLine</h1>
+      In this step, we insert the DLF corner (completing a 3x1x1 line on LD) while forcing the remaining 6 corners into one of 120 of 720 possible permutations (this allows us to solve the corners &lt;R,U&gt;). This step is divided into two parts. First, we'll learn to find a "key swap"; this will let us solve the CPLine very crudely by performing single swaps via setups to T permutations (R U R' U' R' F R2 U' R' U' R U R' F). Second, we'll learn how individual face turns like R, U, and F affect the key swap; this will give us a much more efficient approach to CPLine and allow us to predict what our key swap will be after EOPair. With practice, both EOPair and CPLine will be plannable in inspection.<br>
+      <br>
+      If you want to learn about some of the theory behind why key swaps, recognition, and tracking work, or why certain things described below are done they way that they are, the links in the dropdown menu under "CPLine" above provide some extra explanation. The rest of this page contains only what's necessary to learn how to execute CPLine effectively.
+      
+      <h2 class="title">Recognition</h2>
+      <p>
+        After EOPair, the permutation of the 7 unsolved corners can be expressed as a special "key swap." If this swap is carried out after DLF is solved in a certain way, it will reduce the remaining 6 unsolved corners to &lt;R,U&gt;. We will find the key swap by (1) figuring out what the permutation of our LL corners would be if we solved our D layer corners in a special way and then, (2) if it doesn't meet certain requirements, trading out this key swap for a better one that's in "standard form."<br>
+        <br>
+        Building on conventions from the EOPair section, this tutorial will use red front yellow top. This means that the LL corners will all contain yellow and that DLF will be white-blue-red, etc.
+        FAQ format for the theory section
+      </p>
+      
+      <h3>LL Recognition</h3>
+      <p>
+      </p>
+      
+      <h3>Standard form</h3>
+      <p>
+      </p>
+      
+      <h2 class="title">Tracking</h2>
+      <p>
+      
+      </p>
+    </div>
+  </body>
+</html>
