@@ -8,8 +8,8 @@
     <div class="dropdown">
       <button class="dropbtn" style="font-weight: bold" onclick="location.href='../CPLine/CPLine.html'">CPLine</button>
       <div class="dropdown-content">
-        <a href="../CPLine/Recog.html">Recognition</a>
-        <a href="../CPLine/Track.html">Tracking</a>
+        <a href="../CPLine/Recog.html">Theory - Recognition</a>
+        <a href="../CPLine/Track.html">Theory - Tracking</a>
       </div>
     </div>
     <button class="btn" onclick="location.href='../Block/Block.html'">Block</button>
@@ -41,29 +41,29 @@
   <body>
     <div class="page">
       <h1 class="title">CPLine</h1>
-      In this step, we insert the DLF corner (completing a 3x1x1 line on LD) while forcing the remaining 6 corners into one of 120 of 720 possible permutations (this allows us to solve the corners &lt;R,U&gt;). This step is divided into two parts. First, we'll learn to find a "key swap"; this will let us solve the CPLine very crudely by performing single swaps via setups to T permutations (R U R' U' R' F R2 U' R' U' R U R' F). Second, we'll learn how individual face turns like R, U, and F affect the key swap; this will give us a much more efficient approach to CPLine and allow us to predict what our key swap will be after EOPair. With practice, both EOPair and CPLine will be plannable in inspection.<br>
+      In this step, we insert the DLF corner (completing a 3x1x1 line on LD) while forcing the remaining 6 corners into one of 120 of 720 possible permutations (this allows us to solve the corners &lt;R,U&gt;). This step is divided into two parts. First, we'll learn to find a "key swap"; this will let us solve the CPLine very crudely by performing single swaps via setups to T permutations (R U R' U' R' F R2 U' R' U' R U R' F). Second, we'll learn how R, U, and F affect the key swap; this will give us a much more efficient approach to CPLine and allow us to predict what our post-EOPair key swap will be during inspection.<br>
       <br>
-      If you want to learn about some of the theory behind why key swaps, recognition, and tracking work, or why certain things described below are done they way that they are, the links in the dropdown menu under "CPLine" above provide some extra explanation. The rest of this page contains only what's necessary to learn how to execute CPLine effectively.
-      
+      If you want to learn about some of the theory behind why key swaps, recognition, and tracking work, or why certain things described below are done they way that they are, the links in the dropdown menu under "CPLine" above provide some extra explanation. The rest of this page contains only what's necessary to learn how to execute CPLine effectively.<br>
+      <br>
+      <hr>
       <h2 class="title">Recognition</h2>
       <p>
         After EOPair, the permutation of the 7 unsolved corners can be expressed as a special "key swap." If this swap is carried out after DLF is solved in a certain way, it will reduce the remaining 6 unsolved corners to &lt;R,U&gt;. We will find the key swap by (1) figuring out what the permutation of our LL corners would be if we solved our D layer corners in a special way and then, (2) if it doesn't meet certain requirements, trading out this key swap for a better one that's in "standard form."<br>
         <br>
         Building on conventions from the EOPair section, this tutorial will use red front yellow top. This means that the LL corners will all contain yellow and that DLF will be white-blue-red, etc. For convenience's sake (and to help you memorize the permutation of the LL corners), we'll give each of the remaining 7 corners a name that roughly calls to mind its respective sticker colors. D layer corners are Star Wars characters, and LL corners are types of civilizations (note that clockwise LL permutation follows the progression of civilizations from least to most advanced):
-        <table id="corner-names">
-        </table>
+        <table id="corner-names"></table>
+        <br>
         <script>
           var maxWidth = window.getComputedStyle(document.getElementsByClassName("page")[0]).width;
           maxWidth = maxWidth.substring(0, maxWidth.length-2);
           loadExample(document.getElementById("corner-names"), maxWidth, ["Anakin", "Palpatine", "Yoda", "Hunter / gatherer", "Agricultural", "Industrial", "Space-faring"], [
             "y", "y2", "x2 y", "y'", "y'", "y'", ""], undefined, true, true);
         </script>
-        FAQ format for the theory section
       </p>
       
       <h3>LL Recognition</h3>
       <p>
-        If Palpatine is unsolved, pretend that he is whatever corner is currently at DLF. Based on where Yoda and Anakin are, we'll read out an ordered permutation of 3 LL corners as illustrated in the diagrams below by the corners marked in gray (starting at the brightest and ending at the darkest).<br>
+        First we need to find an ordered triple of LL corners.<br>If Palpatine is unsolved, pretend that he is whatever corner is currently at DLF. Now, based on where Yoda and Anakin are, we'll read out an ordered permutation of 3 LL corners as illustrated in the diagrams below by the corners marked in gray (starting at the brightest and ending at the darkest).<br>
         <br>
         If Yoda and Anakin are either both on U or both on D, there are 5 possibilities:
         <table id="yoda-anakin-UD"></table>
@@ -72,34 +72,35 @@
         <table id="yoda-anakin-1only"></table>
         <br>
         Note that any type of Anakin permutation begins diagonally across from Yoda on the U layer, and any type of Yoda permutation begins opposite of the direction the permutation is traced out (so if the permutation goes clockwise, you begin directly counterclockwise of Anakin, and vice versa). Also note that solved cases go counterclockwise while confused cases go clockwise.<br>
+        <br>
       </p>
       <script>
         insertTable(document.getElementById("yoda-anakin-UD"), maxWidth/6 * 5, ["Both solved", "Both swapped", "Anakin-Yoda on U", "Yoda-Anakin on U", "Diag on U"], [
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,EEEEEE,CCCCCC,AAAAAA|446444847|448444444|847444443|746444242|644444144|440440440&hideButtons=true",
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,AAAAAA,CCCCCC,EEEEEE|446444847|448444444|847444441|746444242|644444344|440440440&hideButtons=true",
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,EEEEEE,CCCCCC,AAAAAA|740444640|746444444|641444448|242444844|347444444|448444444&hideButtons=true",
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,EEEEEE,CCCCCC,AAAAAA|640444740|647444444|742444444|341444448|246444844|444444448&hideButtons=true",
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,EEEEEE,CCCCCC,AAAAAA|440444047|442444444|347444446|741444648|244444844|447444448&hideButtons=true"
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,BBBBBB,999999|446444847|448444444|847444443|746444242|644444144|440440440&hideButtons=true",
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,999999,BBBBBB,EEEEEE|446444847|448444444|847444441|746444242|644444344|440440440&hideButtons=true",
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,BBBBBB,999999|740444640|746444444|641444448|242444844|347444444|448444444&hideButtons=true",
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,BBBBBB,999999|640444740|647444444|742444444|341444448|246444844|444444448&hideButtons=true",
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,BBBBBB,999999|440444047|442444444|347444446|741444648|244444844|447444448&hideButtons=true"
         ], ["Any 3 corners on U in clockwise order", "Any 3 corners on U in counterclockwise order", "The remaining 2 corners on U in clockwise order + DRF", "The remaining 2 corners on U in counterclockwise order + DRB", "DRF + the corner on U immediately clockwise of Yoda + DRB"])
         
         insertTable(document.getElementById("yoda-anakin-1only"), maxWidth/6 * 4, ["Solved Anakin", "Confused Anakin", "Solved Yoda", "Confused Yoda"], [
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,EEEEEE,CCCCCC,AAAAAA|840444647|846444444|647444443|741444244|248444444|444444444&hideButtons=true",
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,EEEEEE,AAAAAA,CCCCCC|840444647|846444444|647444444|741444443|248444244|444444444&hideButtons=true",
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,EEEEEE,CCCCCC,AAAAAA|847444640|846444444|642444444|347444442|748444144|444444444&hideButtons=true",
-          "&stickers=FFFFFF,FF8C00,228B22,B22222,999999,DDDD00,CCCCCC,EEEEEE,AAAAAA|847444640|846444444|642444442|347444144|748444444|444444444&hideButtons=true"
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,BBBBBB,999999|840444647|846444444|647444443|741444244|248444444|444444444&hideButtons=true",
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,999999,BBBBBB|840444647|846444444|647444444|741444443|248444244|444444444&hideButtons=true",
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,BBBBBB,999999|847444640|846444444|642444444|347444442|748444144|444444444&hideButtons=true",
+          "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,BBBBBB,EEEEEE,999999|847444640|846444444|642444442|347444144|748444444|444444444&hideButtons=true"
         ], ["Beginning diagonally across from Yoda, 3 LL corners in counterclockwise order", "Beginning diagonally across from Yoda, 3 LL corners in clockwise order", "Beginning clockwise of Anakin, 3 LL corners in counterclockwise order", "Beginning counterclockwise of Anakin, 3 LL corners in clockwise order"])
       </script>
       
       <h3>LL swap</h3>
       <p>
-        The ordered triple from above should follow clockwise permutation of LL corners when CPLine is complete. However, this triple will usually be incorrectly permuted to begin with. If so, you'll need to find a swap of two LL corners that will fix this. If we label our ordered list of corners with the letters (A, B, C), we can do this by looking at two things: (1) how A is related to B, and (2) how B is related to C.<br>
+        The ordered triple from above should follow clockwise permutation of LL corners when CPLine is complete. However, this triple will usually be incorrectly permuted to begin with, and you'll need to find a swap of two LL corners that will fix this. If we label our ordered list of corners with the letters (A, B, C), we can find this LL swap by looking at two things: (1) how A is related to B, and (2) how B is related to C.<br>
         <br>
         To do this we'll define 3 types of relations between two corners X, Y:<br>
         1. Forwards: Y is clockwise of X (e.g. X = hunter/gatherer, Y = agricultural)<br>
         2. Backwards: Y is counterclockwise of X (e.g. X = hunter/gatherer, Y = space-faring)<br>
         3. Jump: Y is two steps ahead of X (e.g. X = agricultural, Y = space-faring, skipping industrial)<br>
         <br>
-        Note that hunter/gatherer directly follows space-faring, so (X = space-faring, Y = hunter/gatherer) is a "forwards" relation. This might seem a little non-intuitive. To remember this, it helps to think of it as a space-faring civilization exploring their galaxy and "starting anew" on a distant planet as a hunter/gatherer society.<br>
+        (Note that hunter/gatherer directly follows space-faring in clockwise permutation of LL corners, so (X = space-faring, Y = hunter/gatherer) is a "forwards" relation. This might seem a little non-intuitive. To remember this, it helps to think of it as a space-faring civilization exploring other galaxies and "starting anew" on a distant planet as a hunter/gatherer society.)<br>
         <br>
         Now, we can figure out which two of A, B, C, D need to be swapped (where D = the last LL corner that wasn't included in the triple. If D happens to be at DLF, pretend that it takes Palpatine's place). The table below lists possible relations (A-B, B-C) and the corresponding LL swap:<br>
         <table width="100%">
@@ -120,6 +121,7 @@
             <td>B, C</td>
           </tr>
         </table>
+        <br>
       </p>
       
       <h3>Standard form</h3>
@@ -128,10 +130,10 @@
         - if Palpatine is unsolved, the LL swap above must be rewritten into one that involves him.<br>
         - if Palpatine is solved, the swap above must be rewritten into a swap of two corners on R.<br>
         <br>
-        All possible LL swaps can be captured by the 5 triplets below. A swap (illustrated by two corner pieces with the same color) in a triplet can be safely rewritten as any of the other two swaps in the same triplet. If the swap you have needs to be rewritten, look for it in the table below and find a working rewrite.<br>
+        All possible LL swaps can be captured by the 5 diagrams below. A swap (illustrated by two corner pieces with the same color) in a diagram can be safely rewritten as any of the other two swaps in the same diagram. If your LL swap needs to be rewritten, look for it in the table below to find a rewrite that is in standard form.<br>
         <br>
         <table id="standardization-tables"></table>
-        (the names of each triplet are based on move sequences that generate 2 of its 3 swaps).<br>
+        (theory tidbit: the names of each diagram are based on move sequences that generate 2 of its 3 swaps).<br>
         <br>
       </p>
       <script>
@@ -161,8 +163,73 @@
         </script>
       </p>
       
+      <hr>
       <h2 class="title">Tracking</h2>
       <p>
+        To efficiently solve EOPair and CPLine in inspection, you'll need to know how &lt;R, U, F&gt; changes key swaps.<br>
+        <br>
+      </p>
+      
+      <h3>&lt;R, U&gt;</h3>
+      <p>
+        R and U are fairly straightforward:<br>
+        - if your key swap involves Palpatine, R and U simply move the two swap pieces around normally.<br>
+        - if your key swap does not involve Palpatine, you'll have to make sure that it's always in standard form (i.e. only involves corner pieces on R). R and U moves will still move the two swap pieces around normally, but sometimes you may have to rewrite the swap if it starts to involve a corner not on R.<br>
+        <br>
+      </p>
+      
+      <h3>&lt;F&gt;</h3>
+      <p>
+        F moves are more complicated. They will move Palpatine around normally, but affect the other swap piece in obscure ways. You'll have to learn what F moves do to every possible key swap. We can do this by memorizing ordered quadruples of key swaps (A, B, C, D), where:<br>
+        - an F will get you from A to B, B to C, C to D, or D to A;<br>
+        - an F' will get you from A to D, D to C, C to B, or B to A;<br>
+        - an F2 will get you from A to C, B to D, C to A, or D to B.<br>
+        <br>
+        There are 12 quadruples to memorize. The corners in red represent a starting key swap A (where solid red = Palpatine. If there is no light red corner, A = no-swap, and if there is no solid red corner, Palpatine is solved). Since Palpatine moves around normally, the diagrams don't keep track of his movement; corners in grayscale illustrate what happens to the non-Palpatine swap piece as you move through the quadruple from B to D (starting at the brightest and ending at the darkest).<br>
+        <br>
+        To aid memorization, quadruples are divided into 3 categories.<br>
+        <br>
+        Singularities - key swaps that aren't affected by F moves:<br>
+        <table id="singularities"></table>
+        <br>
+        
+        Paths - quadruples where Palpatine isn't affected:<br>
+        <table id="paths"></table>
+        <br>
+        
+        Creatures - quadruples where Palpatine is affected:<br>
+        <table id="creatures"></table>
+        <br>
+      </p>
+      <script>
+        insertTable(document.getElementById("paths"), maxWidth/6 * 3, ["Launch", "Cloud", "Spaz"], [
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|400000003|000000000|003000002|300000201|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|300000201|000000000|201000000|100000004|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|104000300|000000000|300000002|004000205|000000000|000000000&hideButtons=true"
+        ], ["", "", ""])
+        insertTable(document.getElementById("singularities"), maxWidth/6 * 4, ["Sun", "Obelisk", "Chevron", "Point"], [
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|004000000|000000000|000000000|004000000|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|005000000|000000000|000000000|005000004|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|000000000|000000000|000000005|000000504|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|001000000|000000000|000000400|001000000|000000000|000000000&hideButtons=true",
+        ], ["", "", "", "In this case, Palpatine moves, but the other swap piece stays constant."])
+        insertTable(document.getElementById("creatures"), maxWidth/6 * 5, ["Tripod", "Seahorse", "Horseshoe", "Twister", "Ground"], [
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|305000002|000000000|002000000|505000001|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|205000003|000000000|003000001|305000105|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|100000200|000000000|200000003|000000505|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|000000301|000000000|305000005|100000502|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|005000100|000000000|100000002|005000503|000000000|000000000&hideButtons=true",
+        ], ["URF is stickered with two colors because it's part of A and C.", "", "", "", ""])
+      </script>
+      
+      <hr>
+      <h2 class="title">Execution</h2>
+      <p>
+        The above will allow you to find a key swap in inspection and predict what will happen to it through EOPair (this is the reason why EOPair is done &lt;R,r,U,u,F,f&gt;). Now, instead of using T permutations, we can move the swap pieces around normally with &lt;R,U&gt; until Palpatine is on the F face and the other swap piece is at URB (which puts the key swap into the Point quadruple), and then use an F move to solve Palpatine while changing our key swap from Palpatine-URB to solved (since the Point quadruple includes the fully solved state, we know that once we solve Palpatine with an F move the key swap will also be solved).<br>
+        <br>
+        If Palpatine is already solved, twisted in place, or the key swap = no-swap, start with an F move to displace Palpatine or change the key swap, and then proceed with the above.<br>
+        <br>
+        If you're having trouble seeing how this is done, take a look at some <a href="../Examples/Examples.html">example solves</a>.
       </p>
     </div>
   </body>

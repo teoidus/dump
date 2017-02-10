@@ -8,8 +8,8 @@
     <div class="dropdown">
       <button class="dropbtn" onclick="location.href='../CPLine/CPLine.html'">CPLine</button>
       <div class="dropdown-content">
-        <a href="../CPLine/Recog.html">Recognition</a>
-        <a href="../CPLine/Track.html">Tracking</a>
+        <a href="../CPLine/Recog.html">Theory - Recognition</a>
+        <a href="../CPLine/Track.html">Theory - Tracking</a>
       </div>
     </div>
     <button class="btn" onclick="location.href='../Block/Block.html'">Block</button>
@@ -115,9 +115,10 @@
         var demoString = (id == "recognition") ? "&godmode=true&setup=x2 y " + scrambleString
           : getDemoFixed(table.scramble.split(" ").slice(0, Math.floor(len/2)).join(" "));
         var srcs = [demoURL + demoString];
+        var scrambles = [scrambleString];
         for (var i = 0; i < titleTexts.length-1; ++i)
         {
-          srcs.push(demoURL + getDemoFixed(getFakeScramble(len, table.scramble)));
+          srcs.push(demoURL + getDemoFixed(getFakeScramble(len, table.scramble, )));
         }
         table.answer = 1 + Math.floor((titleTexts.length-1) * Math.random());
         srcs[table.answer] = demoURL + getDemoFixed(table.scramble);
