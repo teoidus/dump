@@ -41,26 +41,23 @@
   </head>
   <body>
     <div id="page" class="page">
-      <h1 class="title">L</h1>
-      Recognition is done mainly by looking at patterns in the 2x2 blocks of oriented pieces.<br><br>
+      <h1 class="title">O</h1>
+      This set is equivalent to EPLL. Recognize by looking at relationships between edge and corner stickers.<br>
+      The 4 standard EPLLs are listed first. If you want, you can continue going down the list and learn some additional algorithms for different angles.<br>
+      <br>
       <table id="algs"></table>
     </div>
     <script>
       var table = document.getElementById("algs");
       // alg, recognition
       loadAlgs(table, [
-        ["R U' R' r' F2 r U r' F r R U2 R'", "Block"],
-        ["R U R' U R U' R' U R U' R' U R U2 R'", "H-perm<br>R U R' (sexy')2 U R U2 R'"],
-        ["y' R' U2 R U R' U R U2 R' U' R U' R' U2 R", "Z-perm<br>BS' U2 BS"],
-        ["y' R' U' R U' R' U2 R U2 R' U2 R U R' U R", "adjacent/adjacent, no matching colors<br>BS U2 BS'"],
-        ["R U R' U R U2 R' U R' U' R U' R' U2 R", "opposite/bar<br>S U BS"],
-        ["R2' U' R U R U' R' U' R U' R' U R' U R2", "adjacent/bar<br>"],
-        ["y2 R2 U R' U R' U' R U' R' U' R U R U' R2", "adjacent/adjacent, edge on R matches a corner sticker"],
-        ["R U2 R' U' R U' R' U R' U2' R U R' U R", "adjacent/opposite<br>S' U BS'"],
-        ["y' R' U' R U' R' U2 R U' R U R' U R U2 R'", "bar/opposite<br>BS U' S (mirror of opposite/bar)"],
-        ["y' R2 U R' U' R' U R U R' U R U' R U' R2", "bar/adjacent<br>(mirror of adjacent/bar)"],
-        ["y' R' U2 R U R' U R U' R U2 R' U' R U' R'", "opposite/adjacent<br>BS' U' S' (mirror of adjacent/opposite)"],
-        ["y R2' U' R U' R U R' U R U R' U' R' U R2", "adjacent/adjacent, edge on F matches a corner sticker<br>(mirror of the other adjacent/adjacent case)"]
+        ["M2 U M' U2 M U M2", "Bar/adjacent"],
+        ["M2 U' M' U2 M U' M2", "Bar/opposite"],
+        ["M2 U M2 U2 M2 U M2", "Opposite/opposite"],
+        ["M2 U M2 U M' U2 M2 U2 M'", "Adjacent/adjacent, same colors"],
+        ["M2 U' M2 U' M' U2 M2 U2 M'", "Adjacent/adjacent, different colors"],
+        ["M2 U' M U2 M' U' M2", "Adjacent/adjacent, common F color"],
+        ["M2 U M U2 M' U M2", "Adjacent/opposite"],
       ])
     </script>
   </body>

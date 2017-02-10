@@ -118,7 +118,7 @@
         var scrambles = [scrambleString];
         for (var i = 0; i < titleTexts.length-1; ++i)
         {
-          srcs.push(demoURL + getDemoFixed(getFakeScramble(len, table.scramble, )));
+          srcs.push(demoURL + getDemoFixed(getFakeScramble(len, table.scramble)));
         }
         table.answer = 1 + Math.floor((titleTexts.length-1) * Math.random());
         srcs[table.answer] = demoURL + getDemoFixed(table.scramble);

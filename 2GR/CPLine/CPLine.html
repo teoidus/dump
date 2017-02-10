@@ -63,7 +63,7 @@
       
       <h3>LL Recognition</h3>
       <p>
-        First we need to find an ordered triple of LL corners.<br>If Palpatine is unsolved, pretend that he is whatever corner is currently at DLF. Now, based on where Yoda and Anakin are, we'll read out an ordered permutation of 3 LL corners as illustrated in the diagrams below by the corners marked in gray (starting at the brightest and ending at the darkest).<br>
+        The first step towards getting our key swap is to find an ordered triple of LL corners.<br>If Palpatine is unsolved, pretend that he is whatever corner is currently at DLF. Now, based on where Yoda and Anakin are, we'll read out an ordered permutation of 3 LL corners as illustrated in the diagrams below by the corners marked in gray (starting at the brightest and ending at the darkest).<br>
         <br>
         If Yoda and Anakin are either both on U or both on D, there are 5 possibilities:
         <table id="yoda-anakin-UD"></table>
@@ -185,7 +185,7 @@
         - an F' will get you from A to D, D to C, C to B, or B to A;<br>
         - an F2 will get you from A to C, B to D, C to A, or D to B.<br>
         <br>
-        There are 12 quadruples to memorize. The corners in red represent a starting key swap A (where solid red = Palpatine. If there is no light red corner, A = no-swap, and if there is no solid red corner, Palpatine is solved). Since Palpatine moves around normally, the diagrams don't keep track of his movement; corners in grayscale illustrate what happens to the non-Palpatine swap piece as you move through the quadruple from B to D (starting at the brightest and ending at the darkest).<br>
+        There are 13 quadruples to memorize. The corners in red represent a starting key swap A (where solid red = Palpatine. If there is no light red corner, A = no-swap, and if there is no solid red corner, Palpatine is solved). Since Palpatine moves around normally, the diagrams don't keep track of his movement; corners in grayscale illustrate what happens to the non-Palpatine swap piece as you move through the quadruple from B to D (starting at the brightest and ending at the darkest).<br>
         <br>
         To aid memorization, quadruples are divided into 3 categories.<br>
         <br>
@@ -200,6 +200,8 @@
         Creatures - quadruples where Palpatine is affected:<br>
         <table id="creatures"></table>
         <br>
+        So now, for example: if your key swap is DFR (Palpatine) + URF, you can figure out what an F move might do to it by looking for the DFR-URF swap in the diagrams above (in this case, it happens to be in Seahorse) and reading out the next swap in the quadruplet (DFR-URF = D in the Seahorse quadruplet, so an F move would turn the key swap into A in the Seahorse quadruplet, which is a URB-DRB swap with Palpatine solved).<br>
+        <br>
       </p>
       <script>
         insertTable(document.getElementById("paths"), maxWidth/6 * 3, ["Launch", "Cloud", "Spaz"], [
@@ -207,12 +209,13 @@
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|300000201|000000000|201000000|100000004|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|104000300|000000000|300000002|004000205|000000000|000000000&hideButtons=true"
         ], ["", "", ""])
-        insertTable(document.getElementById("singularities"), maxWidth/6 * 4, ["Sun", "Obelisk", "Chevron", "Point"], [
+        insertTable(document.getElementById("singularities"), maxWidth/6 * 5, ["Sun", "Obelisk", "Chevron", "Spacecraft", "Point"], [
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|004000000|000000000|000000000|004000000|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|005000000|000000000|000000000|005000004|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|000000000|000000000|000000005|000000504|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|004000005|000000000|005000000|504000000|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|001000000|000000000|000000400|001000000|000000000|000000000&hideButtons=true",
-        ], ["", "", "", "In this case, Palpatine moves, but the other swap piece stays constant."])
+        ], ["", "", "", "", "In this special case, Palpatine moves, but the other swap piece stays constant."])
         insertTable(document.getElementById("creatures"), maxWidth/6 * 5, ["Tripod", "Seahorse", "Horseshoe", "Twister", "Ground"], [
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|305000002|000000000|002000000|505000001|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|205000003|000000000|003000001|305000105|000000000|000000000&hideButtons=true",
@@ -230,6 +233,8 @@
         If Palpatine is already solved, twisted in place, or the key swap = no-swap, start with an F move to displace Palpatine or change the key swap, and then proceed with the above.<br>
         <br>
         If you're having trouble seeing how this is done, take a look at some <a href="../Examples/Examples.html">example solves</a>.
+        <br>
+        You can also use the <a href="../Trainers/CP.html">CP trainer</a> to get practice tracking and recognizing key swaps quickly.<br>
       </p>
     </div>
   </body>
