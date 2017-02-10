@@ -1,5 +1,5 @@
-html, body {
-  font-family: sans-serif;
+html, body, head {
+  font-family: tahoma;
   text-space-collapse: discard;
   margin: 0px;
 }
@@ -73,7 +73,7 @@ html, body {
 }
 
 .page {
-  margin: 10px;
+  margin: 30px;
 }
 
 .demo {

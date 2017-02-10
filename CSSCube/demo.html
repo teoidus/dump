@@ -81,6 +81,11 @@
         setTimeout(function() { c.loadAnimation(decodeURIComponent(args.moves)); }, 100);
       }
       
+      if (typeof args.hideButtons != "undefined")
+      {
+        document.getElementById("bar").style.visibility = "hidden";
+      }
+      
       var prev = document.getElementById("prev");
       var next = document.getElementById("next");
       var play = document.getElementById("play");

@@ -74,8 +74,6 @@ CSSCube.prototype.resetTransforms = function() {
     var origin = origins[sticker];
     this.origins[i] = new RelativeOrigin(0.5+origin[0], 0.5+origin[1], -1.5,
       this.size/3 + this.spacing); // this.size/3 = length of sticker
-      console.log(this.size/3, this.spacing);
-      console.log(this.origins[i]);
 
     this.initials[i] = {
       left: (sticker%3) * this.size/3,

@@ -53,11 +53,13 @@
       </p>
       <table id="good-bad-examples"></table>
       <script>
+        var maxWidth = window.getComputedStyle(document.getElementsByClassName("page")[0]).width;
+        maxWidth = maxWidth.substring(0, maxWidth.length-2);
         var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|000020050|000000000|010030000|000000000|000010000|000000000";
-        loadExample(document.getElementById("good-bad-examples"), ["good", "good", "good", "bad", "bad", "bad"], [
+        loadExample(document.getElementById("good-bad-examples"), maxWidth, ["good", "good", "good", "bad", "bad", "bad"], [
           "U' // solvable by U' R2 D",
           "R' // solvable by R2 D",
-          "F' // solvable by R' D", "U' // permutable by U' R2 D", "R' // permutable by R2 D", "// permutable by R' D"], stickers, true);
+          "F' // solvable by R' D", "U' // permutable by U' R2 D", "R' // permutable by R2 D", "// permutable by R' D"], stickers, true, true);
       </script>
       <p>
       You can determine which edges are bad by applying this definition to every single edge on the cube.
@@ -98,11 +100,11 @@
          var list = document.getElementById("4flip-list");
          var table = document.getElementById("4flip-examples");
          var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|000021000|000005000|000430050|050000050|000010000|000003000";
-         addExample(list, table, ["collect", "collect", "flip"], ["U // move the bad edge at UR onto F", "R // move DR onto F", "F // correct all 4 edges"], stickers);
+         addExample(list, table, maxWidth/6 * 3, ["collect", "collect", "flip"], ["U // move the bad edge at UR onto F", "R // move DR onto F", "F // correct all 4 edges"], stickers);
          var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|000421030|050000000|050030050|050000000|000010000|000000000";
-         addExample(list, table, ["collect", "collect", "flip"], ["L // move UL onto F", "R' // move UR onto F", "F // correct all 4 edges"], stickers);
+         addExample(list, table, maxWidth/6 * 3, ["collect", "collect", "flip"], ["L // move UL onto F", "R' // move UR onto F", "F // correct all 4 edges"], stickers);
          var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|040023010|000000000|050034000|050200000|050010000|000000000";
-         addExample(list, table, ["hide", "collect", "collect", "flip"], ["F2 // move FU and DR to make way for UB and UR", "R' // move UR onto F", "U2 // move UB onto F", "F // correct all 4 edges"], stickers);
+         addExample(list, table, maxWidth/6 * 4, ["hide", "collect", "collect", "flip"], ["F2 // move FU and DR to make way for UB and UR", "R' // move UR onto F", "U2 // move UB onto F", "F // correct all 4 edges"], stickers);
       </script>
       
       <p>

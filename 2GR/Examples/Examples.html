@@ -50,10 +50,14 @@
     <script>
       var list = document.getElementById("example-list");
       var table = document.getElementById("examples");
-      var steps = ["Scramble + Inspection", "EOPair", "CPLine", "Block", "F2L", "2GLL"];
+      var steps = ["Scramble + inspection", "EOPair", "CPLine", "Block", "F2L", "2GLL"];
+      
+      var maxWidth = window.getComputedStyle(document.getElementsByClassName("page")[0]).width;
+      maxWidth = maxWidth.substring(0, maxWidth.length-2);
+        
       function add(moveStrings)
       {
-        addExample(list, table, steps, moveStrings);
+        addExample(list, table, maxWidth, steps, moveStrings);
       }
       
       add([
@@ -261,6 +265,15 @@
         "U2 r2 U r2' U R u2 // Block 7/17                            ",
         "U2 R' U' R' U2 R2 U2 z' // F2L 7/24                         ",
         "M2 U M' U2 M U M2 U' // 2GLL 8/32                           "
+      ]);
+
+      add([
+        "F L2 D2 L B' U L F R' F' U' F D' B2 U' F R B D2 R' y2 x // insp",
+        "F' r E' r' M U F R f2 // EOPair 9/9                            ",
+        "R' U2 r' F r // CPLine 5/14                                    ",
+        "U' r' U2 r u2 U' R u2 // Block 8/22                            ",
+        "R U2 z' // F2L-E 2/24                                          ",
+        "y2 U R U R' U2 R U' R' U' R U2 R' U2 R2 // L5E 14/38           "
       ]);
     </script>
   </body>
