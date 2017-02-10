@@ -1,6 +1,6 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="../style.css">
+    <link rel="stylesheet" type="text/css" href="../style.ss">
     
     <div class="btn-bar"> _</div>
     <button class="btn" onclick="location.href='../2GR.html';">2GR</button>
@@ -124,12 +124,15 @@
       
       <h3>Standard form</h3>
       <p>
-        If Palpatine is unsolved, the LL swap above must be rewritten into one that involves him. If Palpatine is solved, the swap above must be rewritten into a swap of two corners on R. (Without this step, tracking becomes much more difficult.)<br>
+        To convert our LL swap into a key swap, we must put it into a "standard form":<br>
+        - if Palpatine is unsolved, the LL swap above must be rewritten into one that involves him.<br>
+        - if Palpatine is solved, the swap above must be rewritten into a swap of two corners on R.<br>
         <br>
         All possible LL swaps can be captured by the 5 triplets below. A swap (illustrated by two corner pieces with the same color) in a triplet can be safely rewritten as any of the other two swaps in the same triplet. If the swap you have needs to be rewritten, look for it in the table below and find a working rewrite.<br>
         <br>
         <table id="standardization-tables"></table>
-        (the names of each triplet are based on move sequences that generate 2 of its 3 swaps).
+        (the names of each triplet are based on move sequences that generate 2 of its 3 swaps).<br>
+        <br>
       </p>
       <script>
         insertTable(document.getElementById("standardization-tables"), maxWidth/6 * 4, ["(R U R' U')3", "U2", "(R' U' R U)3", "R2 U2 R2", "R2"], [
