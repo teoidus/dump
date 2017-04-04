@@ -88,7 +88,7 @@
           "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,999999,BBBBBB|840444647|846444444|647444444|741444443|248444244|444444444&hideButtons=true",
           "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,EEEEEE,BBBBBB,999999|847444640|846444444|642444444|347444442|748444144|444444444&hideButtons=true",
           "&stickers=FFFFFF,FF8C00,228B22,B22222,777777,DDDD00,BBBBBB,EEEEEE,999999|847444640|846444444|642444442|347444144|748444444|444444444&hideButtons=true"
-        ], ["Beginning diagonally across from Yoda, 3 LL corners in counterclockwise order", "Beginning diagonally across from Yoda, 3 LL corners in clockwise order", "Beginning clockwise of Anakin, 3 LL corners in counterclockwise order", "Beginning counterclockwise of Anakin, 3 LL corners in clockwise order"])
+        ], ["Beginning diagonally across from Yoda, 3 LL corners in counterclockwise order ('check mark' shape)", "Beginning diagonally across from Yoda, 3 LL corners in clockwise order ('saber slash' shape)", "Beginning clockwise of Anakin, 3 LL corners in counterclockwise order", "Beginning counterclockwise of Anakin, 3 LL corners in clockwise order"])
       </script>
       
       <h3>LL swap</h3>
@@ -185,7 +185,7 @@
         - an F' will get you from A to D, D to C, C to B, or B to A;<br>
         - an F2 will get you from A to C, B to D, C to A, or D to B.<br>
         <br>
-        There are 13 quadruples to memorize. The corners in red represent a starting key swap A (where solid red = Palpatine. If there is no light red corner, A = no-swap, and if there is no solid red corner, Palpatine is solved). Since Palpatine moves around normally, the diagrams don't keep track of his movement; corners in grayscale illustrate what happens to the non-Palpatine swap piece as you move through the quadruple from B to D (starting at the brightest and ending at the darkest).<br>
+        There are 15 quadruples to memorize. The corners in red represent a starting key swap A (where solid red = Palpatine. If there is no light red corner, A = no-swap, and if there is no solid red corner, Palpatine is solved). Since Palpatine moves around normally, the diagrams don't keep track of his movement; corners in grayscale illustrate what happens to the non-Palpatine swap piece as you move through the quadruple from B to D (starting at the brightest and ending at the darkest).<br>
         <br>
         To aid memorization, quadruples are divided into 3 categories.<br>
         <br>
@@ -209,13 +209,15 @@
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|300000201|000000000|201000000|100000004|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|104000300|000000000|300000002|004000205|000000000|000000000&hideButtons=true"
         ], ["", "", ""])
-        insertTable(document.getElementById("singularities"), maxWidth/6 * 5, ["Sun", "Obelisk", "Chevron", "Spacecraft", "Point"], [
+        insertTable(document.getElementById("singularities"), maxWidth/6 * 5, ["Sun", "Obelisk", "Chevron", "Spacecraft 1", "Spacecraft 2", "Spacecraft 3", "Point"], [
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|004000000|000000000|000000000|004000000|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|005000000|000000000|000000000|005000004|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|000000000|000000000|000000005|000000504|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|004000005|000000000|005000000|504000000|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|400000500|000000000|500000000|000000000|000000000|000000000&hideButtons=true",
+          "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|405000000|000000000|000000000|005000000|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|001000000|000000000|000000400|001000000|000000000|000000000&hideButtons=true",
-        ], ["", "", "", "", "In this special case, Palpatine moves, but the other swap piece stays constant."])
+        ], ["", "", "", "", "", "", "In this special case, Palpatine moves, but the other swap piece stays constant."])
         insertTable(document.getElementById("creatures"), maxWidth/6 * 5, ["Tripod", "Seahorse", "Horseshoe", "Twister", "Ground"], [
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|305000002|000000000|002000000|505000001|000000000|000000000&hideButtons=true",
           "&stickers=777777,EEEEEE,BBBBBB,999999,FF0000,FFAAAA|205000003|000000000|003000001|305000105|000000000|000000000&hideButtons=true",
@@ -234,7 +236,9 @@
         <br>
         If you're having trouble seeing how this is done, take a look at some <a href="../Examples/Examples.html">example solves</a>.
         <br>
-        You can also use the <a href="../Trainers/CP.html">CP trainer</a> to get practice tracking and recognizing key swaps quickly.<br>
+        It will take some time before you become comfortable with planning both EOPair and CPLine (a.k.a. "2GLine") in inspection. As a stepping stone, you can identify a key swap + plan the EOPair in inspection, then track your swap through your EOPair execution. You can also use the <a href="../Trainers/CP.html">CP trainer</a> to get practice tracking and recognizing key swaps quickly.<br>
+        <br>
+        Click <a href="../Block/Block.html">here</a> to move on to the next step (Block).
       </p>
     </div>
   </body>

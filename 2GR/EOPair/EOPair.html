@@ -141,9 +141,6 @@
       Since we will be using wide moves, the centers are allowed to change position throughout EO, so F and B turns won't necessarily flip edges. Instead, you'll have to keep track of where the red/orange faces are, and a quarter turn on any of the red/orange faces will flip all 4 edges on that face (note that if the red center is on L, an r move is a quarter turn on the red face, an R move is a quarter turn on the orange face, and an M' is a quarter turn on both the red and orange faces).
       </p>
       
-      Here are some useful non-intuitive 4flip solutions (other cases can be completed or reduced to these fairly easily if you're comfortable with ZZ-style EO):
-      <table id="ruf-4flips"></table>
-      
       <p>
       Note: even though we are rotating the cube so that DLB is solved, edge detection should still be done with respect to the red center. Don't treat whatever center ends up on F after your rotation as your red center and detect EO that way.<br>
       Note 2: this won't make EO take any more moves. Since L, B, and D moves can be done with r x', f z', and u y' respectively, any sequence of &lt;R,U,L,D,F,B&gt; can be rewritten as an equally long sequence of &lt;R,r,U,u,F,f&gt;.<br>

@@ -41,26 +41,23 @@
   </head>
   <body>
     <div id="page" class="page">
-      <h1 class="title">T</h1>
-      Recognition is identical to U set recognition: look at patterns in the 2x3 block of oriented pieces. L refers to the left 2x1, R refers to the right 2x1, and F refers to the front 3x1. Many cases are simply inverses of U set algorithms.<br><br>
+      <h1 class="title">H</h1>
+      Look at 2x1 bars on L and R to recognize.<br><br>
       <table id="algs"></table>
     </div>
     <script>
       var table = document.getElementById("algs");
       // alg, recognition
       loadAlgs(table, [
-        ["R U R' U R U2' R' U2 R' U' R U' R' U2 R", "Block<br>S U2 BS"],
-        ["R U2 R' U' R U' R2 U2' R U R' U R", "Z-perm pattern on R"],
-        ["y' R U R2' U' R2 U' R2' U2' R U' R U' R'", "Opposites on R, adjacents on F"],
-        ["y2 R' U2' R U R' U R U' R' U' R U' R' U2 R", "Pair on R, opposites on F<br>BS' U' BS"],
-        ["y' R' U' R U' R' U R U' R U R2' U R2 U2' R'", "Pair on R, adjacents on F"],
-        ["y' R U R' U R U2' R' U' R U2 R' U' R U' R'", "Line on F, adjacents on R"],
-        ["x' U' R' D R U R2 U2 R D' R' U2 R2 x", "H-perm pattern<br>y R2 U R2' U R U' R' U R2 U2' R' U R' U R U' R' also works but is longer"],
-        ["y' R' U2' R U R' U R2 U2' R' U' R U' R'", "Z-perm pattern on L"],
-        ["y' R U R' U R' U2 R2 U R2 U R2 U' R'", "Opposites on L, adjacents on F"],
-        ["y R U2 R' U' R U' R' U R U R' U R U2' R'", "Pair on L, opposites on F"],
-        ["R U R' U R U' R' U R' U' R2 U' R2' U2' R", "Pair on L, adjacents on F"],
-        ["R' U' R U' R' U2 R U R' U2' R U R' U R", "Line on F, adjacents on L"],
+        ["R U2 R' U' R U R' U' R U' R'", "(S')2<br>The antisune hides the blue 2x1 on B"],
+        ["R' U2 R U R' U' R U R' U R", "(BS')2<br>The backantisune hides the green 2x1 on F"],
+        ["y2 R U R' U R U' R' U R U2 R'", "S2<br>The sune breaks the red 2x1 on B"],
+        ["R' U' R U' R' U R U' R' U2 R", "(BS)2<br>The backsune breaks the red 2x1 on F"],
+        ["y2 R U2 R' U' R U' R' U' R' U' R U' R' U2 R", "S' U' BS<br>L and R both contain only red/orange stickers. The antisune hides the orange 2x1 on B"],
+        ["y2 R' U2 R U R' U R U R U R' U R U2 R'", "BS' U S<br>L and R both contain only red/orange stickers. The backantisune hides the red 2x1 on F"],
+        ["R U R' U R U2 R' U' R' U2 R U R' U R", "S U' BS'<br>No bars, and corner stickers don't match edge stickers adjacent to them."],
+        ["R U2 R' U' R U R' U' R U' R' M2 U' M' U2 M U' M2", "S'2 UPerm<br>Pure twist. No bars, and corner stickers match edge stickers adjacent to them."],
+        ["r' U r U r' U r U' r' U' r U' r' U r U r' U r U' r' U' r", "Alternate pure twist algorithm. Longer, but more fun to execute.<br>Memorize as follows (let A = r' U r and B = r' U' r): (A U A U' B) U' (A U A U' B)<br>Can also be executed as: R' F R U R' F R U' R' F' R U' R' F R U R' F R U' R' F' R"]
       ])
     </script>
   </body>
