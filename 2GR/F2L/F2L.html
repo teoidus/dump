@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    
+    <div class="btn-bar"> _</div>
+    <button class="btn" onclick="location.href='../2GR.html';">2GR</button>
+    <button class="btn" onclick="location.href='../EOPair/EOPair.html'">EOPair</button>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='../CPLine/CPLine.html'">CPLine</button>
+      <div class="dropdown-content">
+        <a href="../CPLine/Recog.html">Theory - Recognition</a>
+        <a href="../CPLine/Track.html">Theory - Tracking</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Block/Block.html'">Block</button>
+    <button class="btn" style="font-weight: bold" onclick="location.href='../F2L/F2L.html'">F2L</button>
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='../2GLL/2GLL.html'">2GLL</button>
+      <div class="dropdown-content">
+        <a href="../2GLL/2GLL_U.html">U</a>
+        <a href="../2GLL/2GLL_T.html">T</a>
+        <a href="../2GLL/2GLL_Pi.html">Pi</a>
+        <a href="../2GLL/2GLL_S.html">S</a>
+        <a href="../2GLL/2GLL_AS.html">AS</a>
+        <a href="../2GLL/2GLL_L.html">L</a>
+        <a href="../2GLL/2GLL_H.html">H</a>
+        <a href="../2GLL/2GLL_O.html">O (EPLL)</a>
+      </div>
+    </div>
+      
+    <div class="dropdown">
+      <button class="dropbtn" onclick="location.href='#'">Trainers</button>
+      <div class="dropdown-content">
+        <a href="../Trainers/CP.html">CP</a>
+        <a href="../Trainers/2GLL.html">2GLL</a>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='../Examples/Examples.html'">Examples</button>
+    <script src="../js/exampleLoader.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <h1 class="title">F2L</h1>
+      In this step, we will use &lt;R,U&gt; to expand our 2x2x3 into a 2x3x3. Generally, this is done by first solving a 2x2x1 square, and then attaching a 2x2x1 pair.<br>
+      <br>
+      As a general rule of thumb, this step should take no more than 16 moves in the worst case (8 for square, 8 for pair). While pretty straightforward, there are some tricks that can be used to increase efficiency. On the examples page, the following solves contain interesting F2Ls that you might find helpful:<br>
+      <br>
+        <b>1</b> forms orange-green-white pair and preserves it while solving the red-green-white square instead of greedily solving it right away<br>
+        <b>3</b> U2 R2 U' R forms orange-green-white and white-green-red pairs, which are then solved into a block together<br>
+        <b>4</b> constructs two 2x3x1 lines and solves them together (in this case, more efficient than solving a square and a pair)<br>
+        <b>5</b> instead of solving the F2L on white, we use the free yellow-orange-blue pair staring us in the face to build the F2L on blue<br>
+        <b>7</b> once again we can use the free square right in front of us, giving a very lucky F2L<br>
+        <b>10</b> instead of solving F2L on white, we use the yellow-green-orange pair staring us in the face to build pseudo-F2L on yellow<br>
+        <b>16</b> instead of inserting the last pair with U R U' R', we use U2 R U2' R' to force a Sune/Antisune last layer case (these tend to be ~3-4 moves shorter)<br>
+        <b>44</b> after inserting the first line in Block, the second line is very awkward. Instead, we can make the right half of the F2L right away and complete the second line afterwards.<br>
+        <b>48</b> since we solved the first square while solving the Block, we can place the last corner + complete corner orientation with one of 27 algorithms (CLS), leaving only EPLL.<br>
+      <script>
+      </script>
+    </div>
+  </body>
+</html>

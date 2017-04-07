@@ -43,16 +43,19 @@
       <h1 class="title">Block</h1>
       In this step, we will use &lt;R,U,r2,u2&gt; to expand the 1x1x3 line into a 2x2x3 block. Usually, the best approach is first to expand the 1x1x3 into a 1x2x3 (by attaching a 1x1x3 at DF-DB or LF-LB), and then to expand the 1x2x3 into a 2x2x3 (by attaching a second 1x1x3 at LF-LB or DF-DB).<br>
       <br>
-      While largely intuitive, below are some examples to help show how these lines can be made and attached:<br>
-      <table id="block-examples"></table>41, 42
+      As a general rule of thumb, this step should take no more than 10 moves in the worst case (5 moves per line). While pretty straightforward, there are some tricks that can be used to increase efficiency. On the examples page, the following solves contain interesting blocks that you might find helpful:<br>
+      <br>
+        <b>1</b> uses an E move to insert the first line, allowing the second line to be completed in 3 moves<br>
+        <b>7</b> uses a u2 to solve an otherwise awkward second line in 4 moves<br>
+        <b>8</b> inserts the first line with an M2 instead of an r2, allowing the second line to be inserted in 1 move<br>
+        <b>13</b> inserts the first line with an r2 instead of an M2, allowing the second line to be inserted in 3 moves<br>
+        <b>18</b> solves the green 3x2x1 line instead of the blue 3x2x1 line, allowing the block to be built in 5 moves in exchange for harder F2L recognition and a u2 AUF at the end of the solve<br>
+        <b>19</b> uses r' E2 to insert the first line while simultaneously pairing a second line edge with its corresponding center<br>
+        <b>26</b> uses a lot of things. I don't think this sort of thing is practical in speedsolves, but it's interesting<br>
+        <b>41</b> uses a u in place of a U to form both lines simultaneously<br>
+        <b>42</b> uses E moves to form both lines simultaneously<br>
+        <b>48</b> solves a free 2x2x2 along with the block, essentially skipping straight to last slot of F2L in 13 moves<br>
       <script>
-        var maxWidth = window.getComputedStyle(document.getElementsByClassName("page")[0]).width;
-        maxWidth = maxWidth.substring(0, maxWidth.length-2);
-        var stickers = "AAAAAA,FF8C00,FFFFFF,B22222,00008B,DDDD00|000020050|000000000|010030000|000000000|000010000|000000000";
-        loadExample(document.getElementById("good-bad-examples"), maxWidth, ["good", "good", "good", "bad", "bad", "bad"], [
-          "U' // solvable by U' R2 D",
-          "R' // solvable by R2 D",
-          "F' // solvable by R' D", "U' // permutable by U' R2 D", "R' // permutable by R2 D", "// permutable by R' D"], stickers, true, true);
       </script>
     </div>
   </body>
