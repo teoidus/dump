@@ -1,6 +1,6 @@
 <html>
   <head>
-    Restrict moveset to: <input id="moveset"></input><button onclick="filter()">Go</button><br>
+    Restrict moveset to: <input id="moveset"></input><button onclick="doFilter()">Go</button><br>
     <textarea id="input" style="width:49%; height:90%"></textarea>
     <textarea id="output" style="width:49%; height:90%"></textarea>
   </head>
@@ -12,15 +12,21 @@
       function log(s) {
         console.log(s);
       }
-      function filter() {
+      function doFilter() {
+        movesets = moveset.value.split("|");
+        output.value = "";
+        for (var i = 0; i < movesets.length; ++i)
+          filter(movesets[i])
+      }
+      function filter(moves) {
         var all = ["U", "L", "F", "R", "B", "D", "M", "E", "S"];
         var invalids = [];
         for (var i = 0; i < all.length; ++i) {
-          if (!moveset.value.includes(all[i])) invalids.push(all[i]);
+          if (!moves.includes(all[i])) invalids.push(all[i]);
         }
         var lines = input.value.split("\n");
-        output.value = "";
         log("Processing " + lines.length + " items...");
+        log(invalids);
         for (var i = 0; i < lines.length; ++i) {
           if (lines[i] == "") continue;
           var valid = true;
@@ -30,7 +36,7 @@
               break;
             }
           }
-          if (valid) {
+          if (valid && lines[i].match(/([URFLDBMES][2']? )+/) != null) {
             output.value += lines[i] + "\n";
           }
         }
