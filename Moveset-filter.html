@@ -1,0 +1,41 @@
+<html>
+  <head>
+    Restrict moveset to: <input id="moveset"></input><button onclick="filter()">Go</button><br>
+    <textarea id="input" style="width:49%; height:90%"></textarea>
+    <textarea id="output" style="width:49%; height:90%"></textarea>
+  </head>
+  <body>
+    <script>
+      var moveset = document.getElementById("moveset");
+      var input = document.getElementById("input");
+      var output = document.getElementById("output");
+      function log(s) {
+        console.log(s);
+      }
+      function filter() {
+        var all = ["U", "L", "F", "R", "B", "D", "M", "E", "S"];
+        var invalids = [];
+        for (var i = 0; i < all.length; ++i) {
+          if (!moveset.value.includes(all[i])) invalids.push(all[i]);
+        }
+        var lines = input.value.split("\n");
+        output.value = "";
+        log("Processing " + lines.length + " items...");
+        for (var i = 0; i < lines.length; ++i) {
+          if (lines[i] == "") continue;
+          var valid = true;
+          for (var j = 0; j < invalids.length; ++j) {
+            if (lines[i].includes(invalids[j])) {
+              valid = false;
+              break;
+            }
+          }
+          if (valid) {
+            output.value += lines[i] + "\n";
+          }
+        }
+        log("Done.");
+      }
+    </script>
+  </body>
+</html>
