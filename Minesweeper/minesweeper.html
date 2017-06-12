@@ -15,7 +15,7 @@
       let curr = {r: 0, c: 0}
       let currOpacity = 0.5;
       let gameOver = false;
-      newGame(16, 16, 40, 16); // intermediate, custom sizes??
+      newGame(16, 30, 99, 16); // intermediate, custom sizes??
       
       function isMine(r, c) {
         if (r < 0 || r >= h || c < 0 || c >= w)
@@ -70,7 +70,7 @@
             updateImage(cells[r][c]);
       }
       
-      function newGame(width, height, totalMines, cellWidth) {
+      function newGame(height, width, totalMines, cellWidth) {
         w = width, h = height, mineCount = totalMines, cellSize = cellWidth, gameOver = false, correctFlags = 0;
         startTime = Infinity, stopTime = Infinity;
         timer.style.position = "fixed";
@@ -168,7 +168,7 @@
         }
         updateImage(cells[r][c]);
         
-        if (correctFlags == mineCount) {
+        if (correctFlags == mineCount) { // check that all other unflagged cells are exposed??
           gameOver = true;
           stopTime = new Date().getTime();
         }
@@ -180,7 +180,7 @@
           rNew = (rNew + dr + h) % h;
           cNew = (cNew + dc + w) % w;
         } while (cells[rNew][cNew].exposed && cells[rNew][cNew].neighbors == 0)
-        // jump over exposed cells??
+        // jump over exposed cells?? inaccessible columns rows??
         setCurr({r: rNew, c: cNew});
       }
       
