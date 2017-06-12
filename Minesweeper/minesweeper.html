@@ -1,0 +1,201 @@
+<html>
+  <head>
+  </head>
+  <body onkeydown="keydown(event.keyCode)" onkeyup="keyup(event.keyCode)">
+    <div id="board"></div>
+    <script>
+      let neighbors = [];
+      let cells = [];
+      let board = document.getElementById("board");
+      let w = 0, h = 0, mineCount = 0, cellSize = 0;
+      let curr = {r: 0, c: 0}
+      let currOpacity = 0.5;
+      let gameOver = false;
+      newGame(16, 16, 40, 16); // intermediate, custom sizes??
+      
+      function isMine(r, c) {
+        if (r < 0 || r >= h || c < 0 || c >= w)
+          return false;
+        return cells[r][c].isMine;
+      }
+      
+      function flagged(r, c) {
+        if (r < 0 || r >= h || c < 0 || c >= w)
+          return false;
+        return cells[r][c].flagged;
+      }
+      
+      function setCurr(newCurr) {
+        cells[curr.r][curr.c].style.opacity = 1.0;
+        cells[newCurr.r][newCurr.c].style.opacity = currOpacity;
+        curr = newCurr;
+      }
+      
+      function updateImage(cell) {
+        let path = "img/tiles/";
+        if (gameOver) {
+          if (cell.isMine) {
+            if (cell.exposed)
+              cell.src = path + "exposedmine.png";
+            else if (cell.flagged)
+              cell.src = path + "flag.png";
+            else
+              cell.src = path + "mine.png";
+          } else {
+            if (cell.flagged)
+              cell.src = path + "badflag.png";
+          }
+          return;
+        }
+        //if (cell.exposed)
+        //  cell.style.opacity = 0.2;
+        //if (cell.isMine)
+        //  cell.src = path + "mine.png";
+        //else if (cell.exposed || true)
+        if (cell.exposed)
+          cell.src = path + cell.neighbors + ".png";
+        else if (cell.flagged)
+          cell.src = path + "flag.png";
+        else
+          cell.src = path + "unexposed.png";
+      }
+      
+      function updateImages() {
+        for (let r = 0; r < h; ++r)
+          for (let c = 0; c < w; ++c)
+            updateImage(cells[r][c]);
+      }
+      
+      function newGame(width, height, totalMines, cellWidth) {
+        w = width, h = height, mineCount = totalMines, cellSize = cellWidth, gameOver = false;
+        for (let r = 0; r < h; ++r) {
+          cells[r] = [];
+          for (let c = 0; c < w; ++c) {
+            cells[r][c] = document.createElement("img");
+            cells[r][c].exposed = false;
+            cells[r][c].flagged = false;
+            cells[r][c].isMine = false;
+            cells[r][c].r = r;
+            cells[r][c].c = c;
+            cells[r][c].style.position = "fixed";
+            cells[r][c].style.width = cellSize + "px";
+            cells[r][c].style.height = cellSize + "px";
+            cells[r][c].style.left = (c * cellSize) + "px"; // add margin??
+            cells[r][c].style.top = (r * cellSize) + "px";
+            // onclick??
+            board.appendChild(cells[r][c]);
+          }
+        }
+        let minesSpawned = 0;
+        while (minesSpawned < mineCount) {
+          let r = Math.floor(h * Math.random());
+          let c = Math.floor(w * Math.random());
+          if (!isMine(r, c)) {
+            cells[r][c].isMine = true;
+            ++minesSpawned
+          }
+        }
+        for (let r = 0; r < h; ++r) {
+          for (let c = 0; c < w; ++c) {
+            cells[r][c].neighbors = 0;
+            for (let r1 = r-1; r1 <= r+1; ++r1)
+              for (let c1 = c-1; c1 <= c+1; ++c1)
+                if (isMine(r1, c1))
+                  ++cells[r][c].neighbors
+          }
+        }
+        
+        setCurr({r: h >> 1, c: w >> 1});
+        //cells[curr.r][curr.c].exposed = true;
+        //gameOver = true;
+        updateImages();
+      }
+      
+      function exposeOne(r, c) {
+        if (r < 0 || r >= h || c < 0 || c >= w)
+          return;
+        cells[r][c].exposed = true;
+        if (cells[r][c].isMine) {
+          gameOver = true;
+          return;
+        }
+      }
+      
+      function tryExpose(r, c) {
+        if (r < 0 || r >= h || c < 0 || c >= w)
+          return;
+        if (!cells[r][c].flagged && !cells[r][c].isMine
+          && !cells[r][c].exposed && cells[r][c].neighbors >= 0)
+          expose(r, c);
+      }
+      
+      function expose(r, c) {
+        if (r < 0 || r >= h || c < 0 || c >= w)
+          return;
+        exposeOne(r, c);
+        if (cells[r][c].neighbors == 0)
+          for (let r1 = r-1; r1 <= r+1; ++r1)
+            for (let c1 = c-1; c1 <= c+1; ++c1)
+              tryExpose(r1, c1);
+        // ?? expose a cell, update expose[] and img
+      }
+      
+      function deduce(r, c) {
+        for (let r1 = r-1; r1 <= r+1; ++r1)
+          for (let c1 = c-1; c1 <= c+1; ++c1)
+            if (r1 >= 0 && r1 < h && c1 >= 0 && c1 < w)
+              if (!flagged(r1, c1)) // make sure number satisfied??
+                expose(r1, c1);
+      }
+      
+      function flag(r, c) {
+        if (cells[r][c].exposed)
+          return;
+        cells[r][c].flagged = !cells[r][c].flagged;
+        updateImage(cells[r][c]);
+      }
+      
+      function moveCurr(dr, dc) {
+        let rNew = curr.r, cNew = curr.c;
+        do {
+          rNew = (rNew + dr + h) % h;
+          cNew = (cNew + dc + w) % w;
+        } while (cells[rNew][cNew].exposed && cells[rNew][cNew].neighbors == 0)
+        // jump over exposed cells??
+        setCurr({r: rNew, c: cNew});
+      }
+      
+      function keydown(keyCode) {
+        console.log("down", keyCode);
+        switch (keyCode) {
+          // arrow keys/WASD to move
+          case 37: case 65: moveCurr(0, -1); break;
+          case 38: case 87: moveCurr(-1, 0); break;
+          case 39: case 68: moveCurr(0, 1); break;
+          case 40: case 83: moveCurr(1, 0); break;
+          //case 13: newGame(16, 16, 40, 16); break; // custom sizes??, dont regen img elements??
+          // k to flag
+          case 75: flag(curr.r, curr.c); break;
+        }
+      }
+      
+      function keyup(keyCode) {
+        console.log("up", keyCode);
+        if (gameOver)
+          return; // mght have to move this??
+        switch (keyCode) {
+          // space/j to expose
+          case 32: case 74:
+                   if (cells[curr.r][curr.c].flagged)
+                     break;
+                   if (!cells[curr.r][curr.c].exposed)
+                     expose(curr.r, curr.c); 
+                   else
+                     deduce(curr.r, curr.c);
+                   updateImages();
+                   break;
+        }
+      }
+    </script>
+  </body>
+</html>
