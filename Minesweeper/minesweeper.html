@@ -11,6 +11,8 @@
       let timer = document.getElementById("timer");
       let startTime = Infinity, stopTime = Infinity;
       let w = 0, h = 0, mineCount = 0, cellSize = 0;
+      let topbar = 0;
+      let flagCount = 0;
       let correctFlags = 0;
       let curr = {r: 0, c: 0}
       let currOpacity = 0.5;
@@ -71,8 +73,9 @@
       }
       
       function newGame(height, width, totalMines, cellWidth) {
-        w = width, h = height, mineCount = totalMines, cellSize = cellWidth, gameOver = false, correctFlags = 0;
+        w = width, h = height, mineCount = totalMines, cellSize = cellWidth, gameOver = false, correctFlags = 0, flagCount = 0;
         startTime = Infinity, stopTime = Infinity;
+        topbar = cellSize * 2;
         timer.style.position = "fixed";
         timer.style.left = 0;
         timer.style.top = (h+1) * cellSize;
@@ -112,6 +115,8 @@
                   ++cells[r][c].neighbors
           }
         }
+        
+        flagCount = document.createElement("div");
         
         setCurr({r: h >> 1, c: w >> 1});
         //cells[curr.r][curr.c].exposed = true;
@@ -166,7 +171,12 @@
           else
             --correctFlags;
         }
+        if (cells[r][c].flagged)
+          ++flagCount;
+        else
+          --flagCount;
         updateImage(cells[r][c]);
+        updateFlagCount();
         
         if (correctFlags == mineCount) { // check that all other unflagged cells are exposed??
           gameOver = true;
