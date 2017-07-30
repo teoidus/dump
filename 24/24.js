@@ -8,7 +8,7 @@ function newPuzzle() {
     b = Math.floor(25 * Math.random());
     c = Math.floor(25 * Math.random());
     d = Math.floor(25 * Math.random());
-    seed = btoa(parseInt(atob(seed))+1);
+    seed = btoa((parseInt(atob(seed).split("").reverse().join(""))+1).toString().split("").reverse().join(""));
   } while (typeof solvePuzzle([a, b, c, d]) == "undefined")
   return [a, b, c, d];
 }
