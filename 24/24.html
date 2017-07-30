@@ -100,7 +100,7 @@
           let ms = puzzleInterval - Date.now() % puzzleInterval; // handle tenths of second?
           let s = Math.floor(ms / 1000) % 60;
           let m = Math.floor(ms / 1000 / 60);
-          document.getElementById("next").innerHTML = m + ":" + ((s < 10) ? "0"+s : s);
+          document.getElementById("next").innerHTML = "(" + m + ":" + ((s < 10) ? "0"+s : s) + ") &#x2192;";
         }
       }
       
