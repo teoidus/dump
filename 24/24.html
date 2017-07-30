@@ -1,26 +1,127 @@
-<html>
+<html> 
   <head>
     <title>24</title><link rel="icon" href="icon.png">
     <script src="seedrandom.min.js"></script>
     <script src="24.js"></script>
   </head>
   <body>
-    <div id="numbers"></div><br>
-    <button id="giveUp" onclick="printSolution(p)">give up</button>
+    <div id="display" style="width: 100%; height: 33%"></div>
+    <div id="buttons" style="position: fixed; width: 100%; height: 66.6666%; left: 0%; top: 33%">
+      <button id="a"></button><button id="b"></button><button id="c"></button><button id="d"></button><br>
+      <button id="add">+</button><button id="sub">-</button><button id="mul">*</button><button id="div">/</button><br>
+      <button id="bksp">&#x232B;</button><button id="enter">=</button><br>
+      <button id="next" disabled>&#x2192;</button><button id="giveUp">?</button>
+    </div>
     <div id="solns"></div>
     <script>
-      let numbers = document.getElementById("numbers");
-      numbers.innerHTML = "Loading...";
-      let p = [];
-      setTimeout(function() {
-        p = newPuzzle();
-        numbers.innerHTML = p.join(" ");
-      }, 100);
+      let p = {}; // holds current puzzle
+      let expr = []; // holds user input
+      let display = document.getElementById("display"); // text output
+      let ops = "+-*/";
+      let puzzleInterval = 30e3;
+      let currentBlock = -1;
       
-      function printSolution(p) {
+      // init event handlers
+      buttons = ["a", "b", "c", "d", "add", "sub", "mul", "div"];
+      for (let i = 0; i < buttons.length; ++i)
+        document.getElementById(buttons[i]).onclick = function() { expr.push(document.getElementById(buttons[i]).innerHTML); refreshDisplay(); };
+      document.getElementById("bksp").onclick = function() { expr.pop(); refreshDisplay(); };
+      document.getElementById("enter").onclick = function() { submitAnswer(); };
+      document.getElementById("next").onclick = function() { getNewPuzzle(); refreshDisplay(); };
+      document.getElementById("giveUp").onclick = function() { giveUp(); };
+      
+      refreshDisplay();
+      getNewPuzzle();
+      setInterval(updateNextButton, 1000);
+      
+      function getNewPuzzle() {
+        expr = [];
+        display.innerHTML = "Loading...";
+        setTimeout(function() {
+          document.getElementById("next").disabled = true;
+          currentBlock = Math.floor(Date.now() / puzzleInterval);
+          p = newPuzzle(puzzleInterval, ops);
+          setNumbers(p.numbers);
+          display.innerHTML = "";
+        }, 100);
+      }
+      
+      function setNumbers(nums) {
+        let ids = ["a", "b", "c", "d"];
+        for (let i = 0; i < ids.length; ++i)
+          document.getElementById(ids[i]).innerHTML = nums[i];
+      }
+      
+      function refreshDisplay() {
+        let ids = ["a", "b", "c", "d"];
+        display.innerHTML = expr.join(" ");
+        
+        let used = {};
+        for (let i = 0; i < expr.length; ++i)
+          if (expr[i] in used)
+            ++used[expr[i]];
+          else
+            used[expr[i]] = 1;
+        for (let i = 0; i < ids.length; ++i)
+          document.getElementById(ids[i]).disabled = false;
+        for (token in used)
+          for (let i = 0; i < used[token]; ++i)
+            for (let j = 0; j < ids.length; ++j) {
+              let b = document.getElementById(ids[j]);
+              if (!b.disabled && b.innerHTML == token) {
+                b.disabled = true;
+                break;
+              }
+            }
+        
+        let buttonWidths = {
+          "a": "25%", "b": "25%", "c": "25%", "d": "25%",
+          "add": "25%", "sub": "25%", "mul": "25%", "div": "25%",
+          "bksp": "50%", "enter": "50%", "next": "50%", "giveUp": "50%"
+        };
+        for (id in buttonWidths) {
+          document.getElementById(id).style.width = buttonWidths[id];
+          document.getElementById(id).style.height = "25%";
+          document.getElementById(id).style.display = "block";
+          document.getElementById(id).style.float = "left";
+          document.getElementById(id).style.fontSize = window.innerWidth / 16;
+        }
+        document.getElementById("display").style.fontSize = window.innerWidth / 16;
+      }
+      
+      function updateNextButton() {
+        console.log(currentBlock, Math.floor(Date.now() / puzzleInterval));
+        if (Math.floor(Date.now() / puzzleInterval) != currentBlock) { // new puzzle available
+          document.getElementById("next").disabled = false;
+          document.getElementById("next").innerHTML = "&#x2192;";
+        } else {
+          document.getElementById("next").disabled = true;
+          let ms = puzzleInterval - Date.now() % puzzleInterval; // handle tenths of second?
+          let s = Math.floor(ms / 1000) % 60;
+          let m = Math.floor(ms / 1000 / 60);
+          document.getElementById("next").innerHTML = m + ":" + ((s < 10) ? "0"+s : s);
+        }
+      }
+      
+      function submitAnswer() { //?? handle bad operations, incomplete answers
+        let s = exprToStr(expr, ops);
+        let answer = eval(s);
+        display.innerHTML = s + " = " + answer;
+        if (Math.abs(answer - 24) < 1e-6)
+          display.innerHTML += "&nbsp;<span style='color: green'>&#x2714</span>";
+        else
+          display.innerHTML += "&nbsp;<span style='color: red'>&#x1F5F4</span>";
+      }
+      
+      function giveUp() {
+        let s = exprToStr(p.solution, ops);
+        display.innerHTML = s + " = " + eval(s);
+      }
+      
+      function printSolutions(p) {
         let solns = document.getElementById("solns");
         solns.innerHTML = "";
-        solvePuzzle(p, true, function(s) {solns.innerHTML = s.replace(/\n/g, "<br>") + solns.innerHTML;});
+        solvePuzzle(p.numbers, ops, true, function(s) {solns.innerHTML = s.replace(/\n/g, "<br>") + solns.innerHTML;});
       }
     </script>
   </body>
