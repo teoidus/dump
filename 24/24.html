@@ -4,11 +4,23 @@
     <script src="24.js"></script>
   </head>
   <body>
-    <div id="numbers"></div>
+    <div id="numbers"></div><br>
+    <button id="giveUp" onclick="printSolution(p)">give up</button>
     <div id="solns"></div>
     <script>
-      let p = newPuzzle(document.getElementById("numbers"));
-      document.getElementById("numbers").innerHTML = p.join(" ");
+      let numbers = document.getElementById("numbers");
+      numbers.innerHTML = "Loading...";
+      let p = [];
+      setTimeout(function() {
+        p = newPuzzle();
+        numbers.innerHTML = p.join(" ");
+      }, 100);
+      
+      function printSolution(p) {
+        let solns = document.getElementById("solns");
+        solns.innerHTML = "";
+        solvePuzzle(p, true, function(s) {solns.innerHTML = s.replace(/\n/g, "<br>") + solns.innerHTML;});
+      }
     </script>
   </body>
 </html>
