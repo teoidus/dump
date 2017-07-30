@@ -13,18 +13,18 @@ function newPuzzle() {
   return [a, b, c, d];
 }
 
-function evalRPN(expr, ops) {
-  stack = [];
+function exprToStr(expr, ops) {
+  let result = [];
   for (let i = 0; i < expr.length; ++i) {
-    if (ops.replace(expr[i], "") == ops) // is value
-      stack.push(expr[i]);
-    else { // is operator
-      let b = stack.pop();
-      let a = stack.pop();
-      stack.push(eval("(" + a + ")" + expr[i] + "(" + b + ")"));
+    if (ops.replace(expr[i], "") == ops) { // is value
+      result.push(expr[i]);
+    } else { // is operator
+      a = result.pop();
+      b = result.pop();
+      result.push("(" + a + " " + expr[i] + " " + b + ")");
     }
   }
-  return stack[0];
+  return result[0];
 }
 
 function solvePuzzle(p, verbose, log) {
@@ -47,9 +47,9 @@ function solvePuzzle(p, verbose, log) {
         opindex = Math.floor(opindex / ops.length);
       }
       if (typeof log != "undefined" && verbose)
-        log("Evaluating " + expr.join(" ") + " yields " + result + "\n");
+        log("Evaluating " + exprToStr(expr, ops) + " yields " + result + "\n");
       if (Math.abs(result-goal) < epsilon) {
-        if (typeof log != "undefined") log("Solution found! Evaluating " + expr.join(" ") + " yields " + result + ".\n");
+        if (typeof log != "undefined") log("Solution found! Evaluating " + exprToStr(expr, ops) + " yields " + result + ".\n");
         return expr;
       }
     }
