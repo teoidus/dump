@@ -1,5 +1,5 @@
 function newPuzzle() {
-  let seed = Math.seedrandom(btoa(Math.floor(Date.now() / 1e5)));
+  let seed = Math.seedrandom(btoa(Math.floor(Date.now() / 30e3)));
   let a = 0, b = 0, c = 0, d = 0;
   do {
     console.log("seed:", seed);
