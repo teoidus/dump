@@ -25,11 +25,11 @@
       // init event handlers
       buttons = ["a", "b", "c", "d", "add", "sub", "mul", "div"];
       for (let i = 0; i < buttons.length; ++i)
-        document.getElementById(buttons[i]).onclick = function() { expr.push(document.getElementById(buttons[i]).innerHTML); refreshDisplay(); };
-      document.getElementById("bksp").onclick = function() { expr.pop(); refreshDisplay(); };
-      document.getElementById("enter").onclick = function() { submitAnswer(); };
-      document.getElementById("next").onclick = function() { getNewPuzzle(); refreshDisplay(); };
-      document.getElementById("giveUp").onclick = function() { giveUp(); };
+        document.getElementById(buttons[i]).onmousedown = function() { expr.push(document.getElementById(buttons[i]).innerHTML); refreshDisplay(); };
+      document.getElementById("bksp").onmousedown = function() { expr.pop(); refreshDisplay(); };
+      document.getElementById("enter").onmousedown = function() { submitAnswer(); };
+      document.getElementById("next").onmousedown = function() { getNewPuzzle(); refreshDisplay(); };
+      document.getElementById("giveUp").onmousedown = function() { giveUp(); };
       
       refreshDisplay();
       getNewPuzzle();
@@ -85,6 +85,8 @@
           document.getElementById(id).style.height = "25%";
           document.getElementById(id).style.display = "block";
           document.getElementById(id).style.float = "left";
+          document.getElementById(id).style.backgroundColor = "#EEEEEE";
+          document.getElementById(id).style.border = "none";
           document.getElementById(id).style.fontSize = window.innerWidth / 16;
         }
         document.getElementById("display").style.fontSize = window.innerWidth / 16;
