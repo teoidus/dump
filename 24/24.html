@@ -5,7 +5,7 @@
     <script src="seedrandom.min.js"></script>
     <script src="24.js"></script>
   </head>
-  <body>
+  <body style="font-family: Arial">
     <div id="display" style="width: 100%; height: 33%"></div>
     <div id="buttons" style="position: fixed; width: 100%; height: 66.6666%; left: 0%; top: 33%">
       <button id="a"></button><button id="b"></button><button id="c"></button><button id="d"></button><br>
@@ -28,22 +28,23 @@
         document.getElementById(buttons[i]).onmousedown = function() { expr.push(document.getElementById(buttons[i]).innerHTML); refreshDisplay(); };
       document.getElementById("bksp").onmousedown = function() { expr.pop(); refreshDisplay(); };
       document.getElementById("enter").onmousedown = function() { submitAnswer(); };
-      document.getElementById("next").onmousedown = function() { getNewPuzzle(); refreshDisplay(); };
+      document.getElementById("next").onmousedown = function() { getNewPuzzle(); };
       document.getElementById("giveUp").onmousedown = function() { giveUp(); };
       
-      refreshDisplay();
+      initDisplay();
       getNewPuzzle();
       setInterval(updateNextButton, 1000);
       
       function getNewPuzzle() {
         expr = [];
-        display.innerHTML = "Loading...";
+        document.getElementById("display").innerHTML = "Loading...";
+        console.log(document.getElementById("display"));
         setTimeout(function() {
           document.getElementById("next").disabled = true;
           currentBlock = Math.floor(Date.now() / puzzleInterval);
           p = newPuzzle(puzzleInterval, ops);
           setNumbers(p.numbers);
-          display.innerHTML = "";
+          refreshDisplay();
         }, 100);
       }
       
@@ -51,6 +52,24 @@
         let ids = ["a", "b", "c", "d"];
         for (let i = 0; i < ids.length; ++i)
           document.getElementById(ids[i]).innerHTML = nums[i];
+      }
+      
+      function initDisplay() {
+        let buttonWidths = {
+          "a": "25%", "b": "25%", "c": "25%", "d": "25%",
+          "add": "25%", "sub": "25%", "mul": "25%", "div": "25%",
+          "bksp": "50%", "enter": "50%", "next": "50%", "giveUp": "50%"
+        };
+        for (id in buttonWidths) {
+          document.getElementById(id).style.width = buttonWidths[id];
+          document.getElementById(id).style.height = "25%";
+          document.getElementById(id).style.display = "block";
+          document.getElementById(id).style.float = "left";
+          document.getElementById(id).style.backgroundColor = "#EEEEEE";
+          document.getElementById(id).style.border = "none";
+          document.getElementById(id).style.fontSize = window.innerWidth / 16;
+        }
+        document.getElementById("display").style.fontSize = window.innerWidth / 16;
       }
       
       function refreshDisplay() {
@@ -74,22 +93,6 @@
                 break;
               }
             }
-        
-        let buttonWidths = {
-          "a": "25%", "b": "25%", "c": "25%", "d": "25%",
-          "add": "25%", "sub": "25%", "mul": "25%", "div": "25%",
-          "bksp": "50%", "enter": "50%", "next": "50%", "giveUp": "50%"
-        };
-        for (id in buttonWidths) {
-          document.getElementById(id).style.width = buttonWidths[id];
-          document.getElementById(id).style.height = "25%";
-          document.getElementById(id).style.display = "block";
-          document.getElementById(id).style.float = "left";
-          document.getElementById(id).style.backgroundColor = "#EEEEEE";
-          document.getElementById(id).style.border = "none";
-          document.getElementById(id).style.fontSize = window.innerWidth / 16;
-        }
-        document.getElementById("display").style.fontSize = window.innerWidth / 16;
       }
       
       function updateNextButton() {
