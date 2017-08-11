@@ -1,0 +1,276 @@
+
+Chess = {
+Engine: function()
+{
+  with (Chess) {
+  var pieces = Object.keys(this.materials);
+  for (var i = 0; i < pieces.length; ++i) {
+    for (var color = 1; color <= 2; ++color) {
+      var sign = (color == 1) ? 1 : -1;
+      for (var sq = 0; sq < this.evalTables[true][(pieces[i] << 2) | color].length; ++sq) {
+        this.evalTables[true][(pieces[i] << 2) | color][sq] += sign * this.materials[pieces[i]];
+        this.evalTables[false][(pieces[i] << 2) | color][sq] += sign * this.materials[pieces[i]];
+      }
+    }
+  }
+} }
+}
+
+Chess.Engine.prototype.evaluate = function() {
+  var result = 0;
+  var i = 64; while (i--) {
+    var sq = i + (i & ~7);
+    if (this.board[sq]) {
+      result += this.evalTables[true][this.board[sq]][sq];
+    }
+  }
+  return (this.turn) ? -result : result;
+}
+
+Chess.Engine.prototype.isAttacked = function(sq, side) {
+  var i = this.pieceTypes.length; while (i--) {
+    var deltas = this.pieceDeltas[this.pieceTypes[i]];
+    var p = (this.pieceTypes[i] << 2) | (side+1);
+    var j = deltas.length; while (j--) {
+      if (p & Chess.sliderMask)
+        for (var to = sq + deltas[j]; (to & 0x88) == 0; to += deltas[j]) {
+          if (this.board[to]) {
+            if (this.board[to] == p)
+              return true;
+            break;
+          }
+        }
+      else {
+        var sign = (side) ? 1 : -1; // used for pawns
+        var to = sq + sign*deltas[i];
+        if (to & 0x88) continue; // off board
+        if (this.board[to] == p)
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
+Chess.Engine.prototype.make = function(move) {
+  this.castlings.push(this.castling);
+  this.eps.push(this.ep);
+  if (move & Chess.castleMask) {
+    var rank = (this.turn) ? 7*16 : 0;
+    var kfr, kto, rfr, rto;
+    kfr = 4 + rank;
+    if (move & Chess.ooMask) {
+      kto = 6 + rank, rfr = 7 + rank, rto = 5 + rank;
+    } else {
+      kto = 2 + rank, rfr = 0 + rank, rto = 3 + rank;
+    }
+    this.board[kto] = this.board[kfr]; this.board[kfr] = 0;
+    this.board[rto] = this.board[rfr]; this.board[rfr] = 0;
+    this.castling &= ~(3 << (this.turn << 1));
+    this.kings[this.turn] = kto;
+  } else {
+    var fr = move & Chess.fromMask;
+    var to = (move & Chess.toMask) >>> 8;
+    var p = this.board[fr];
+    
+    this.board[to] = this.board[fr]; this.board[fr] = 0;
+    
+    var sign = (this.turn) ? 1 : -1;
+    if (move & Chess.epMask)
+      this.board[to + sign*16] = 0;
+    this.ep = (((p >>> 2) == Chess.p) && (Math.abs(to - fr) == 32)) ? (to + sign*16) : -1;
+    if (move & Chess.promotionMask)
+      this.board[to] = (move & Chess.promotionMask) >>> 24;
+    
+    if ((p >>> 2) == Chess.k)
+      this.kings[this.turn] = to;
+    this.castling &= Chess.castlingRestrictions[fr];
+    this.castling &= Chess.castlingRestrictions[to];
+  }
+  this.turn ^= 1;
+  
+  for (var i = 0; i <  this.board.length; ++i) {
+    if ((this.board[i] > 0) && (this.board[i] < 4)) {
+      throw 'found an error after making move: ' + move + ' ' + this.moveToStr(move) + '. board[' + i + '] = ' + this.board[i];
+    }
+  }
+}
+
+Chess.Engine.prototype.unmake = function(move) {
+  this.castling = this.castlings.pop();
+  this.ep = this.eps.pop();
+  this.turn ^= 1;
+  
+  if (move & Chess.castleMask) {
+    var rank = (this.turn) ? 7*16 : 0;
+    var kfr, kto, rfr, rto;
+    kfr = 4 + rank;
+    if (move & Chess.ooMask) {
+      kto = 6 + rank, rfr = 7 + rank, rto = 5 + rank;
+    } else {
+      kto = 2 + rank, rfr = 0 + rank, rto = 3 + rank;
+    }
+    this.board[kfr] = this.board[kto]; this.board[kto] = 0;
+    this.board[rfr] = this.board[rto]; this.board[rto] = 0;
+    this.kings[this.turn] = kfr;
+  } else {
+    var fr = move & Chess.fromMask;
+    var to = (move & Chess.toMask) >>> 8;
+    var c = (move & Chess.captureMask) >>> 16;
+    var p = this.board[to];
+    
+    this.board[fr] = p; this.board[to] = c;
+    
+    var sign = (this.turn) ? 1 : -1;
+    if (move & Chess.epMask)
+      this.board[to + sign*16] = p ^ 3; // sets an enemy pawn
+    if (move & Chess.promotionMask)
+      this.board[fr] = (Chess.p << 2) | (this.turn + 1);
+    if ((p >>> 2) == Chess.k)
+      this.kings[this.turn] = fr;
+  }
+  
+  
+  for (var i = 0; i < this.board.length; ++i) {
+    if ((this.board[i] > 0) && (this.board[i] < 4)) {
+      throw 'found an error after unmakin  move: ' + move + ' ' + this.moveToStr(move) + '. board[' + i + '] = ' + this.board[i];
+    }
+  }
+}
+
+Chess.Engine.prototype.moveToStr = function(m) {
+  return Chess.squares[m & Chess.fromMask] + Chess.squares[(m & Chess.toMask) >>> 8] + ', ' + ((m >> 16) & 0xFF) + ' ' + ((m >> 24) & 0xFF);
+}
+
+Chess.Engine.prototype.legalize = function(moves) {
+  var result = [];
+  var i = moves.length; while (i--) {
+    if ((moves[i] & Chess.castleMask) 
+      && this.isAttacked(this.kings[this.turn], this.turn ^ 1))
+      continue; // can't castle out of check
+    this.make(moves[i]);
+    if (!this.isAttacked(this.kings[this.turn ^ 1], this.turn))
+      result.push(moves[i]); // can't move into check
+    this.unmake(moves[i]);
+  }
+  return result;
+}
+
+Chess.Engine.prototype.sort = function(moves) {
+  var result = [];
+  var i = moves.length; while (i--) {
+    var score = (moves[i] & Chess.captureMask) ? 1 : 0;
+    result.push({ m: moves[i], s: score });
+  }
+  result.sort(function(a, b) { return b.s - a.s });
+  for (var i = 0; i < result.length; ++i)
+    result[i] = result[i].m;
+  return result;
+}
+
+Chess.Engine.prototype.sanList = function() {
+  var moves = this.legalize(this.movegen());
+  var result = {};
+  for (var i = 0; i < moves.length; ++i) {
+    this.make(moves[i]);
+    var check = (this.isAttacked(this.kings[this.turn], this.turn ^ 1)) ?
+      ((this.legalize(this.movegen()).length == 0) ? '#' : '+') :
+      '';
+    this.unmake(moves[i]);
+    if (moves[i] & Chess.castleMask) {
+      if (moves[i] & Chess.ooMask)
+        result['O-O' + check] = moves[i];
+      else
+        result['O-O-O' + check] = moves[i];
+    } else {
+      var fr = Chess.squares[moves[i] & Chess.fromMask];
+      var to = Chess.squares[(moves[i] & Chess.toMask) >>> 8];
+      //console.log(fr, to, moves[i], Chess.toMask, moves[i] & Chess.toMask, (moves[i] & Chess.toMask) >>> 8);
+      var isCapt = (moves[i] & Chess.captureMask) || (moves[i] & Chess.epMask);
+      var p = Chess.pieceTypes[this.board[moves[i] & Chess.fromMask] >>> 2];
+      var piece = (p != 'p') ? p.toUpperCase() : (isCapt ? fr[0] : '');
+      var capt = isCapt ? 'x' : '';
+      var prom = (moves[i] & Chess.promotionMask) ?
+        '='+Chess.pieceTypes[(moves[i] & Chess.promotionMask) >>> 26].toUpperCase() : '';
+      var dis = '';
+      for (var j = 0; j < moves.length; ++j) {
+        if ((i != j) && (p != 'p')) {
+          if ((Chess.pieceTypes[this.board[moves[j] & Chess.fromMask] >>> 2] == p)
+              && (Chess.squares[(moves[j] & Chess.toMask) >>> 8] == to)) {
+            var other = Chess.squares[(moves[i] & Chess.toMask) >>> 8];
+            for (var k = other.length-1; k >= 0; --k) {
+              if (fr[k] != other[k])
+                dis = fr[k];
+            }
+            break;
+          }
+        }
+      }
+      result[piece + dis + capt + to + prom + check] = moves[i];
+    }
+  }
+  return result;
+}
+
+Chess.Engine.prototype.apply = function(sans) {
+  for (var i = 0; i < sans.length; ++i) {
+    var legal = this.sanList();
+    if (!(sans[i] in legal)) {
+      console.log(sans[i] + ' is illegal: legal moves are ' + Object.keys(legal).join(', '));
+      //console.log(this.castling, this.turn);
+    } else {
+      this.make(legal[sans[i]]);
+      console.log('Made move: ' + sans[i] + ' => ' + legal[sans[i]] + '. Current eval: ' + this.evaluate());
+      //console.log(this.castling, this.turn);
+    }
+  }
+}
+
+Chess.Engine.prototype.perft = function(depth) {
+  if (depth == 0) return 1;
+  result = 0;
+  var moves = this.legalize(this.movegen());
+  for (var i = 0; i < moves.length; ++i) {
+    this.make(moves[i]);
+    result += this.perft(depth-1);
+    this.unmake(moves[i]);
+  }
+  return result;
+}
+
+Chess.Engine.prototype.alphabeta = function(alpha, beta, depth) {
+  if (depth == 0) return this.evaluate(); //quiesce(alpha, beta);
+  var moves = this.sort(this.legalize(this.movegen()));
+  for (var i = 0; i < moves.length; ++i)  {
+    this.make(moves[i]); //console.log('Making', this.moveToStr(moves[i]));
+    var score = -this.alphabeta(-beta, -alpha, depth - 1);
+    this.unmake(moves[i]);// console.log('Unmaking', this.moveToStr(moves[i]));
+    if (score >= beta)
+      return beta; //  fail hard beta-cutoff
+    if (score > alpha)
+      alpha = score; // alpha acts like max in MiniMax
+  }
+  return alpha;
+}
+
+Chess.Engine.prototype.go = function(depth) {
+  if (depth == 0) return this.evaluate(); //quiesce(alpha, beta);
+  var alpha = -1e100, beta = 1e100;
+  var moves = this.sort(this.legalize(this.movegen()));
+  var best = -1;
+  for (var i = 0; i < moves.length; ++i) {
+    this.make(moves[i]);
+    var score = -this.alphabeta(-beta, -alpha, depth - 1);
+    this.unmake(moves[i]);
+    if (score >= beta) {
+      return { score: beta, best: moves[i] };
+    }
+    if (score > alpha) {
+      alpha = score;
+      var best = i;
+    }
+  }
+  
+  var m = this.moveToStr(moves[best]);
+  return { score: alpha, best: m };
+}
