@@ -93,10 +93,10 @@
       <p>
         We'll now use this triplet to get an initial swap. If we label our ordered list of corners with the letters (A, B, C), we can find this LL swap by looking at how (1) A is related to B, and (2) B is related to C.<br>
         <br>
-        To do this we'll define 3 types of relations between two corners X, Y:<br>
-        1. Forwards: Y is clockwise of X (e.g. X = 1, Y = 2)<br>
-        2. Backwards: Y is counterclockwise of X (e.g. X = 2, Y = 1)<br>
-        3. Jump: Y is two steps ahead of X (e.g. X = 1, Y = 3)<br>
+        To do this we'll define 3 types of relations between two corners A, B:<br>
+        1. Forwards: A is clockwise of B (e.g. A = 1, B = 2)<br>
+        2. Backwards: A is counterclockwise of B (e.g. A = 2, B = 1)<br>
+        3. Jump: A is two steps ahead of B (e.g. A = 1, B = 3)<br>
         <br>
         Now, we can figure out which two of A, B, C, D need to be swapped (where D = the last LL corner that wasn't included in the triplet. The table below lists possible relations (A-B, B-C) and the corresponding LL swap:<br>
         <table width="100%">
