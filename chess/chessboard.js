@@ -664,9 +664,10 @@ function alphabeta(alpha, beta, depth) {
   if ((depth|0) == (0|0))
     return evaluate()|0; //quiesce(alpha, beta);
   movegen(); legalize(); //sort();
-  if (moveListMax[moves] == 0) {// checkmate or stalemate {
-    //console.log('found checkmate at depth',depth);
-    return -((1 << 29) + depth)|0; // always assume checkmate for now
+  if (moveListMax[moves] == 0) {// checkmate or stalemate
+    return (isAttacked(kings[turn], turn^1)|0)
+      ? -((1 << 29) + depth)|0
+      : 0|0;
   }
   
   var offset = (moves << maxMoveShift)|0;
@@ -880,6 +881,7 @@ function moveChange() {
   
   var heatmap = Array(64);
   for (var i = 0; i < 64; ++i) heatmap[i] = -6;
+  console.log('No. of legal moves:', Object.keys(sanList()).length);
   var searchresult = go(4);
   console.log('Final eval: ' + (searchresult.score/100) + ', best move: ' + searchresult.best.substring(0, 4), searchresult);
   var fr = sqIDs[searchresult.best.substring(0, 2)];

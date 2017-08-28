@@ -1,0 +1,131 @@
+<html>
+  <head>
+    <script src="ArrayCube.js"></script>
+    <script src="Rotation.js"></script>
+    <script src="CSSCube.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <div id="all">
+      <div id="cube">
+      </div>
+      <div id="bar" class="btn-bar">
+        <button id="beginning" class="btn">&lt;&lt;</button>
+        <button id="prev" class="btn">&lt;</button>
+        <button id="play" class="btn">&#9654;</button>
+        <button id="next" class="btn">&gt;</button>
+        <button id="end" class="btn">&gt;&gt;</button>
+      </div>
+    </div>
+  </head>
+  <body style="background-color: #CCCCCC">
+    <script type="text/javascript">
+      // alg.cubing.net
+      // x y z      
+      var args = {};
+      if (location.search) {
+        var parts = location.search.substring(1).split('&');
+        for (var i = 0; i < parts.length; i++) {
+          var nv = parts[i].split('=');
+          if (!nv[0]) continue;
+          args[nv[0]] = nv[1] || true;
+        }
+      }
+      
+      var size = (typeof args.size != "undefined") ? args.size : 250;
+      var spacing = (typeof args.godmode != "undefined") ? size/22.5 : 0;
+      var animSpeed = (typeof args.speed != "undefined") ? args.speed : undefined;
+      
+      if (typeof args.stickers != "undefined")
+      {
+        var tokens = args.stickers.split("|");
+        var colors = tokens[0].split(",").map(x => "#" + x);
+        var indices = tokens.slice(1).join("");
+        
+        var stickers = [];
+        for (var i = 0; i < 54; i++) {
+          stickers.push([colors[indices[i]], 1]);
+        }
+      } else {
+        var colors = ['#FFFFFF', '#FF8C00', '#228B22', '#B22222', '#00008B', '#DDDD00']; // Dayan
+        var stickers = [];
+        var opacity = 1;
+        for (var i = 0; i < 54; i++) {
+          stickers.push([colors[Math.floor(i/9)], opacity]);
+        }
+      }
+      
+      var all = document.getElementById("all");
+      all.style.width = size;
+      all.style.height = size;
+      
+      var cDiv = document.getElementById("cube");
+      cDiv.style.position = "relative";
+      cDiv.style.left = size/6 - size * 2/3 * Math.pow(2, -size/100);
+      cDiv.style.top = size/4 - size * 1/3 * Math.pow(2, -size/100);
+      
+      var bar = document.getElementById("bar");
+      bar.style.position = "absolute";
+      bar.style.top = size * 9/10;
+      bar.style.width = size;
+      bar.style.height = size/10;
+      
+      var c = new CSSCube("cube", stickers, size*1/2, cDiv, true, animSpeed, spacing);
+      
+      if (typeof args.setup != "undefined")
+      {
+        setTimeout(function() { c.moves(decodeURIComponent(args.setup)); }, 100);
+      }
+      
+      if (typeof args.moves != "undefined")
+      {
+        setTimeout(function() { c.loadAnimation(decodeURIComponent(args.moves)); }, 100);
+      }
+      
+      if (typeof args.hideButtons != "undefined")
+      {
+        document.getElementById("bar").style.visibility = "hidden";
+      }
+      
+      var prev = document.getElementById("prev");
+      var next = document.getElementById("next");
+      var play = document.getElementById("play");
+      var beginning = document.getElementById("beginning");
+      var end = document.getElementById("end");
+      setTimeout(function() {
+        prev.onclick = function() { c.prev() };
+        next.onclick = function() { c.next() };
+        beginning.onclick = function() { c.jumpToBeginning() };
+        end.onclick = function() { c.jumpToEnd() };
+        play.onclick = function() {
+          if (c.isPaused()) {
+            c.play();
+          } else {
+            c.pause();
+            play.innerHTML = "&#9654;";
+          }
+        };
+        setInterval(function() {
+          if (c.isPaused())
+            play.innerHTML = "&#9654;";
+          else
+            play.innerHTML = "&#10074;&#10074;";
+        }, 100);
+      }, 100)
+      
+      var bindings = {
+        "Q": "z'", "W": "B", "E": "L'", "R": "l'", "T": "x", "U": "r", "I": "R", "O": "B'", "P": "z",
+        "A": "y'", "S": "D", "D": "L", "F": "U'", "G": "F'", "H": "F", "J": "U", "K": "R'", "L": "D'",
+        "V": "l", "N": "x'", "M": "r'"
+      };
+      bindings[String.fromCharCode(186)] = "y";
+      
+      document.body.onkeydown = function(e) {
+        let key = String.fromCharCode(e.which || e.keyCode);
+        if (key in bindings) {
+          console.log(bindings[String.fromCharCode(e.which || e.keyCode)]);
+          c.moves(bindings[key]);
+        }
+      }
+    </script>
+  </body>
+</html>
