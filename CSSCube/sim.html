@@ -118,12 +118,15 @@
         "V": "l", "N": "x'", "M": "r'"
       };
       bindings[String.fromCharCode(186)] = "y";
+      var moves = [];
       
       document.body.onkeydown = function(e) {
-        let key = String.fromCharCode(e.which || e.keyCode);
+        var key = String.fromCharCode(e.which || e.keyCode);
         if (key in bindings) {
-          console.log(bindings[String.fromCharCode(e.which || e.keyCode)]);
-          c.moves(bindings[key]);
+          var move = bindings[key];
+          console.log(move);
+          c.moves(move);
+          moves.push(move);
         }
       }
     </script>
