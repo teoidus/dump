@@ -1,0 +1,118 @@
+[disabled optimization for 0000003032F89E31 <SharedFunctionInfo SetConstructor>, reason: TryCatchStatement]
+[disabled optimization for 0000003032F8A371 <SharedFunctionInfo MapConstructor>, reason: TryCatchStatement]
+[disabled optimization for 0000003032F8C321 <SharedFunctionInfo WeakMapConstructor>, reason: TryCatchStatement]
+[disabled optimization for 0000003032F8C6E1 <SharedFunctionInfo WeakSetConstructor>, reason: TryCatchStatement]
+[disabled optimization for 0000003032F988A1 <SharedFunctionInfo>, reason: TryCatchStatement]
+[disabled optimization for 0000003032F949C9 <SharedFunctionInfo FormatMessage>, reason: TryCatchStatement]
+[disabled optimization for 0000003032F4C751 <SharedFunctionInfo PostNatives>, reason: TryCatchStatement]
+[disabled optimization for 0000003032F91639 <SharedFunctionInfo Promise>, reason: TryCatchStatement]
+[disabled optimization for 0000003032FBA191 <SharedFunctionInfo NativeModule.compile>, reason: TryFinallyStatement]
+[disabled optimization for 0000003032FD1679 <SharedFunctionInfo createUnsafeBuffer>, reason: TryFinallyStatement]
+[didn't find optimized code in optimized code map for 0000003032FE3A11 <SharedFunctionInfo>]
+[disabled optimization for 0000003032F5E311 <SharedFunctionInfo Join>, reason: TryFinallyStatement]
+[disabled optimization for 0000034B67A0F4E9 <SharedFunctionInfo>, reason: TryCatchStatement]
+[didn't find optimized code in optimized code map for 0000003032FEC7E9 <SharedFunctionInfo debugs.(anonymous function)>]
+[didn't find optimized code in optimized code map for 0000003032FEC7E9 <SharedFunctionInfo debugs.(anonymous function)>]
+[disabled optimization for 0000034B67A09561 <SharedFunctionInfo tryModuleLoad>, reason: TryFinallyStatement]
+[disabled optimization for 0000034B67A11109 <SharedFunctionInfo tryStatSync>, reason: TryFinallyStatement]
+[disabled optimization for 0000034B67A111C9 <SharedFunctionInfo tryCreateBuffer>, reason: TryFinallyStatement]
+[disabled optimization for 0000034B67A11289 <SharedFunctionInfo tryReadSync>, reason: TryFinallyStatement]
+[marking 0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)> for recompilation, reason: small function, ICs with typeinfo: 2/3 (66%), generic ICs: 0/3 (0%)]
+[marking 0000034B67A5C321 <JS Function valueOf (SharedFunctionInfo 0000003032F537A9)> for recompilation, reason: small function, ICs with typeinfo: 0/0 (100%), generic ICs: 0/0 (0%)]
+[compiling method 0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)> using Crankshaft]
+[marking 0000034B67A66DA9 <JS Function join (SharedFunctionInfo 0000003032F7D141)> for recompilation, reason: small function, ICs with typeinfo: 1/2 (50%), generic ICs: 0/2 (0%)]
+[optimizing 0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)> - took 0.069, 0.150, 0.055 ms]
+[completed optimizing 0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)>]
+[compiling method 0000034B67A5C321 <JS Function valueOf (SharedFunctionInfo 0000003032F537A9)> using Crankshaft]
+[compiling method 0000034B67A66DA9 <JS Function join (SharedFunctionInfo 0000003032F7D141)> using Crankshaft]
+[optimizing 0000034B67A5C321 <JS Function valueOf (SharedFunctionInfo 0000003032F537A9)> - took 0.014, 0.088, 0.064 ms]
+[completed optimizing 0000034B67A5C321 <JS Function valueOf (SharedFunctionInfo 0000003032F537A9)>]
+[optimizing 0000034B67A66DA9 <JS Function join (SharedFunctionInfo 0000003032F7D141)> - took 0.043, 0.186, 0.049 ms]
+[completed optimizing 0000034B67A66DA9 <JS Function join (SharedFunctionInfo 0000003032F7D141)>]
+[marking 0000023EC4E56B49 <JS Function bitd (SharedFunctionInfo 0000034B67ACB439)> for recompilation, reason: small function, ICs with typeinfo: 2/2 (100%), generic ICs: 0/2 (0%)]
+[marking 0000023EC4E56E19 <JS Function add (SharedFunctionInfo 0000034B67ACBBB9)> for recompilation, reason: small function, ICs with typeinfo: 13/18 (72%), generic ICs: 2/18 (11%)]
+[compiling method 0000023EC4E56E19 <JS Function add (SharedFunctionInfo 0000034B67ACBBB9)> using Crankshaft]
+[compiling method 0000023EC4E56B49 <JS Function bitd (SharedFunctionInfo 0000034B67ACB439)> using Crankshaft]
+[optimizing 0000023EC4E56E19 <JS Function add (SharedFunctionInfo 0000034B67ACBBB9)> - took 0.471, 0.651, 0.126 ms]
+[completed optimizing 0000023EC4E56E19 <JS Function add (SharedFunctionInfo 0000034B67ACBBB9)>]
+[optimizing 0000023EC4E56B49 <JS Function bitd (SharedFunctionInfo 0000034B67ACB439)> - took 0.017, 0.088, 0.032 ms]
+[completed optimizing 0000023EC4E56B49 <JS Function bitd (SharedFunctionInfo 0000034B67ACB439)>]
+[marking 0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)> for recompilation, reason: hot and stable, ICs with typeinfo: 15/32 (46%), generic ICs: 0/32 (0%)]
+[compiling method 0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)> using Crankshaft]
+[marking 00000246713046D1 <JS Function (SharedFunctionInfo 0000034B67ACB2B9)> for recompilation, reason: hot and stable, ICs with typeinfo: 7/13 (53%), generic ICs: 0/13 (0%)]
+[optimizing 0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)> - took 0.349, 1.886, 0.267 ms]
+[completed optimizing 0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)>]
+[didn't find optimized code in optimized code map for 0000034B67ACB2B9 <SharedFunctionInfo>]
+[compiling method 00000246713046D1 <JS Function (SharedFunctionInfo 0000034B67ACB2B9)> using Crankshaft OSR]
+[optimizing 00000246713046D1 <JS Function (SharedFunctionInfo 0000034B67ACB2B9)> - took 0.543, 0.796, 0.198 ms]
+[marking 0000034B67A99DB1 <JS Function UseSparseVariant (SharedFunctionInfo 0000003032F5DE91)> for recompilation, reason: not much type info but very hot, ICs with typeinfo: 2/9 (22%), generic ICs: 0/9 (0%)]
+[compiling method 0000034B67A99DB1 <JS Function UseSparseVariant (SharedFunctionInfo 0000003032F5DE91)> using Crankshaft]
+[marking 0000034B67A61C79 <JS Function toString (SharedFunctionInfo 0000003032F5E851)> for recompilation, reason: not much type info but very hot, ICs with typeinfo: 1/5 (20%), generic ICs: 0/5 (0%)]
+[optimizing 0000034B67A99DB1 <JS Function UseSparseVariant (SharedFunctionInfo 0000003032F5DE91)> - took 0.047, 0.222, 0.164 ms]
+[completed optimizing 0000034B67A99DB1 <JS Function UseSparseVariant (SharedFunctionInfo 0000003032F5DE91)>]
+[compiling method 0000034B67A61C79 <JS Function toString (SharedFunctionInfo 0000003032F5E851)> using Crankshaft]
+[optimizing 0000034B67A61C79 <JS Function toString (SharedFunctionInfo 0000003032F5E851)> - took 0.141, 0.361, 0.061 ms]
+[completed optimizing 0000034B67A61C79 <JS Function toString (SharedFunctionInfo 0000003032F5E851)>]
+[didn't find optimized code in optimized code map for 0000003032FEC7E9 <SharedFunctionInfo debugs.(anonymous function)>]
+[didn't find optimized code in optimized code map for 0000035C91F3C389 <SharedFunctionInfo WritableState.onwrite>]
+[didn't find optimized code in optimized code map for 0000035C91F3CA59 <SharedFunctionInfo CorkedRequest.finish>]
+[disabled optimization for 0000003032FB9411 <SharedFunctionInfo installInspectorConsoleIfNeeded>, reason: TryCatchStatement]
+[disabled optimization for 0000003032FCB1F1 <SharedFunctionInfo formatValue>, reason: TryCatchStatement]
+[disabled optimization for 0000003032FCB731 <SharedFunctionInfo formatTypedArray>, reason: TryCatchStatement]
+[deoptimizing (DEOPT eager): begin 0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)> (opt #5) @8, FP to SP delta: 64, caller sp: 0x95ae14ecd8]
+            ;;; deoptimize at 2538: Unknown map in polymorphic element access
+  reading input frame DoJoin => node=261, args=6, height=5; inputs:
+      0: 0x34b67a99d69 ; [fp - 16] 0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)>
+      1: 0x3032f04241 ; [fp + 56] 0000003032F04241 <undefined>
+      2: 0x20620ab6641 ; r8 0000020620AB6641 <JS Array[2]>
+      3: 0x200000000 ; [fp + 40] 2
+      4: 0x3032f04281 ; [fp + 32] 0000003032F04281 <true>
+      5: 0x3032f64e99 ; rcx 0000003032F64E99 <String[2]: , >
+      6: 0x34b67ab5fc9 ; [fp + 16] 0000034B67AB5FC9 <JS Function ConvertToString (SharedFunctionInfo 0000003032F5E3D1)>
+      7: 0x34b67aa9311 ; [fp - 24] 0000034B67AA9311 <FixedArray[73]>
+      8: 0x3032f04241 ; (literal 1) 0000003032F04241 <undefined>
+      9: 0x3032f04241 ; (literal 1) 0000003032F04241 <undefined>
+     10: 0x20620ab6cc1 ; rax 0000020620AB6CC1 <JS Array[2]>
+     11: 0x3032f04241 ; (literal 1) 0000003032F04241 <undefined>
+  translating frame DoJoin => node=261, height=32
+    0x95ae14ecd0: [top + 104] <- 0x3032f04241 ;  0000003032F04241 <undefined>  (input #1)
+    0x95ae14ecc8: [top + 96] <- 0x20620ab6641 ;  0000020620AB6641 <JS Array[2]>  (input #2)
+    0x95ae14ecc0: [top + 88] <- 0x200000000 ;  2  (input #3)
+    0x95ae14ecb8: [top + 80] <- 0x3032f04281 ;  0000003032F04281 <true>  (input #4)
+    0x95ae14ecb0: [top + 72] <- 0x3032f64e99 ;  0000003032F64E99 <String[2]: , >  (input #5)
+    0x95ae14eca8: [top + 64] <- 0x34b67ab5fc9 ;  0000034B67AB5FC9 <JS Function ConvertToString (SharedFunctionInfo 0000003032F5E3D1)>  (input #6)
+    0x95ae14eca0: [top + 56] <- 0x18d00b858f2 ;  caller's pc
+    0x95ae14ec98: [top + 48] <- 0x95ae14ed00 ;  caller's fp
+    0x95ae14ec90: [top + 40] <- 0x34b67aa9311 ;  context    0000034B67AA9311 <FixedArray[73]>  (input #7)
+    0x95ae14ec88: [top + 32] <- 0x34b67a99d69 ;  function    0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)>  (input #0)
+    0x95ae14ec80: [top + 24] <- 0x3032f04241 ;  0000003032F04241 <undefined>  (input #8)
+    0x95ae14ec78: [top + 16] <- 0x3032f04241 ;  0000003032F04241 <undefined>  (input #9)
+    0x95ae14ec70: [top + 8] <- 0x20620ab6cc1 ;  0000020620AB6CC1 <JS Array[2]>  (input #10)
+    0x95ae14ec68: [top + 0] <- 0x3032f04241 ;  0000003032F04241 <undefined>  (input #11)
+[deoptimizing (eager): end 0000034B67A99D69 <JS Function DoJoin (SharedFunctionInfo 0000003032F5E251)> @8 => node=261, pc=0x18d00b86244, caller sp=0x95ae14ecd8, state=NO_REGISTERS, took 70.338 ms]
+[removing optimized code for: DoJoin]
+[evicting entry from optimizing code map (notify deoptimized) for 0000003032F5E251 <SharedFunctionInfo DoJoin>]
+[deoptimizing (DEOPT soft): begin 0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)> (opt #0) @4, FP to SP delta: 32, caller sp: 0x95ae14ef48]
+            ;;; deoptimize at 5696: Insufficient type feedback for keyed load
+  reading input frame InnerArrayJoin => node=54, args=4, height=2; inputs:
+      0: 0x34b67a99c49 ; [fp - 16] 0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)>
+      1: 0x3032f04241 ; [fp + 40] 0000003032F04241 <undefined>
+      2: 0x3032f4ab09 ; [fp - 32] 0000003032F4AB09 <String[1]:  >
+      3: 0x20620ab53a1 ; [fp + 24] 0000020620AB53A1 <JS Array[1]>
+      4: 0x100000000 ; [fp + 16] 1
+      5: 0x34b67aa9311 ; [fp - 24] 0000034B67AA9311 <FixedArray[73]>
+      6: 0x3032f04241 ; (literal 1) 0000003032F04241 <undefined>
+  translating frame InnerArrayJoin => node=54, height=8
+    0x95ae14ef40: [top + 64] <- 0x3032f04241 ;  0000003032F04241 <undefined>  (input #1)
+    0x95ae14ef38: [top + 56] <- 0x3032f4ab09 ;  0000003032F4AB09 <String[1]:  >  (input #2)
+    0x95ae14ef30: [top + 48] <- 0x20620ab53a1 ;  0000020620AB53A1 <JS Array[1]>  (input #3)
+    0x95ae14ef28: [top + 40] <- 0x100000000 ;  1  (input #4)
+    0x95ae14ef20: [top + 32] <- 0x18d00b854d2 ;  caller's pc
+    0x95ae14ef18: [top + 24] <- 0x95ae14ef70 ;  caller's fp
+    0x95ae14ef10: [top + 16] <- 0x34b67aa9311 ;  context    0000034B67AA9311 <FixedArray[73]>  (input #5)
+    0x95ae14ef08: [top + 8] <- 0x34b67a99c49 ;  function    0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)>  (input #0)
+    0x95ae14ef00: [top + 0] <- 0x3032f04241 ;  0000003032F04241 <undefined>  (input #6)
+[deoptimizing (soft): end 0000034B67A99C49 <JS Function InnerArrayJoin (SharedFunctionInfo 0000003032F5EA91)> @4 => node=54, pc=0x18d00b85609, caller sp=0x95ae14ef48, state=NO_REGISTERS, took 44.354 ms]
+[removing optimized code for: InnerArrayJoin]
+[evicting entry from optimizing code map (notify deoptimized) for 0000003032F5EA91 <SharedFunctionInfo InnerArrayJoin>]
+Uint32Array [ 0, 0 ]
