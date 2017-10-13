@@ -3,7 +3,8 @@ let rbx = new Uint32Array(2)
 let rcx = new Uint32Array(2)
 let rdx = new Uint32Array(2)
 
-function f() {
+function f(n) {
+  n = n|0
   rax[0] = 1
   rax[1] = 5
 }

@@ -19,10 +19,25 @@
 
 var DEBUG = false
 var INTERFACE = true
-var SEARCH_DEPTH = 4
+var SEARCH_DEPTH = 5
 
 var start = Date.now()
 console.log('Initializing:')
+
+console.log('- bitwise tricks')
+var BSF = new Uint8Array(1 << 16).map(function (e, i) {
+  for (var j = 0; j < 16; ++j)
+    if ((i >>> j) & 1)
+      return j
+  return 16 // miss
+}) // 64 KB
+var POPCNT = new Uint8Array(1 << 16).map(function (e, i) {
+  var n = 0
+  for (var j = 0; j < 16; ++j)
+    if ((i >>> j) & 1)
+      ++n
+  return n
+}) // 64 KB
 
 console.log('- board constants')
 var SQUARES = [
@@ -84,6 +99,18 @@ var initial_mailbox = [
   BR, BN, BB, BQ, BK, BB, BN, BR, 0,0,0,0,0,0,0,0
 ]
 var mailbox = Uint8Array.from(initial_mailbox)
+var initial_piece_list = [
+  // white pieces
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+  // black pieces
+  0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67,
+  0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77
+]
+var initial_population = [0xFFFF, 0xFFFF]
+var piece_list = Uint8Array.from(initial_piece_list)
+var population = Uint16Array.from(initial_population)
+var populations = new Uint16Array(MAX_LEN)
 var kings = new Uint32Array([SQ_IDS['e1'], SQ_IDS['e8']])
 var turn = 0|0 // (0,1) = (w,b)
 var moves = 0|0

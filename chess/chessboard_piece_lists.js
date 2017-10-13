@@ -2,13 +2,13 @@
 
 //TODO:
 // 'flip overlay' button
-// only think on 'your' turn
+// only think on 'your' turn 
 // when in check, only generate king moves or captures or moves that intersect king (make 'bitmap' of just byte * 128 * 128, 16 KB lookup table)
 // quiescence
-// better move ordering algorithm
+// better move ordering algorithm and data structure
 // keep track of sides that are in check
 // use Arraybuffer/view tricks to decompose things into fields?
-// use fancy chess piece symbols in print()?
+// use fancy chess piece symbols in print()? \u2659\u265F\u2658\u265E\u2657\u265D\u2656\u265C\u2655\u265B\u2654\u265A
 // piece list (18 bit integer) to keep track of nonking pieces
 // rethink board and move representation
 //   mailbox maps sq -> piece list id
@@ -16,6 +16,12 @@
 //   id map maps piece list id -> piece type
 //   move representation: fr piece list id(4) capt piece list id(4) to sq(8)
 // automatically detect time control
+// tapered evaluation
+// make perft check work
+// fix make/unmake (update population)
+// make movegen use the new piece lists
+
+// abandoned. it's faster to simply scan the whole board...
 
 var DEBUG = false
 var INTERFACE = true
@@ -23,6 +29,21 @@ var SEARCH_DEPTH = 4
 
 var start = Date.now()
 console.log('Initializing:')
+
+console.log('- bitwise tricks')
+var BSF = new Uint8Array(1 << 16).map(function (e, i) {
+  for (var j = 0; j < 16; ++j)
+    if ((i >>> j) & 1)
+      return j
+  return 16 // miss
+}) // 64 KB
+var POPCNT = new Uint8Array(1 << 16).map(function (e, i) {
+  var n = 0
+  for (var j = 0; j < 16; ++j)
+    if ((i >>> j) & 1)
+      ++n
+  return n
+}) // 64 KB
 
 console.log('- board constants')
 var SQUARES = [
@@ -73,18 +94,41 @@ console.log('- board')
 var MAX_LEN = 512|0 // please don't play extra long games
 var MAX_MOVE_SHIFT = 8|0 // log2(arbitrary max branching factor
 var map0x88 = new Uint32Array(64).map((e, i) => i + (i & ~7))
-var initial_mailbox = [
-  WR, WN, WB, WQ, WK, WB, WN, WR, 0,0,0,0,0,0,0,0,
-  WP, WP, WP, WP, WP, WP, WP, WP, 0,0,0,0,0,0,0,0,
-  EE, EE, EE, EE, EE, EE, EE, EE, 0,0,0,0,0,0,0,0,
-  EE, EE, EE, EE, EE, EE, EE, EE, 0,0,0,0,0,0,0,0,
-  EE, EE, EE, EE, EE, EE, EE, EE, 0,0,0,0,0,0,0,0,
-  EE, EE, EE, EE, EE, EE, EE, EE, 0,0,0,0,0,0,0,0,
-  BP, BP, BP, BP, BP, BP, BP, BP, 0,0,0,0,0,0,0,0,
-  BR, BN, BB, BQ, BK, BB, BN, BR, 0,0,0,0,0,0,0,0
+var initial_population = [0xFFFF, 0xFFFF]
+var initial_piece_squares = [
+  0x88,
+  // white pieces
+  SQ_IDS['a1'], SQ_IDS['b1'], SQ_IDS['c1'], SQ_IDS['d1'], SQ_IDS['e1'], SQ_IDS['f1'], SQ_IDS['g1'], SQ_IDS['h1'],
+  SQ_IDS['a2'], SQ_IDS['b2'], SQ_IDS['c2'], SQ_IDS['d2'], SQ_IDS['e2'], SQ_IDS['f2'], SQ_IDS['g2'], SQ_IDS['h2'],
+  // black pieces
+  SQ_IDS['a8'], SQ_IDS['b8'], SQ_IDS['c8'], SQ_IDS['d8'], SQ_IDS['e8'], SQ_IDS['f8'], SQ_IDS['g8'], SQ_IDS['h8'],
+  SQ_IDS['a7'], SQ_IDS['b7'], SQ_IDS['c7'], SQ_IDS['d7'], SQ_IDS['e7'], SQ_IDS['f7'], SQ_IDS['g7'], SQ_IDS['h7']
 ]
-var mailbox = Uint8Array.from(initial_mailbox)
-var kings = new Uint32Array([SQ_IDS['e1'], SQ_IDS['e8']])
+var initial_piece_types = [
+  // empty space
+  EE,
+  // white pieces
+  WR, WN, WB, WQ, WK, WB, WN, WR,
+  WP, WP, WP, WP, WP, WP, WP, WP,
+  // black pieces
+  BR, BN, BB, BQ, BK, BB, BN, BR,
+  BP, BP, BP, BP, BP, BP, BP, BP
+]
+var initial_mailbox = [
+   1,  2,  3,  4,  5,  6,  7,  8, 0,0,0,0,0,0,0,0,
+   9, 10, 11, 12, 13, 14, 15, 16, 0,0,0,0,0,0,0,0,
+   0,  0,  0,  0,  0,  0,  0,  0, 0,0,0,0,0,0,0,0,
+   0,  0,  0,  0,  0,  0,  0,  0, 0,0,0,0,0,0,0,0,
+   0,  0,  0,  0,  0,  0,  0,  0, 0,0,0,0,0,0,0,0,
+   0,  0,  0,  0,  0,  0,  0,  0, 0,0,0,0,0,0,0,0,
+  25, 26, 27, 28, 29, 30, 31, 32, 0,0,0,0,0,0,0,0,
+  17, 18, 19, 20, 21, 22, 23, 24, 0,0,0,0,0,0,0,0
+]
+var mailbox = Uint8Array.from(initial_mailbox) // an array of piece list indices
+var population = Uint16Array.from(initial_population) // a record of pieces list indices still on the board (each bit is a piece)
+var piece_squares = Uint8Array.from(initial_piece_squares) // a list of squares for each bit in population
+var piece_types = Uint8Array.from(initial_piece_types) // a list of piece types for each bit in population
+var kings = new Uint32Array([SQ_IDS['e1'], SQ_IDS['e8']]) // squares of the kings //TODO: remove, since redundant
 var turn = 0|0 // (0,1) = (w,b)
 var moves = 0|0
 var castling = 0xF|0 // (msb) BQ BK WQ WK (lsb)
@@ -93,6 +137,7 @@ var ep = -1|0
 var eps = new Uint32Array(MAX_LEN)
 var score = 0|0
 var scores = new Uint32Array(MAX_LEN)
+var enemy_populations = new Uint16Array(MAX_LEN)
 var make_pieces = new Uint8Array(MAX_LEN * 4) // pieces in old mailbox state before make
 var make_squares = new Uint8Array(MAX_LEN * 4) // indices of those pieces
 
@@ -236,7 +281,7 @@ function print() {
   for (var r = 7; r >= 0; --r) {
     var line = ''
     for (var f = 0; f < 8; ++f) {
-      var k = mailbox[(r << 4)|f]
+      var k = piece_types[mailbox[(r << 4)|f]]
       if (k in PIECES)
         line += PIECES[k]
       else
@@ -244,18 +289,20 @@ function print() {
     }
     console.log(line)
   }
-  console.log('castling:',castling,'ep:',ep,'->',SQUARES[ep],'moves:',moves,'score:',score)
+  console.log('castling:',castling,'ep:',ep,'->',SQUARES[ep],'moves:',moves,'score:',score,'population (w):',population[0].toString(2),'population (b):',population[1].toString(2))
 }
 
 function reset_board() {
-  for (var i = 0; i < 128; ++i)
-    mailbox[i] = initial_mailbox[i]|0
+  mailbox = Uint8Array.from(initial_mailbox)
+  population = Uint16Array.from(initial_population)
+  piece_squares = Uint8Array.from(initial_piece_squares)
+  piece_types = Uint8Array.from(initial_piece_types)
+  kings = new Uint32Array([SQ_IDS['e1'], SQ_IDS['e8']])
   turn = 0|0
   moves = 0|0
   castling = 0xF|0
   ep = -1|0
   score = 0|0
-  kings = new Uint32Array([SQ_IDS['e1'], SQ_IDS['e8']])
 }
 
 function slow_evaluate() {
@@ -263,7 +310,7 @@ function slow_evaluate() {
   var i = 64|0; do {
     i = (i - 1)|0
     var sq = map0x88[i]
-    var p = mailbox[sq] << 7|0
+    var p = piece_types[mailbox[sq]] << 7|0
     result = (result + (eval_table[p + sq]|0))|0
   } while (i !== (0|0))
   return (turn|0) ? -result|0 : result|0
@@ -285,7 +332,7 @@ function is_attacked(sq, side) {
         var d = deltas[j]|0
         for (var to = (sq + d)|0; (((to & 0x88)|0) === (0|0)); to = (to + d)|0)
           if ((mailbox[to]|0) !== (0|0)) {
-            if ((mailbox[to]|0) === (p|0)) {
+            if ((piece_types[mailbox[to]]|0) === (p|0)) {
               return 1|0
             }
             break
@@ -293,9 +340,9 @@ function is_attacked(sq, side) {
       }
     } else {
       for (var j = (p << 4)|0; (deltas[j]|0) !== (0|0); j = (j + 1)|0) {
-        var to = (sq - (deltas[j]|0))|0 // PAWNs captures are 'reversed'
+        var to = (sq - (deltas[j]|0))|0 // pawn captures are 'reversed'
         if (((to & 0x88)|0) !== (0|0)) continue // off mailbox
-        if ((mailbox[to]|0) === (p|0)) return 1|0
+        if ((piece_types[mailbox[to]]|0) === (p|0)) return 1|0
       }
     }
   } while (i !== (0|0))
@@ -304,50 +351,56 @@ function is_attacked(sq, side) {
 
 function make(move) {
   move = move|0
+
+  // push castling, ep, score, enemy population
   castlings[moves] = castling|0
   eps[moves] = ep|0
   scores[moves] = score|0
+  enemy_populations[moves] = population[turn^1]
 
   var ptr = moves << 2 // ptr to make_pieces & make_squares
   
-  // decompose bitfields
-  var fr = (move & FROM_MASK)|0
-  var to = ((move & TO_MASK) >> 8)|0
-  var c = mailbox[to]|0
-  var p = mailbox[fr]|0
+  // decompose bitfields of move
+  var fr = (move & FROM_MASK)|0 // from square
+  var to = ((move & TO_MASK) >> 8)|0 // to square
+  var c = mailbox[to]|0 // captured piece list id
+  var p = mailbox[fr]|0 // moving piece list id
+  var c_type = piece_types[c] // captured piece type 
+  var p_type = piece_types[p] // moving piece type
   
-  // move piece
+  // move piece and make capture (non-ep)
   make_pieces[ptr] = mailbox[fr] // vacate from sq
   make_squares[ptr] = fr
-  ptr = (ptr + 1)|0 
+  ptr = (ptr + 1)|0
   mailbox[fr] = 0|0
-  score = (score - eval_table[c << 7 | to])|0 // subtract captured score (non ep)
-  score = (score - eval_table[p << 7 | fr])|0 // subtract fr sq score
+  make_pieces[ptr] = mailbox[to]|0 // place piece on to sq
+  make_squares[ptr] = to|0
+  ptr = (ptr + 1)|0
+  mailbox[to] = p|0
+  piece_squares[p] = to
+  score = (score - eval_table[c_type << 7 | to])|0 // subtract captured score (non ep)
+  score = (score - eval_table[p_type << 7 | fr])|0 // subtract fr sq score
 
-  // if KING move, update KING locations
-  if ((p >> 2) === KING) 
-    kings[turn] = to|0
-  // update castling rights
-  castling &= CASTLE_MASKS[to << 7 | fr]|0
+  var enemy_turn = turn^1
+  if ((c|0) !== (0|0)) // if capture,
+    population[enemy_turn] = population[enemy_turn] ^ (1 << (c - (enemy_turn<<4) - 1)) // clear the captured piece's flag in population
+
+  if ((p_type >> 2) === KING) // if king move,
+    kings[turn] = to|0 // update king location
+  castling &= CASTLE_MASKS[to << 7 | fr]|0 // update castling rights
+
   // update ep
-  var sign = turn ? 1|0 : -1|0 
-  ep = (p >> 2 === PAWN && (to ^ fr) === 32) ? (to + (sign << 4))|0 : -1|0
+  var sign = turn ? 1|0 : -1|0
+  ep = (p_type >> 2 === PAWN && (to ^ fr) === 32) ? (to + (sign << 4))|0 : -1|0 // lookup table?
 
   // handle promotions
   var prom = (move & PROMOTION_MASK)|0
   if (prom !== (0|0)) { // if promotion
     prom >>= 24
-    make_pieces[ptr] = mailbox[to]|0 // place promotion piece
-    make_squares[ptr] = to|0
-    ptr = (ptr + 1)|0
-    mailbox[to] = prom
+    piece_types[p] = prom // place promotion piece
     score = (score + eval_table[prom << 7 | to])|0 // add promotion piece score    
   } else { // if not promotion
-    make_pieces[ptr] = mailbox[to]|0 // place piece on to sq
-    make_squares[ptr] = to|0
-    ptr = (ptr + 1)|0
-    mailbox[to] = p|0
-    score = (score + eval_table[p << 7 | to])|0 // add to sq score
+    score = (score + eval_table[p_type << 7 | to])|0 // add to sq score
   }
   // handle castling
   if (((move & CASTLE_MASK)|0) !== (0|0)) { 
@@ -359,8 +412,8 @@ function make(move) {
       rfr = (0 + rank)|0, rto = (3 + rank)|0
     }
     var rook = mailbox[rfr]|0
-    score = (score - eval_table[rook << 7 | rfr])|0 // subtract rook fr score
-    score = (score + eval_table[rook << 7 | rto])|0 // add rook to score
+    score = (score - eval_table[piece_types[rook] << 7 | rfr])|0 // subtract rook fr score
+    score = (score + eval_table[piece_types[rook] << 7 | rto])|0 // add rook to score
     make_pieces[ptr] = mailbox[rto]|0 // add rook to rto
     make_squares[ptr] = rto|0
     ptr = (ptr + 1)|0 
@@ -369,22 +422,25 @@ function make(move) {
     make_squares[ptr] = rfr|0
     ptr = (ptr + 1)|0 
     mailbox[rfr] = 0|0
+    piece_squares[rook] = rto
   }
   // handle ep
   else if (((move & EP_MASK)|0) !== (0|0)) {
-    var epSquare = (to + (sign<<4))|0
-    make_pieces[ptr] = mailbox[epSquare]|0 // capture ep pawn
-    make_squares[ptr] = epSquare|0
+    var ep_square = (to + (sign<<4))|0
+    make_pieces[ptr] = mailbox[ep_square]|0 // capture ep pawn
+    make_squares[ptr] = ep_square|0
     ptr = (ptr + 1)|0 // final add
     make_squares[ptr] = 9|0 // set last value to junk value
-    mailbox[epSquare] = 0
-    score = (score - eval_table[(p^3) << 7 | epSquare])|0 // subtract enemy pawn score
+    mailbox[ep_square] = 0
+    score = (score - eval_table[(p_type^3) << 7 | ep_square])|0 // subtract enemy pawn score
   } else {
     // not castling or ep: set rest to junk values
     make_squares[ptr] = 9|0
     ptr = (ptr + 1)|0 
     make_squares[ptr] = 9|0
   }
+
+  // flip turn and increment movecount
   turn ^= 1|0
   moves = (moves + 1)|0
 }
@@ -392,22 +448,36 @@ function make(move) {
 function unmake(move) {
   move = move|0
 
+  // restore turn
   turn ^= 1|0
+
+  // pop castling, ep, score, enemy population
   moves = (moves - 1)|0
   castling = castlings[moves]|0
   ep = eps[moves]|0
   score = scores[moves]|0
+  population[turn^1] = enemy_populations[moves]
   
-  // decompose bitfields
-  var fr = (move & FROM_MASK)|0
-  var to = ((move & TO_MASK) >> 8)|0
-  var p = mailbox[to]|0
+  // decompose bitfields of move
+  var fr = (move & FROM_MASK)|0 // from square
+  var to = ((move & TO_MASK) >> 8)|0 // to square
+  var p = mailbox[to]|0 // piece index
+  var p_type = piece_types[p]|0 // piece type
   
-  // update KING location
-  if (((p >> 2)|0) === KING)
-    kings[turn] = fr|0 // update king location (if king move)
+  if (((p_type >> 2)|0) === KING) // if king move,
+    kings[turn] = fr|0 // update king location
+
+  if (((move & PROMOTION_MASK)|0) !== (0|0)) // if promotion,
+    piece_types[p] = WP ^ (turn*3) // replace promoted piece with friendly pawn
+
+  piece_squares[p] = fr // reset piece list square
+
+  if (((move & OO_MASK)|0) !== (0|0)) // if kingside castle,
+    piece_squares[8 + (turn<<4)] = 7 + 7 * (turn<<4) // set rook back to original position
+  if (((move & OOO_MASK)|0) !== (0|0)) // if queen castle,
+    piece_squares[1 + (turn<<4)] = 7 * (turn<<4) // set rook back to original position
   
-  // modify other SQUARES using make_pieces and make_squares
+  // modify other squares using make_pieces and make_squares
   var ptr = moves << 2
   mailbox[make_squares[ptr]] = make_pieces[ptr]
   ptr = (ptr + 1)|0
@@ -433,22 +503,27 @@ var check_king = new Uint32Array([ // 1 if nEEd check if attacked, 0 if only che
   1, 1, 0, 0,
   1, 0, 1, 0
 ])
-var castleBits = new Uint32Array([OO_MASK, OOO_MASK, OO_MASK, OOO_MASK]) // one for each entry in sqcheck
+var castle_bits = new Uint32Array([OO_MASK, OOO_MASK, OO_MASK, OOO_MASK]) // one for each entry in sqcheck
 function movegen() {
   var new_max = 0|0
   var offset = (moves << MAX_MOVE_SHIFT)|0
   var turn_bit = (1 << turn)|0
-  var i = 64|0; do { // for each square
+  //var turn_offset = 1 + (turn << 4)
+  //var pieces = population[turn]|0
+  var i = 64; do {
+  //while ((pieces|0) !== (0|0)) { // for each piece
     i = (i - 1)|0
-    var sq = (i + (i & ~7))|0
-    if (((mailbox[sq] & turn_bit)|0) !== (0|0)) { // if current piece can move
-      var p = mailbox[sq]|0
+    var sq = i + (i & ~7)
+    //var sq = piece_squares[turn_offset + BSF[pieces]] // extract the square the piece is on
+    //pieces = (pieces & (pieces - 1))|0 // drop the lsb of pieces
+    if (((piece_types[mailbox[sq]] & turn_bit)|0) !== (0|0)) { // if current piece can move
+      var p = piece_types[mailbox[sq]]|0
       if (((p >> 2)|0) !== (PAWN|0)) { // if not pawn
         if (((p & SLIDER_MASK)|0) !== (0|0)) { // if sliding
           var j = (p << 4)|0; while ((deltas[j]|0) !== (0|0)) { // for all deltas
             var d = deltas[j]|0
             for (var to = (sq + d)|0; (((to & 0x88)|0) === (0|0)); to = (to + d)|0) { // while tosq is on mailbox, generate sliding attacks
-              var c = mailbox[to]|0
+              var c = piece_types[mailbox[to]]|0
               if (c !== (0|0)) { // if obstructed
                 if (((c & turn_bit)|0) === (0|0)) { // if obstructed piece is enemy
                   move_list[offset+new_max] = (sq | (to << 8) | (c << 16))|0 // add capture
@@ -465,7 +540,7 @@ function movegen() {
         } else { // not sliding
           var j = (p << 4)|0; while ((deltas[j]|0) !== (0|0)) { // for all deltas
             var to = (sq + (deltas[j]|0))|0
-            var c = mailbox[to]|0
+            var c = piece_types[mailbox[to]]|0
             j = (j + 1)|0 // must be done before continue statement
             if ((((to & 0x88)|0) !== (0|0)) || (((c & turn_bit)|0) !== (0|0)))
               continue // if off mailbox or friendly obstruction, skip this delta
@@ -487,7 +562,7 @@ function movegen() {
                   k = (k + 1)|0
                 }
                 if ((ok|0) !== (0|0)) {
-                  move_list[offset+new_max] = (sq | ((sqcheck[j << 2]|0) << 8) | (castleBits[j]|0))|0
+                  move_list[offset+new_max] = (sq | ((sqcheck[j << 2]|0) << 8) | (castle_bits[j]|0))|0
                   new_max = (new_max + 1)|0
                 }
               }
@@ -521,7 +596,7 @@ function movegen() {
         var j = (p << 4)|0; while ((deltas[j]|0) !== (0|0)) { // for all capture deltas
           var capt = (sq + (deltas[j]|0))|0
           if ((((capt & 0x88)|0) === (0|0)) && ((mailbox[capt]|0) !== (0|0))) {
-            if ((((mailbox[capt]|0) & turn_bit)|0) === (0|0)) { // found enemy piece
+            if ((((piece_types[mailbox[capt]]|0) & turn_bit)|0) === (0|0)) { // found enemy piece
               if (((capt >> 4)|0) === (prom_rank|0)) { // if rank 7 or 2, add as capture with promotion
                 var template = (sq | (capt << 8) | ((mailbox[capt]|0) << 16) | (turn_bit << 24))|0
                 move_list[offset+new_max] = (template | (QUEEN << 26))|0
@@ -542,7 +617,8 @@ function movegen() {
         }
       }
     }
-  } while (i !== (0|0)) // while there are still squares left to consider
+  //} // while (pieces !== 0)
+  } while ((i|0) !== (0|0))
   move_list_max[moves] = new_max
 }
 
@@ -608,7 +684,7 @@ function san_list() {
       var fr = SQUARES[move_list[j] & FROM_MASK]
       var to = SQUARES[(move_list[j] & TO_MASK) >> 8]
       var isCapt = (move_list[j] & CAPTURE_MASK) || (move_list[j] & EP_MASK)
-      var p = PIECE_NAMES[mailbox[move_list[j] & FROM_MASK] >> 2]
+      var p = PIECE_NAMES[piece_types[mailbox[move_list[j] & FROM_MASK]] >> 2]
       var piece = (p !== 'p') ? p.toUpperCase() : (isCapt ? fr[0] : '')
       var capt = isCapt ? 'x' : ''
       var prom = (move_list[j] & PROMOTION_MASK) ?
@@ -617,7 +693,7 @@ function san_list() {
       for (var k = 0; k < move_list_max[moves]; ++k) {
         if ((p !== 'p') && (i !== k)) {
           var l = offset + k
-          var otherP = PIECE_NAMES[mailbox[move_list[l] & FROM_MASK] >> 2]
+          var otherP = PIECE_NAMES[piece_types[mailbox[move_list[l] & FROM_MASK]] >> 2]
           var other_to = SQUARES[(move_list[l] & TO_MASK) >> 8]
           if ((otherP === p) && (other_to === to)) {
             var other_fr = SQUARES[move_list[l] & FROM_MASK]
@@ -730,7 +806,7 @@ function go(depth, nodes = [0]) {
 
 function perft_check(name, pos, toMove, castlingRights, epSquare, expected, maxdepth) {
   for (var i = 0; i < 128; ++i)
-    mailbox[i] = pos[i]|0
+    mailbox[i] = pos[i]|0 // TODO: fix
   turn = toMove|0
   moves = 0|0
   castling = castlingRights|0

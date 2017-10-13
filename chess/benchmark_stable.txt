@@ -1,0 +1,41 @@
+Initializing:
+VM131:19 - board constants
+VM131:32 - piece & move constants
+VM131:61 - board
+VM131:97 - movegen constants
+VM131:116 - evaluation tables
+VM131:225 - engine functions
+VM131:726 Perft (initial):
+VM131:731 - perft(1) = 20 (expected 20). Duration: 4 ms (5 knps). Score: 0
+VM131:731 - perft(2) = 400 (expected 400). Duration: 4 ms (100 knps). Score: 0
+VM131:731 - perft(3) = 8902 (expected 8902). Duration: 32 ms (278.19 knps). Score: 0
+VM131:731 - perft(4) = 197281 (expected 197281). Duration: 61 ms (3234.11 knps). Score: 0
+VM131:726 Perft (kiwipete):
+VM131:731 - perft(1) = 48 (expected 48). Duration: 0 ms (Infinity knps). Score: 110
+VM131:731 - perft(2) = 2039 (expected 2039). Duration: 11 ms (185.36 knps). Score: 110
+VM131:731 - perft(3) = 97862 (expected 97862). Duration: 41 ms (2386.88 knps). Score: 110
+VM131:731 - perft(4) = 4085603 (expected 4085603). Duration: 1127 ms (3625.2 knps). Score: 110
+VM131:726 Perft (rook endgame):
+VM131:731 - perft(1) = 15 (expected 14). Duration: 0 ms (Infinity knps). Score: -20
+VM131:731 - perft(2) = 203 (expected 191). Duration: 0 ms (Infinity knps). Score: -20
+VM131:731 - perft(3) = 2812 (expected 2812). Duration: 1 ms (2812 knps). Score: -20
+VM131:731 - perft(4) = 43238 (expected 43238). Duration: 18 ms (2402.11 knps). Score: -20
+VM131:731 - perft(5) = 674624 (expected 674624). Duration: 218 ms (3094.61 knps). Score: -20
+VM131:731 - perft(6) = 11030083 (expected 11030083). Duration: 3841 ms (2871.67 knps). Score: -20
+VM131:726 Perft (complicated):
+VM131:731 - perft(1) = 2 (expected 2). Duration: 0 ms (Infinity knps). Score: 105
+VM131:731 - perft(2) = 262 (expected 264). Duration: 0 ms (Infinity knps). Score: 105
+VM131:731 - perft(3) = 9467 (expected 9467). Duration: 2 ms (4733.5 knps). Score: 105
+VM131:731 - perft(4) = 422333 (expected 422333). Duration: 121 ms (3490.36 knps). Score: 105
+VM131:731 - perft(5) = 15833292 (expected 15833292). Duration: 4283 ms (3696.78 knps). Score: 105
+VM131:726 Perft (tricky):
+VM131:731 - perft(1) = 44 (expected 44). Duration: 0 ms (Infinity knps). Score: 60
+VM131:731 - perft(2) = 1486 (expected 1486). Duration: 0 ms (Infinity knps). Score: 60
+VM131:731 - perft(3) = 62379 (expected 62379). Duration: 22 ms (2835.41 knps). Score: 60
+VM131:731 - perft(4) = 2103487 (expected 2103487). Duration: 556 ms (3783.25 knps). Score: 60
+VM131:726 Perft (symmetric):
+VM131:731 - perft(1) = 46 (expected 46). Duration: 0 ms (Infinity knps). Score: 0
+VM131:731 - perft(2) = 2079 (expected 2079). Duration: 1 ms (2079 knps). Score: 0
+VM131:731 - perft(3) = 89890 (expected 89890). Duration: 25 ms (3595.6 knps). Score: 0
+VM131:731 - perft(4) = 3894594 (expected 3894594). Duration: 927 ms (4201.29 knps). Score: 0
+VM131:796 Done. Total time: 11.306s

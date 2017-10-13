@@ -1,0 +1,125 @@
+Initializing:
+VM89:24 - board constants
+VM89:37 - piece & move constants
+VM89:69 - board
+VM89:103 - movegen constants
+VM89:121 - evaluation tables
+VM89:230 - engine functions
+VM89:774 Perft (initial):
+VM89:779 - perft(1) = 20 (expected 20). Duration: 5 ms (4 knps). Score: 0
+VM89:779 - perft(2) = 400 (expected 400). Duration: 10 ms (40 knps). Score: 0
+VM89:779 - perft(3) = 8902 (expected 8902). Duration: 63 ms (141.3 knps). Score: 0
+VM89:779 - perft(4) = 197281 (expected 197281). Duration: 74 ms (2665.96 knps). Score: 0
+VM89:774 Perft (kiwipete):
+VM89:779 - perft(1) = 48 (expected 48). Duration: 1 ms (48 knps). Score: 110
+VM89:779 - perft(2) = 2039 (expected 2039). Duration: 10 ms (203.9 knps). Score: 110
+VM89:779 - perft(3) = 97862 (expected 97862). Duration: 46 ms (2127.43 knps). Score: 110
+VM89:779 - perft(4) = 4085603 (expected 4085603). Duration: 990 ms (4126.87 knps). Score: 110
+VM89:774 Perft (rook endgame):
+VM89:779 - perft(1) = 15 (expected 14). Duration: 0 ms (Infinity knps). Score: -20
+VM89:779 - perft(2) = 203 (expected 191). Duration: 0 ms (Infinity knps). Score: -20
+VM89:779 - perft(3) = 2812 (expected 2812). Duration: 2 ms (1406 knps). Score: -20
+VM89:779 - perft(4) = 43238 (expected 43238). Duration: 15 ms (2882.53 knps). Score: -20
+VM89:779 - perft(5) = 674624 (expected 674624). Duration: 277 ms (2435.47 knps). Score: -20
+VM89:779 - perft(6) = 11030083 (expected 11030083). Duration: 4050 ms (2723.48 knps). Score: -20
+VM89:774 Perft (complicated):
+VM89:779 - perft(1) = 2 (expected 2). Duration: 0 ms (Infinity knps). Score: 105
+VM89:779 - perft(2) = 262 (expected 264). Duration: 0 ms (Infinity knps). Score: 105
+VM89:779 - perft(3) = 9467 (expected 9467). Duration: 2 ms (4733.5 knps). Score: 105
+VM89:779 - perft(4) = 422333 (expected 422333). Duration: 150 ms (2815.55 knps). Score: 105
+VM89:779 - perft(5) = 15833292 (expected 15833292). Duration: 5188 ms (3051.91 knps). Score: 105
+VM89:774 Perft (tricky):
+VM89:779 - perft(1) = 44 (expected 44). Duration: 0 ms (Infinity knps). Score: 60
+VM89:779 - perft(2) = 1485 (expected 1486). Duration: 1 ms (1485 knps). Score: 60
+VM89:779 - perft(3) = 62379 (expected 62379). Duration: 32 ms (1949.34 knps). Score: 60
+VM89:779 - perft(4) = 2103487 (expected 2103487). Duration: 883 ms (2382.2 knps). Score: 60
+VM89:774 Perft (symmetric):
+VM89:779 - perft(1) = 46 (expected 46). Duration: 0 ms (Infinity knps). Score: 0
+VM89:779 - perft(2) = 2079 (expected 2079). Duration: 1 ms (2079 knps). Score: 0
+VM89:779 - perft(3) = 89890 (expected 89890). Duration: 32 ms (2809.06 knps). Score: 0
+VM89:779 - perft(4) = 3894594 (expected 3894594). Duration: 1005 ms (3875.22 knps). Score: 0
+VM89:844 Done. Total time: 12.859s
+
+Initializing:
+VM101:25 - board constants
+VM101:38 - piece & move constants
+VM101:70 - board
+VM101:104 - movegen constants
+VM101:122 - evaluation tables
+VM101:231 - engine functions
+VM101:784 Perft (initial):
+VM101:789 - perft(1) = 20 (expected 20). Duration: 4 ms (5 knps). Score: 0
+VM101:789 - perft(2) = 400 (expected 400). Duration: 10 ms (40 knps). Score: 0
+VM101:789 - perft(3) = 8902 (expected 8902). Duration: 68 ms (130.91 knps). Score: 0
+VM101:789 - perft(4) = 197281 (expected 197281). Duration: 78 ms (2529.24 knps). Score: 0
+VM101:784 Perft (kiwipete):
+VM101:789 - perft(1) = 48 (expected 48). Duration: 1 ms (48 knps). Score: 110
+VM101:789 - perft(2) = 2039 (expected 2039). Duration: 8 ms (254.88 knps). Score: 110
+VM101:789 - perft(3) = 97862 (expected 97862). Duration: 51 ms (1918.86 knps). Score: 110
+VM101:789 - perft(4) = 4085603 (expected 4085603). Duration: 1122 ms (3641.36 knps). Score: 110
+VM101:784 Perft (rook endgame):
+VM101:789 - perft(1) = 15 (expected 14). Duration: 0 ms (Infinity knps). Score: -20
+VM101:789 - perft(2) = 203 (expected 191). Duration: 0 ms (Infinity knps). Score: -20
+VM101:789 - perft(3) = 2812 (expected 2812). Duration: 1 ms (2812 knps). Score: -20
+VM101:789 - perft(4) = 43238 (expected 43238). Duration: 17 ms (2543.41 knps). Score: -20
+VM101:789 - perft(5) = 674624 (expected 674624). Duration: 197 ms (3424.49 knps). Score: -20
+VM101:789 - perft(6) = 11030083 (expected 11030083). Duration: 4013 ms (2748.59 knps). Score: -20
+VM101:784 Perft (complicated):
+VM101:789 - perft(1) = 2 (expected 2). Duration: 0 ms (Infinity knps). Score: 105
+VM101:789 - perft(2) = 262 (expected 264). Duration: 0 ms (Infinity knps). Score: 105
+VM101:789 - perft(3) = 9467 (expected 9467). Duration: 3 ms (3155.67 knps). Score: 105
+VM101:789 - perft(4) = 422333 (expected 422333). Duration: 106 ms (3984.27 knps). Score: 105
+VM101:789 - perft(5) = 15833292 (expected 15833292). Duration: 4335 ms (3652.43 knps). Score: 105
+VM101:784 Perft (tricky):
+VM101:789 - perft(1) = 44 (expected 44). Duration: 0 ms (Infinity knps). Score: 60
+VM101:789 - perft(2) = 1485 (expected 1486). Duration: 1 ms (1485 knps). Score: 60
+VM101:789 - perft(3) = 62379 (expected 62379). Duration: 28 ms (2227.82 knps). Score: 60
+VM101:789 - perft(4) = 2103487 (expected 2103487). Duration: 736 ms (2858 knps). Score: 60
+VM101:784 Perft (symmetric):
+VM101:789 - perft(1) = 46 (expected 46). Duration: 0 ms (Infinity knps). Score: 0
+VM101:789 - perft(2) = 2079 (expected 2079). Duration: 2 ms (1039.5 knps). Score: 0
+VM101:789 - perft(3) = 89890 (expected 89890). Duration: 40 ms (2247.25 knps). Score: 0
+VM101:789 - perft(4) = 3894594 (expected 3894594). Duration: 1491 ms (2612.07 knps). Score: 0
+VM101:854 Done. Total time: 12.328s
+
+Initializing:
+VM207:25 - board constants
+VM207:38 - piece & move constants
+VM207:70 - board
+VM207:104 - movegen constants
+VM207:122 - evaluation tables
+VM207:231 - engine functions
+VM207:785 Perft (initial):
+VM207:790 - perft(1) = 20 (expected 20). Duration: 5 ms (4 knps). Score: 0
+VM207:790 - perft(2) = 400 (expected 400). Duration: 8 ms (50 knps). Score: 0
+VM207:790 - perft(3) = 8902 (expected 8902). Duration: 68 ms (130.91 knps). Score: 0
+VM207:790 - perft(4) = 197281 (expected 197281). Duration: 158 ms (1248.61 knps). Score: 0
+VM207:785 Perft (kiwipete):
+VM207:790 - perft(1) = 48 (expected 48). Duration: 1 ms (48 knps). Score: 110
+VM207:790 - perft(2) = 2039 (expected 2039). Duration: 26 ms (78.42 knps). Score: 110
+VM207:790 - perft(3) = 97862 (expected 97862). Duration: 95 ms (1030.13 knps). Score: 110
+VM207:790 - perft(4) = 4085603 (expected 4085603). Duration: 1910 ms (2139.06 knps). Score: 110
+VM207:785 Perft (rook endgame):
+VM207:790 - perft(1) = 15 (expected 14). Duration: 0 ms (Infinity knps). Score: -20
+VM207:790 - perft(2) = 203 (expected 191). Duration: 1 ms (203 knps). Score: -20
+VM207:790 - perft(3) = 2812 (expected 2812). Duration: 3 ms (937.33 knps). Score: -20
+VM207:790 - perft(4) = 43238 (expected 43238). Duration: 28 ms (1544.21 knps). Score: -20
+VM207:790 - perft(5) = 674624 (expected 674624). Duration: 369 ms (1828.25 knps). Score: -20
+VM207:790 - perft(6) = 11030083 (expected 11030083). Duration: 5105 ms (2160.64 knps). Score: -20
+VM207:785 Perft (complicated):
+VM207:790 - perft(1) = 2 (expected 2). Duration: 0 ms (Infinity knps). Score: 105
+VM207:790 - perft(2) = 262 (expected 264). Duration: 0 ms (Infinity knps). Score: 105
+VM207:790 - perft(3) = 9467 (expected 9467). Duration: 4 ms (2366.75 knps). Score: 105
+VM207:790 - perft(4) = 422333 (expected 422333). Duration: 120 ms (3519.44 knps). Score: 105
+VM207:790 - perft(5) = 15833292 (expected 15833292). Duration: 6228 ms (2542.28 knps). Score: 105
+VM207:785 Perft (tricky):
+VM207:790 - perft(1) = 44 (expected 44). Duration: 0 ms (Infinity knps). Score: 60
+VM207:790 - perft(2) = 1485 (expected 1486). Duration: 1 ms (1485 knps). Score: 60
+VM207:790 - perft(3) = 62379 (expected 62379). Duration: 45 ms (1386.2 knps). Score: 60
+VM207:790 - perft(4) = 2103487 (expected 2103487). Duration: 919 ms (2288.89 knps). Score: 60
+VM207:785 Perft (symmetric):
+VM207:790 - perft(1) = 46 (expected 46). Duration: 0 ms (Infinity knps). Score: 0
+VM207:790 - perft(2) = 2079 (expected 2079). Duration: 1 ms (2079 knps). Score: 0
+VM207:790 - perft(3) = 89890 (expected 89890). Duration: 28 ms (3210.36 knps). Score: 0
+VM207:790 - perft(4) = 3894594 (expected 3894594). Duration: 915 ms (4256.39 knps). Score: 0
+VM207:855 Done. Total time: 16.056s

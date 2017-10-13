@@ -1,25 +1,28 @@
 'use strict'
 
 //TODO:
-// 'flip overlay' button
-// only think on 'your' turn
 // when in check, only generate king moves or captures or moves that intersect king (make 'bitmap' of just byte * 128 * 128, 16 KB lookup table)
+//   or, return the checker. generate king moves or captures of the checking piece (including en passant)
+//   if bishop/rook/queen, also generate intercepting moves
 // quiescence
-// better move ordering algorithm
-// keep track of sides that are in check
+// keep track of sides that are in check?
 // use Arraybuffer/view tricks to decompose things into fields?
 // use fancy chess piece symbols in print()?
-// piece list (18 bit integer) to keep track of nonking pieces
-// rethink board and move representation
-//   mailbox maps sq -> piece list id
-//   piece list maps piece list id -> sq
-//   id map maps piece list id -> piece type
-//   move representation: fr piece list id(4) capt piece list id(4) to sq(8)
-// automatically detect time control
+// opening book
+// time management
+// endgame pst's
+// transposition table
+// late move reductions
+// Uint32Array.from([Math.random() * (1 << 30)])
+// pseudo-legal move generation
 
-var DEBUG = false
-var INTERFACE = true
-var SEARCH_DEPTH = 4
+var DEBUG = true // enables debugging output
+var PERFT = false // runs through a suite of test perfts
+var INTERFACE = true // extracts moves from lichess and displays recommended moves
+var COMMENTARY = false // displays recommended moves for the opponent
+var SEARCH_DEPTH = 5 // default interface search depth
+var MOVE_ORDERING = true // sort moves based on a heuristic (reduces nodes searched)
+var MOVE_ORDERING_ALGORITHM = 'RADIX' // can be 'RADIX' or 'BUILTIN' (in general, radix is faster)
 
 var start = Date.now()
 console.log('Initializing:')
@@ -72,6 +75,7 @@ var CASTLE_MASKS = new Uint32Array(Math.pow(CASTLE_MASKS_SINGLE.length, 2)).map(
 console.log('- board')
 var MAX_LEN = 512|0 // please don't play extra long games
 var MAX_MOVE_SHIFT = 8|0 // log2(arbitrary max branching factor
+var MAX_MOVE_SCORE = 128|0 // highest possible score for a move (used in move ordering)
 var map0x88 = new Uint32Array(64).map((e, i) => i + (i & ~7))
 var initial_mailbox = [
   WR, WN, WB, WQ, WK, WB, WN, WR, 0,0,0,0,0,0,0,0,
@@ -96,6 +100,9 @@ var scores = new Uint32Array(MAX_LEN)
 var make_pieces = new Uint8Array(MAX_LEN * 4) // pieces in old mailbox state before make
 var make_squares = new Uint8Array(MAX_LEN * 4) // indices of those pieces
 
+var radix_scores = new Uint8Array(1 << MAX_MOVE_SHIFT) // holds scores for each move in sort()
+var radix_counts = new Uint8Array(MAX_MOVE_SCORE) // holds score-indexed counts in sort()
+var radix_swap_space = new Uint32Array(1 << MAX_MOVE_SHIFT) // holds a copy of candidate moves in sort()
 var move_list = new Uint32Array(MAX_LEN * (1 << MAX_MOVE_SHIFT)) // candidate moves for each ply
 var move_list_max = new Uint32Array(MAX_LEN) // number of candidate moves for each ply
 
@@ -196,7 +203,7 @@ eval_table.set([
 for (var i = 0; i < 6; ++i) // set up endgame piece-square tables for white
   for (var j = 0; j < 128; ++j)
     eval_table[128*(PIECES[i]+256) + j] = eval_table[128*PIECES[i] + j]
-// KING endgame-tables are different
+// king endgame-tables are different
 eval_table.set([
   -50,-40,-30,-20,-20,-30,-40,-50, 0,0,0,0,0,0,0,0,
   -30,-20,-10,  0,  0,-10,-20,-30, 0,0,0,0,0,0,0,0,
@@ -547,9 +554,9 @@ function movegen() {
 }
 
 function move_to_str(m) {
-  return SQUARES[m & FROM_MASK] + SQUARES[(m & TO_MASK) >> 8]
-    + ', ' + (m & 0xFF) + ' ' + ((m >> 8) & 0xFF)
-    + ' ' + ((m >> 16) & 0xFF) + ' ' + ((m >> 24) & 0xFF)
+  return SQUARES[m & FROM_MASK] + SQUARES[(m & TO_MASK) >> 8] + ((m & PROMOTION_MASK) ? '=' + PIECE_NAMES[(m & PROMOTION_MASK) >> 26].toUpperCase() : '')
+  //  + ', ' + (m & 0xFF) + ' ' + ((m >> 8) & 0xFF)
+  //  + ' ' + ((m >> 16) & 0xFF) + ' ' + ((m >> 24) & 0xFF)
 }
 
 function legalize() {
@@ -570,18 +577,77 @@ function legalize() {
   move_list_max[moves] = new_max|0
 }
 
-// convert into heap operations
-function sort() {
+function score_move(move/*, verbose*/) {
+  var fr = (move & FROM_MASK)|0 // extract fr, to, piece
+  var to = (move & TO_MASK) >> 8
+  var p = mailbox[fr] << 7
+  var sign = (turn|0) === (0|0) ? 1 : -1
+  var result = sign*(eval_table[p | fr] - eval_table[p | to]) >> 2 // score = -pst delta/4
+  if (((move & CAPTURE_MASK)|0) !== (0|0)) { // if capture,
+    result = (result + (sign*eval_table[mailbox[to] << 7 | to] >> 4))|0 // score -= |captured piece value|/16
+    if ((p >> 9) === (KING|0)) // if king capture,
+      result = (result + (1000 >> 6))|0 // score += 1000/64
+    else
+      result = (result + (sign*eval_table[p | fr] >> 6))|0 // score += |capturing piece value|/64
+  }
+  //score = (score - ((move & CAPTURE_MASK)|0 ? 50 : 0|0))|0 // score -= 50 if capture
+  result = (result + 64)|0 // force a positive value 0..MAX_MOVE_SCORE
+  //if (verbose)
+  //  console.log(move_to_str(move), score, eval_table[p | fr] - eval_table[p | to])
+  //if (result < 0 || result > 127) 
+  //  console.log(move_to_str(move), ((move & CAPTURE_MASK) >> 16).toString(2), mailbox[fr].toString(2), result, p >>2, KING)
+  return (result|0) < (0|0) ? 0|0 : result|0
+}
+
+var sort = function() { return 'placeholder' }
+
+if (MOVE_ORDERING_ALGORITHM === 'RADIX') {
+
+sort = function(/*verbose*/) {
+  var length = move_list_max[moves]|0 // number of candidate moves
+  var offset = (moves << MAX_MOVE_SHIFT)|0 // ptr in move_list
+  
+  // initialization
+  for (var i = 0|0; (i|0) < (length|0); i = (i + 1)|0) // for each move,
+    radix_swap_space[i] = move_list[offset + i]|0 // copy the candidate list
+  for (var i = 1|0; (i|0) < (MAX_MOVE_SCORE|0); i = (i + 1)|0) // for scores 1..max,
+    radix_counts[i] = 0|0 // initialize counts to zero
+  //if (verbose) console.log('initialized counts:', radix_counts, 'swap space:', radix_swap_space)
+  
+  // key indexed counting
+  for (var i = 0|0; (i|0) < (length|0); i = (i + 1)|0) { // score each move (lower is better)
+    var score = score_move(radix_swap_space[i])|0
+    radix_scores[i] = score|0 // record score
+    radix_counts[score] = (radix_counts[score] + 1)|0 // update count
+  }
+  for (var i = 1|0; (i|0) < (MAX_MOVE_SCORE|0); i = (i + 1)|0) // for scores 1..max,
+    radix_counts[i] = (radix_counts[i] + radix_counts[i - 1])|0 // convert the count to a maximum offset in sorted array
+  //if (verbose) console.log('after key indexed counting:', JSON.stringify(radix_counts))
+  
+  // sort
+  for (var i = 0|0; (i|0) < (length|0); i = (i + 1)|0) { // for each candidate move,
+    var score = radix_scores[i] // extract score
+    radix_counts[score] = (radix_counts[score] - 1)|0 // decrement offset in sorted array
+    move_list[offset + radix_counts[score]] = radix_swap_space[i] // place sorted move
+  }
+  //if (verbose) console.log('sorted move list:', Array.from(move_list.slice(offset, offset + length)).map(e => move_to_str(e) + '=' + score_move(e)).join(' '))
+}
+
+} else if (MOVE_ORDERING_ALGORITHM === 'BUILTIN') {
+
+sort = function() {
   var copied = []
   var offset = (moves << MAX_MOVE_SHIFT)|0
   for (var i = 0|0; (i|0) < (move_list_max[moves]|0); i = (i + 1)|0) {
-    var score = ((((move_list[offset+i]|0) & CAPTURE_MASK))|0) ? 1|0 : 0|0
+    var score = score_move(move_list[offset+i])|0
     copied.push({ m: move_list[offset+i]|0, s: score|0 })
   }
   copied.sort(function(a, b) { return +(b.s - a.s) })
   for (var i = 0|0; (i|0) < (copied.length|0); i = (i + 1)|0)
     move_list[offset+i] = copied[i].m|0
 }
+
+} else console.error('Unrecognized move ordering algorithm "' + MOVE_ORDERING_ALGORITHM + '"')
 
 function san_list() {
   movegen()
@@ -640,11 +706,11 @@ function apply(sans) {
     var legal = san_list()
     var san = sans[i].replace(new RegExp(String.fromCharCode(1093), 'g'), 'x')
     if (!(san in legal)) {
-      console.log(san === 'dxc5', san.length, san[1].charCodeAt(0), san[1] === 'x')
       console.log(san + ' is illegal: legal moves are ' + Object.keys(legal).join(', '))
     } else {
       make(legal[san]|0)
-      console.log('Made move: ' + san + ' => ' + legal[san] + '. Current eval: ' + evaluate())
+      if (DEBUG)
+        console.log('Made move: ' + san + ' => ' + legal[san] + '. Current score: ' + evaluate())
     }
   }
 }
@@ -652,7 +718,9 @@ function apply(sans) {
 function perft(depth) {
   if (depth === (0|0)) return 1
   var result = 0
-  movegen(); legalize(); sort()
+  movegen(); legalize()
+  if (MOVE_ORDERING)
+    sort()
   var offset = (moves << MAX_MOVE_SHIFT)|0
   for (var i = 0; i < move_list_max[moves]; ++i) {
     make(move_list[offset+i]|0)
@@ -680,7 +748,9 @@ function alphabeta(alpha, beta, depth, nodes = [0]) {
     nodes[0] = (nodes[0] + 1)|0
     return evaluate()|0 //quiesce(alpha, beta)
   }
-  movegen(); legalize(); sort()
+  movegen(); legalize()
+  if (MOVE_ORDERING)
+    sort()
   if (move_list_max[moves] === (0|0)) { // checkmate or stalemate
     return (is_attacked(kings[turn], turn^1)|0)
       ? -((1 << 29) + depth)|0
@@ -688,7 +758,7 @@ function alphabeta(alpha, beta, depth, nodes = [0]) {
   }
   
   var offset = (moves << MAX_MOVE_SHIFT)|0
-  for (var i = 0|0; (i|0) < (move_list_max[moves]|0); i = (i + 1)|0)  {
+  for (var i = 0|0; (i|0) < (move_list_max[moves]|0); i = (i + 1)|0) {
     make(move_list[offset+i]|0)
     var score = -alphabeta(-beta|0, -alpha|0, (depth - 1)|0, nodes)|0
     unmake(move_list[offset+i]|0)
@@ -707,7 +777,24 @@ function go(depth, nodes = [0]) {
     return evaluate()|0 //quiesce(alpha, beta)
   }
   var alpha = -(1 << 30)|0, beta = (1 << 30)|0
-  movegen(); legalize() //sort()
+  movegen(); legalize()
+  if (MOVE_ORDERING) {
+    if (DEBUG) {
+      var m = []
+      var offset = (moves << MAX_MOVE_SHIFT)|0
+      for (var i = 0|0; (i|0) < (move_list_max[moves]|0); i = (i + 1)|0)
+        m.push(move_to_str(move_list[offset + i]) + '=' + score_move(move_list[offset + i], true))
+      console.log('Before sort: ' + m.join(' '))
+    }
+    sort(true)
+    if (DEBUG) {
+      var m = []
+      var offset = (moves << MAX_MOVE_SHIFT)|0
+      for (var i = 0|0; (i|0) < (move_list_max[moves]|0); i = (i + 1)|0)
+        m.push(move_to_str(move_list[offset + i]) + '=' + score_move(move_list[offset + i], true))
+      console.log('After sort: ' + m.join(' '))
+    }
+  }
   var offset = (moves << MAX_MOVE_SHIFT)|0
   var best = -1
   for (var i = 0|0; (i|0) < (move_list_max[moves]|0); i = (i + 1)|0)  {
@@ -749,7 +836,7 @@ function perft_check(name, pos, toMove, castlingRights, epSquare, expected, maxd
 // perft positions taken from https://chessprogramming.wikispaces.com/Perft+Results
 perft_check('initial', initial_mailbox, 0, 0xF, -1, [1, 20, 400, 8902, 197281, 4865609, 119060324], 4)
 
-if (DEBUG) {
+if (PERFT) {
   perft_check('kiwipete', [
     WR, EE, EE, EE, WK, EE, EE, WR, 0,0,0,0,0,0,0,0,
     WP, WP, WP, WB, WB, WP, WP, WP, 0,0,0,0,0,0,0,0,
@@ -809,19 +896,6 @@ if (DEBUG) {
 console.log('Done. Total time:', (Date.now()-start)/1000 + 's')
 //engine
 
-if (INTERFACE) {
-
-var move_record = []
-var last_new_game = Date.now()
-var flip = 0
-if (typeof overlay === 'undefined') {
-  var overlay = document.createElement('div')
-  overlay.onmousedown = function() { overlay.style.zIndex = -1; }
-  overlay.onmouseup = function() { overlay.style.zIndex = 1; }
-  init_display()
-  resize_display()
-  document.body.appendChild(overlay)
-}
 function get_moves() {
   var raw = document.getElementsByClassName('moves')[0].children // document.getElementsByClassName('areplay')[0].children[1]; 
   var accu = []
@@ -834,15 +908,6 @@ function get_moves() {
   }
   return accu
 }
-if (typeof tickInterval !== 'undefined') clearInterval(tickInterval)
-tickInterval = setInterval(function(){
-  var m = get_moves()
-  if (m.join(' ') !== move_record.join(' ')) {
-    //if (m.length === (0|0)) new_game()
-    move_record = m
-    move_change()
-  }
-}, 100)
 
 function init_display() {
   for (var i = 0; i < 64; ++i) {
@@ -893,32 +958,92 @@ function update_display(heatmap) {
 function new_game() {
   flip = parseInt(prompt('New game! Side (0 = white, 1 = black)?', 0))
 }
-function move_change(searchdepth = SEARCH_DEPTH) {
-  var start = Date.now()
-  reset_board()
-  apply(move_record)
-  
-  var heatmap = Array(64)
-  for (var i = 0; i < 64; ++i) heatmap[i] = -6
-  console.log('No. of legal moves:', Object.keys(san_list()).length)
-  var nodes = [0]
-  var searchresult = go(searchdepth, nodes)
-  console.log('Final eval: ' + (searchresult.score/100) + ', best move: ' + searchresult.best.substring(0, 4), searchresult)
-  var fr = SQ_IDS[searchresult.best.substring(0, 2)]
-  var to = SQ_IDS[searchresult.best.substring(2, 4)]
-  fr = (fr + (fr & 7)) >> 1
-  to = (to + (to & 7)) >> 1
-  heatmap[fr] = heatmap[to] = -5
-  
-  var translated = Array(64)
-  for (var i = 0; i < 8; ++i) {
-    for (var j = 0; j < 8; ++j) {
-      translated[i*8 + j] = flip ? heatmap[8*i + (7-j)] : heatmap[8*(7-i) + j]
-    }
-  }
-  update_display(translated)
-  var duration = Date.now() - start
-  console.log('Total time: ' + duration + ' ms (' + nodes[0] + ' nodes @ ' + (Math.round(100*nodes[0]/duration)/100) + ' knps)')
+
+function search_record_to_string(record) {
+  return (record.score/100) + ' ' + record.best +
+    ' (' + record.nodes + ' nodes in ' + record.ms +
+    ' ms at ' + (Math.round(100*record.nodes/record.ms)/100) + ' knps)'
 }
+
+function move_change(search_depth = SEARCH_DEPTH) {
+  if (COMMENTARY || move_record.length % 2 === flip) {
+    var start = Date.now()
+    reset_board()
+    apply(move_record)
+    
+    var heatmap = Array(64)
+    for (var i = 0; i < 64; ++i) heatmap[i] = -6
+    if (DEBUG)
+      console.log('No. of legal moves:', Object.keys(san_list()).length)
+    var nodes = [0]
+    var search_result = go(search_depth, nodes)
+    var fr = SQ_IDS[search_result.best.substring(0, 2)]
+    var to = SQ_IDS[search_result.best.substring(2, 4)]
+    fr = (fr + (fr & 7)) >> 1
+    to = (to + (to & 7)) >> 1
+    heatmap[fr] = heatmap[to] = -5
+    
+    var translated = Array(64)
+    for (var i = 0; i < 8; ++i) {
+      for (var j = 0; j < 8; ++j) {
+        translated[i*8 + j] = flip ? heatmap[8*i + (7-j)] : heatmap[8*(7-i) + j]
+      }
+    }
+    update_display(translated)
+    var duration = Date.now() - start
+    var record = {
+      score: search_result.score,
+      best: search_result.best,
+      ms: duration,
+      nodes: nodes[0]
+    }
+    search_history.push(record)
+    if (DEBUG)
+      console.log(search_record_to_string(record))
+  }
+}
+
+function print_search_history() {
+  var total_nodes = 0
+  var total_duration = 0
+  var total_knps = 0
+  for (const record of search_history) {
+    total_nodes += record.nodes
+    total_duration += record.ms
+    total_knps += Math.round(100*record.nodes/record.ms)/100
+  }
+  console.log(
+    search_history.map(e => search_record_to_string(e)).join('\n') + '\n' +
+    'On average: ' + Math.round(total_nodes / search_history.length) + ' nodes, ' +
+    Math.round(total_duration / search_history.length) + ' ms, ' +
+    Math.round(total_knps / search_history.length) + ' knps'
+  )
+}
+
+if (INTERFACE) {
+
+var move_record = []
+var search_history = []
+var last_new_game = Date.now()
+var flip = 0
+if (typeof overlay === 'undefined') {
+  var overlay = document.createElement('div')
+  overlay.onmousedown = function() { overlay.style.zIndex = -1; }
+  overlay.onmouseup = function() { overlay.style.zIndex = 1; }
+  init_display()
+  resize_display()
+  document.body.appendChild(overlay)
+}
+
+if (typeof tickInterval !== 'undefined')
+  clearInterval(tickInterval)
+tickInterval = setInterval(function(){
+  var m = get_moves()
+  if (m.join(' ') !== move_record.join(' ')) {
+    //if (m.length === (0|0)) new_game()
+    move_record = m
+    move_change()
+  }
+}, 100)
 
 } // if (INTERFACE)
