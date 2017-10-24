@@ -16,6 +16,7 @@
 // sign issues with scores? check <= fancier things in transposition table (e.g. if already searched depth n, don't search any depth m < n ever again)
 // pseudo-legal move generation
 // to get tt usage: tt.map((e, i) => e > 0 ? i : 0).filter(e => e)
+// [^\r\n]*(Searching d|Made move|[a-h][0-9][a-h][0-9]|Time remaining|Allocating|No. of)[^\r\n]*\r\n
 
 var DEBUG                    = true    // debugging output
 var PERFT                    = false   // runs through a suite of test perfts
@@ -27,9 +28,10 @@ var MOVE_ORDERING            = true    // sort moves based on a heuristic (reduc
 var MOVE_ORDERING_ALGORITHM  = 'RADIX' // can be 'RADIX' or 'BUILTIN' (in general, radix is faster)
 var OPENING_BOOK             = true    // use opening book
 var TRANSPOSITION_TABLE      = true    // use a transposition table
-var TRANSPOSITION_TABLE_SIZE = 20      // log2(maximum number of entries in transposition table)
+var TRANSPOSITION_TABLE_SIZE = 25      // log2(maximum number of entries in transposition table)
 var LATE_MOVE_REDUCTIONS     = true    // only search the first few moves of each candidate move list at full depth
 var CHECK_EXTENSIONS         = true    // never evaluate leaf nodes where either side is in check
+var PANIC                    = true    // only performs depth 3 searches when clock drops below 10 seconds
 
 var start = Date.now()
 console.log('Initializing:')
@@ -83,7 +85,7 @@ console.log('- transposition table')
 var TRANSPOSITION_TABLE_SIZE = 1 << TRANSPOSITION_TABLE_SIZE
 var TRANSPOSITION_TABLE_MASK = TRANSPOSITION_TABLE_SIZE - 1
 var ZOBRIST_GENERATOR = e => (4294967296 * Math.random())
-var ZOBRIST_KEYS = new Int32Array(2 * 256 * 128).map(ZOBRIST_GENERATOR)
+var ZOBRIST_KEYS = new Int32Array(2 * 256 * 128).map((e, i) => i & (255 << 7) ? ZOBRIST_GENERATOR() : 0)
 var ZOBRIST_TURN = new Int32Array(2).map(ZOBRIST_GENERATOR)
 var ZOBRIST_CASTLING = new Int32Array(2 * 16).map(ZOBRIST_GENERATOR)
 var ZOBRIST_EP = new Int32Array(2 * 128).map(ZOBRIST_GENERATOR)
@@ -111,6 +113,8 @@ var mailbox = Uint8Array.from(initial_mailbox)
 var kings = new Uint32Array([SQ_IDS['e1'], SQ_IDS['e8']])
 var turn = 0|0 // (0,1) = (w,b)
 var moves = 0|0
+var fifty = 0|0 // moves since last pawn move or capture
+var fiftys = new Uint32Array(MAX_LEN)
 var castling = 0xF|0 // (msb) BQ BK WQ WK (lsb)
 var castlings = new Uint32Array(MAX_LEN)
 var ep = -1|0
@@ -3844,7 +3848,7 @@ function print() {
     }
     console.log(line)
   }
-  console.log('castling:',castling,'ep:',ep,'->',SQUARES[ep],'moves:',moves,'score:',score,'hash:',hash)
+  console.log('castling:',castling,'ep:',ep,'->',SQUARES[ep],'moves:',moves,'score:',score,'fifty:',fifty,'hash:',hash)
 }
 
 function reset_board() {
@@ -3968,11 +3972,12 @@ function book_unmake(move) {
 
 function make(move) {
   move = move|0
+  fiftys[moves] = fifty|0
   castlings[moves] = castling|0
   eps[moves] = ep|0
   scores[moves] = score|0
-  hashs[moves] = hash[0]|0
-  hashs[moves + 1] = hash[1]|0
+  hashs[moves << 1] = hash[0]|0
+  hashs[moves << 1 | 1] = hash[1]|0
   hash[0] = (hash[0] ^ ZOBRIST_TURN[0])|0
   hash[1] = (hash[1] ^ ZOBRIST_TURN[1])|0
 
@@ -3985,6 +3990,9 @@ function make(move) {
   var to = ((move & TO_MASK) >> 8)|0
   var c = mailbox[to]|0
   var p = mailbox[fr]|0
+
+  // update fifty
+  fifty = (c !== EE || (p >> 2) === PAWN) ? 0|0 : (fifty + 1)|0
   
   // move piece
   make_pieces[ptr] = mailbox[fr] // vacate from sq
@@ -3996,7 +4004,7 @@ function make(move) {
   hash[0] = (hash[0] ^ ZOBRIST_KEYS[          c << 7 | to])|0
   hash[1] = (hash[1] ^ ZOBRIST_KEYS[1 << 15 | c << 7 | to])|0
   hash[0] = (hash[0] ^ ZOBRIST_KEYS[          p << 7 | fr])|0
-  hash[0] = (hash[0] ^ ZOBRIST_KEYS[1 << 15 | p << 7 | fr])|0
+  hash[1] = (hash[1] ^ ZOBRIST_KEYS[1 << 15 | p << 7 | fr])|0
 
   // if KING move, update KING locations
   if ((p >> 2) === KING) 
@@ -4069,8 +4077,8 @@ function make(move) {
     make_squares[ptr] = 9|0 // set last value to junk value
     mailbox[ep_square] = 0
     score = (score - eval_table[(p^3) << 7 | ep_square])|0 // subtract enemy pawn score
-    hash[0] = (hash[1] ^ ZOBRIST_KEYS[          (p^3) << 7 | ep_square])|0  
-    hash[0] = (hash[1] ^ ZOBRIST_KEYS[1 << 15 | (p^3) << 7 | ep_square])|0  
+    hash[0] = (hash[0] ^ ZOBRIST_KEYS[          (p^3) << 7 | ep_square])|0  
+    hash[1] = (hash[1] ^ ZOBRIST_KEYS[1 << 15 | (p^3) << 7 | ep_square])|0  
   } else {
     // not castling or ep: set rest to junk values
     make_squares[ptr] = 9|0
@@ -4086,6 +4094,7 @@ function unmake(move) {
 
   turn ^= 1|0
   moves = (moves - 1)|0
+  fifty = fiftys[moves]|0
   castling = castlings[moves]|0
   ep = eps[moves]|0
   score = scores[moves]|0
@@ -4278,6 +4287,7 @@ function legalize() {
 var hits = 0
 var collisions = 0
 var saved = 0
+var probed = 0
 function score_move(move/*, verbose*/) {
   if (TRANSPOSITION_TABLE) {
     var key = tt_key()
@@ -4453,7 +4463,7 @@ function divide(depth) {
 }
 
 function tt_key() {
-  return ((hash[0] & TRANSPOSITION_TABLE_MASK) << 1)|0
+  return ((hash[0] & TRANSPOSITION_TABLE_MASK) * 5)|0
 }
 
 function add_tt_entry(score, move, depth) {
@@ -4491,6 +4501,15 @@ function alphabeta(alpha, beta, depth, max_depth, end_time, nodes = [0]) {
   alpha = alpha|0, beta = beta|0, depth = depth|0
   if (Date.now() >= end_time)
     return TIME_UP_SCORE
+  // check for threefold repetition
+  var repetitions = 0
+  for (var i = 1|0; (i|0) <= (fifty|0); i = (i + 1)|0) {
+    if (hash[0] === hashs[(moves - i) << 1] && hash[1] === hashs[(moves - i) << 1 | 1])
+      repetitions = (repetitions + 1)|0
+  }
+  if ((repetitions|0) >= (2|0)) // 2 previous repetitions of current position = 3-fold
+    return 0|0
+  // leaf node
   if ((depth|0) >= (max_depth|0)) {
     if (!CHECK_EXTENSIONS || !is_attacked(kings[turn], turn^1)) {
       nodes[0] = (nodes[0] + 1)|0
@@ -4500,9 +4519,12 @@ function alphabeta(alpha, beta, depth, max_depth, end_time, nodes = [0]) {
   if (TRANSPOSITION_TABLE) {
     var key = tt_key()
     if (hash[0] === tt[key] && hash[1] === tt[key + 1]) { // if entry in table exists
+      ++probed
       if ((tt[key + 4]|0) >= ((max_depth - depth)|0)) { // if depth searched >= current depth left
         ++saved
-        return ((turn|0) === (0|0)) ? tt[key + 3]|0 : -tt[key + 3]|0 // return saved score
+        var score = ((turn|0) === (0|0)) ? tt[key + 3]|0 : -tt[key + 3]|0 // set window near saved score
+        alpha = score - 150
+        beta = score + 150
       }
     }
   }
@@ -4569,10 +4591,6 @@ function go_once(depth, end_time, nodes = [0]) {
 function go(time = SEARCH_TIME, nodes = [0]) {
   var end_time = Date.now() + time
   var results = [go_once(1, Date.now() + 10000000000, nodes)]
-  if (MATE_SCORE - Math.abs(results[0].score) < 100) {
-    results[0].depth = 0
-    return [results[0]]
-  }
   for (var depth = 2; true; ++depth) {
     var result = go_once(depth, end_time, nodes)
     if (result.score === 'book') {
@@ -4742,6 +4760,22 @@ function new_game() {
   move_change()
 }
 
+function display_move(move_string) {
+  var fr = SQ_IDS[move_string.substring(0, 2)]
+  var to = SQ_IDS[move_string.substring(2, 4)]
+  fr = (fr + (fr & 7)) >> 1
+  to = (to + (to & 7)) >> 1
+  heatmap[fr] = heatmap[to] = -5
+  
+  var translated = Array(64)
+  for (var i = 0; i < 8; ++i) {
+    for (var j = 0; j < 8; ++j) {
+      translated[i*8 + j] = flip ? heatmap[8*i + (7-j)] : heatmap[8*(7-i) + j]
+    }
+  }
+  update_display(translated)
+}
+
 function search_record_to_string(record) {
   return (record.score === 'book' ? 'book' : score_to_str(record.score)) + ' ' + record.best +
     ' (depth ' + record.depth + ', ' + record.nodes + ' nodes in ' + record.ms +
@@ -4756,17 +4790,17 @@ function make_lichess(move) {
   keyboard_input.dispatchEvent(new KeyboardEvent('keyup'))
 }
 
-// used for time management. taken from: https://chessprogramming.wikispaces.com/Time+Management
+// used for time management. modified version of graph on this page: https://chessprogramming.wikispaces.com/Time+Management
 var TIME_TABLE = [
-  1, 1, 1, 1, 1, 1, 1, 1, 1, // opening
-  2, 2, 3, 3, 4, 7, 10, 14, 16, 15, 14, 13, 12, 10, 7, 5, 4, 4, 4, // middlegame
+  1, 1, 2, 2, 2, 2, 3, 3, 3, // opening
+  3, 3, 3, 3, 3, 4, 4, 5, 5, 7, 9, 9, 9, 9, 7, 5, 5, 5, 4, 4, 3, 4, 4, // middlegame
   3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 // endgame
 ].map(e => [e, e]).reduce((x, y) => x.concat(y)) // convert turns to plies
 TIME_TABLE = TIME_TABLE.map(e => e / TIME_TABLE.reduce((x, y) => x + y)) // convert times to proportions
 
 function time_allocation(i) {
   var j = Math.min(i, TIME_TABLE.length - 1)
-  var result = Math.max(Math.floor(total_time * TIME_TABLE[j] * 1.4 * 1000), 500)
+  var result = Math.max(Math.floor(total_time * TIME_TABLE[j] * 1.4 * 1000), 400)
   if (DEBUG)
     console.log('Allocating', result, 'ms for move', i)
   return result
@@ -4777,39 +4811,30 @@ function move_change(search_time = SEARCH_TIME) {
     var start = Date.now()
     reset_board()
     apply(move_record)
-    
     var heatmap = Array(64)
     for (var i = 0; i < 64; ++i) heatmap[i] = -6
     if (DEBUG)
       console.log('No. of legal moves:', Object.keys(san_list()).length)
     var nodes = [0]
-    var search_results = go(time_allocation(moves), nodes)
+    var wrap = function(obj) { obj.depth = 0 }
+    var panicking = PANIC && (clock() < 10)
+    var search_results = panicking ? [wrap(go_once(3, Date.now() + 10000000, nodes))] : go(time_allocation(moves), nodes)
     var search_result = search_results.slice(-1)[0]
     var i = search_results.length - 1
     while (i--)
       if (search_results[i].best !== search_result.best)
         break
-    console.log(search_results.map((e, i) => e.score + ' ' + e.best + ' (' + i + ')\n').join(''))
-    console.log('key depth = ' + (i + 1).toString())
-    var fr = SQ_IDS[search_result.best.substring(0, 2)]
-    var to = SQ_IDS[search_result.best.substring(2, 4)]
-    fr = (fr + (fr & 7)) >> 1
-    to = (to + (to & 7)) >> 1
-    heatmap[fr] = heatmap[to] = -5
-    
-    var translated = Array(64)
-    for (var i = 0; i < 8; ++i) {
-      for (var j = 0; j < 8; ++j) {
-        translated[i*8 + j] = flip ? heatmap[8*i + (7-j)] : heatmap[8*(7-i) + j]
-      }
+    if (DEBUG) {
+      console.log(search_results.map((e, i) => e.score + ' ' + e.best + ' (' + i + ')\n').join(''))
+      console.log('key depth = ' + (i + 1).toString())
     }
-    update_display(translated)
-
-    if (AUTOPILOT)
-      make_lichess(search_result.best)
-
+    display_move(search_result.best)
+    if (AUTOPILOT) {
+      var delay = (search_result.score === 'book') ? time_allocation(moves) : panicking ? 100 : 0
+      setTimeout(function() { make_lichess(search_result.best) }, delay)
+    }
     console.log('Time remaining:', clock())
-
+    print()
     var duration = Date.now() - start
     var record = {
       score: search_result.score,
