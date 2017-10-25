@@ -16,6 +16,7 @@
 // sign issues with scores? check <= fancier things in transposition table (e.g. if already searched depth n, don't search any depth m < n ever again)
 // pseudo-legal move generation
 // to get tt usage: tt.map((e, i) => e > 0 ? i : 0).filter(e => e)
+// mild variance in times
 // [^\r\n]*(Searching d|Made move|[a-h][0-9][a-h][0-9]|Time remaining|Allocating|No. of)[^\r\n]*\r\n
 
 var DEBUG                    = true    // debugging output
@@ -4486,8 +4487,8 @@ var MAX_DEPTH_DECREMENT = ['placeholder']
 if (LATE_MOVE_REDUCTIONS) {
   MAX_DEPTH_DECREMENT = new Uint32Array(1 << MAX_MOVE_SHIFT).fill(3).map((e, i) => (i < 8) ? [
     // for any candidate move list, consider:
-    1, 1, 1, 1, 1, 1, 1, 1, // the first 8 normally
-    2, 2, 2, 2, 2, 2, 2, 2, // the next 8 at max depth - 1
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // the first 16 normally
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // the next 16 at max depth - 1
     // anything else at max depth - 2
   ][i] : e)
 } else
@@ -4523,8 +4524,8 @@ function alphabeta(alpha, beta, depth, max_depth, end_time, nodes = [0]) {
       if ((tt[key + 4]|0) >= ((max_depth - depth)|0)) { // if depth searched >= current depth left
         ++saved
         var score = ((turn|0) === (0|0)) ? tt[key + 3]|0 : -tt[key + 3]|0 // set window near saved score
-        alpha = score - 150
-        beta = score + 150
+        alpha = score - 200
+        beta = score + 200
       }
     }
   }
@@ -4749,7 +4750,7 @@ function update_display(heatmap) {
 }
 
 function clock() {
-  var [mm, ss_frac] = document.getElementsByClassName('lichess_game')[0].children[1].children[1].children[2].children[1].innerText.split(':')
+  var [mm, ss_frac] = document.getElementsByClassName('clock_bottom')[0].children[1].innerText.split(':')
   return 60*parseInt(mm) + parseFloat(ss_frac)
 }
 
@@ -4800,7 +4801,7 @@ TIME_TABLE = TIME_TABLE.map(e => e / TIME_TABLE.reduce((x, y) => x + y)) // conv
 
 function time_allocation(i) {
   var j = Math.min(i, TIME_TABLE.length - 1)
-  var result = Math.max(Math.floor(total_time * TIME_TABLE[j] * 1.4 * 1000), 400)
+  var result = Math.max(-100 + 500*Math.random + Math.floor(total_time * TIME_TABLE[j] * 1.4 * 1000), 400)
   if (DEBUG)
     console.log('Allocating', result, 'ms for move', i)
   return result
@@ -4816,7 +4817,7 @@ function move_change(search_time = SEARCH_TIME) {
     if (DEBUG)
       console.log('No. of legal moves:', Object.keys(san_list()).length)
     var nodes = [0]
-    var wrap = function(obj) { obj.depth = 0 }
+    var wrap = function(obj) { obj.depth = 0; return obj }
     var panicking = PANIC && (clock() < 10)
     var search_results = panicking ? [wrap(go_once(3, Date.now() + 10000000, nodes))] : go(time_allocation(moves), nodes)
     var search_result = search_results.slice(-1)[0]
